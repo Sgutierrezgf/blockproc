@@ -33,6 +33,18 @@ Stack: Expo (dev build, generación nativa) con React Native y TypeScript, y Exp
 
 La carpeta `android/` se genera con `npx expo prebuild` y **no se versiona**; no la edites a mano. La configuración nativa va en `app.json` y en plugins de configuración.
 
+## Build de producción
+
+`android/app/build.gradle` ya trae un `buildType release` (minificado, con `shrinkResources` y ProGuard) que no depende de Metro: el JS queda empaquetado dentro del APK. Se genera con:
+
+```
+cd android && ./gradlew assembleRelease
+```
+
+La pantalla de Herramientas de desarrollo (`/dev`) está oculta en esa build (`__DEV__` es `false`): ni el enlace de Ajustes ni el enlace profundo `blockproc://dev` la muestran.
+
+**Pendiente antes de publicar de verdad:** esa build release sigue firmada con el keystore de **debug** de la plantilla (`signingConfigs.release` apunta a `signingConfigs.debug` en `build.gradle`) — sirve para probar en un dispositivo, pero no es válida para subir a Play Store. Hace falta generar un keystore de release propio y guardarlo en un lugar seguro (nunca en el repo) antes de publicar.
+
 ## Problemas conocidos de configuración
 
 Cada entrada sigue el formato **síntoma → causa → solución**. Si te encuentras un problema de configuración nuevo, añádelo aquí para el siguiente que clone el repo.

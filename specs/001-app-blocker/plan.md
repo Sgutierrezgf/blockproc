@@ -352,6 +352,20 @@ Hallazgos menores, reportados sin corregir (a pedido del usuario): 5 paquetes de
 
 **Veredicto: dos bugs de severidad real (uno de ellos crítico — anulaba la protección para cualquier instalación nueva) encontrados por una auditoría independiente y corregidos el mismo día.** Ninguno de los dos era detectable por los tests unitarios existentes (ambos viven en código nativo/de arranque, fuera de lo que cubre Jest); solo una revisión de código deliberada, combinada con probar un camino que ninguna sesión anterior había probado (una instalación realmente limpia, sin pasar nunca por `/dev`), los sacó a la luz.
 
+### Rama `main` preparada para build de producción (2026-09-30)
+
+Con el proyecto ya auditado y corregido, se hizo el primer commit del repositorio (nunca
+había tenido ninguno) y se creó `feature/desarrollo` como snapshot completo de ese mismo
+commit (specs/, docs/, tests/, `/dev`, todo tal cual). `main` sigue con el mismo
+contenido salvo un cambio: la pantalla de Herramientas de desarrollo (`/dev`) ahora se
+oculta con `__DEV__` (tanto el enlace desde Ajustes como la propia pantalla, que
+redirige a `/settings` si `__DEV__` es `false`) — así nunca queda alcanzable en la build
+`release` que ya trae `build.gradle` (minificada, sin depender de Metro). No es un
+cambio de RF: es una decisión de build, no de comportamiento funcional para el usuario
+final (la fricción/reto sigue exactamente igual). La firma de esa build `release` sigue
+siendo la de debug por decisión explícita — no apta para publicar, documentado en
+`README.md`.
+
 ## 8. Cambios a la spec (aplicados)
 
 Con tu aprobación se aplicaron:

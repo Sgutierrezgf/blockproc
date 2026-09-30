@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Redirect } from "expo-router";
 import { AppState, Button, PermissionsAndroid, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -201,6 +202,13 @@ export default function Dev() {
     ];
     return () => subs.forEach((s) => s.remove());
   }, []);
+
+  // Defensa en profundidad: en una build release, __DEV__ es false y esta
+  // pantalla no debe quedar alcanzable ni por enlace profundo directo
+  // (blockproc://dev), aunque el enlace de Ajustes ya esté oculto.
+  if (!__DEV__) {
+    return <Redirect href="/settings" />;
+  }
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>

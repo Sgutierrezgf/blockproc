@@ -186,7 +186,8 @@ export default function Settings() {
         <View className="gap-1 rounded-3xl bg-surface-container p-2 shadow-sm dark:bg-surface-container-dark">
           <NavLink href="/apps" label="Apps a restringir" />
           <NavLink href="/schedule" label="Bloqueo horario" />
-          <NavLink href="/dev" label="Herramientas de desarrollo" />
+          {/* Nunca en una build release: __DEV__ es false ahí (ver dev.tsx). */}
+          {__DEV__ && <NavLink href="/dev" label="Herramientas de desarrollo" />}
         </View>
 
         {/* RF-19: mientras el bloqueo horario está activo, no se puede editar nada. */}

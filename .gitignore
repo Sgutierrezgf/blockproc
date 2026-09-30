@@ -1,0 +1,5 @@
+# Estado local de sesión de Claude Code, no es contenido del proyecto.
+.claude/
+
+# macOS
+.DS_Store

@@ -1,0 +1,25 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.blockprocnative'
+version = '0.1.0'
+
+android {
+  namespace "expo.modules.blockprocnative"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  // Necesaria para HeadlessJsTaskService/HeadlessJsTaskConfig/Arguments
+  // (T51): expo-module-gradle-plugin no la expone por sí solo a un módulo
+  // local, a diferencia de app/build.gradle, que sí la declara.
+  implementation "com.facebook.react:react-android"
+}

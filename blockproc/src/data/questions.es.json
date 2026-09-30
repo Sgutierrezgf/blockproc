@@ -1,0 +1,1742 @@
+[
+  {
+    "id": "general-001",
+    "area": "general",
+    "question": "¿Cuál es la capital de Francia?",
+    "options": ["Madrid", "París", "Roma", "Berlín"],
+    "correctIndex": 1
+  },
+  {
+    "id": "general-002",
+    "area": "general",
+    "question": "¿En qué continente está Egipto?",
+    "options": ["Asia", "Europa", "África", "Oceanía"],
+    "correctIndex": 2
+  },
+  {
+    "id": "technology-001",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"HTML\"?",
+    "options": [
+      "HyperText Markup Language",
+      "High Tech Modern Language",
+      "Home Tool Markup Language",
+      "Hyperlink Text Management Language"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-001",
+    "area": "health",
+    "question": "¿Cuántas horas de sueño se recomiendan por noche a una persona adulta?",
+    "options": ["3 a 4", "5 a 6", "7 a 9", "11 a 12"],
+    "correctIndex": 2
+  },
+  {
+    "id": "science-001",
+    "area": "science",
+    "question": "¿Cuál es el planeta más cercano al Sol?",
+    "options": ["Venus", "Mercurio", "Marte", "Tierra"],
+    "correctIndex": 1
+  },
+  {
+    "id": "general-003",
+    "area": "general",
+    "question": "¿Cuál es el océano más grande del mundo?",
+    "options": ["Pacífico", "Atlántico", "Índico", "Ártico"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-004",
+    "area": "general",
+    "question": "¿Cuál es el país más poblado del mundo?",
+    "options": ["India", "China", "Estados Unidos", "Indonesia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-005",
+    "area": "general",
+    "question": "¿Cuál es la capital de Japón?",
+    "options": ["Tokio", "Kioto", "Osaka", "Yokohama"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-006",
+    "area": "general",
+    "question": "¿Cuál es la capital de Australia?",
+    "options": ["Canberra", "Sídney", "Melbourne", "Perth"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-007",
+    "area": "general",
+    "question": "¿Cuál es la lengua materna más hablada del mundo?",
+    "options": ["Mandarín", "Inglés", "Español", "Hindi"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-008",
+    "area": "general",
+    "question": "¿Cuál es la moneda oficial de Japón?",
+    "options": ["Yen", "Won", "Yuan", "Ringgit"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-009",
+    "area": "general",
+    "question": "¿Quién escribió \"Don Quijote de la Mancha\"?",
+    "options": ["Miguel de Cervantes", "Lope de Vega", "Federico García Lorca", "Pablo Neruda"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-010",
+    "area": "general",
+    "question": "¿Quién pintó \"La Mona Lisa\"?",
+    "options": ["Leonardo da Vinci", "Miguel Ángel", "Rafael", "Botticelli"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-011",
+    "area": "general",
+    "question": "¿En qué país se encuentra la Torre Eiffel?",
+    "options": ["Francia", "Italia", "España", "Bélgica"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-012",
+    "area": "general",
+    "question": "¿Cuál es el metal más abundante en la corteza terrestre?",
+    "options": ["Aluminio", "Hierro", "Cobre", "Oro"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-013",
+    "area": "general",
+    "question": "¿Cuántos lados tiene un hexágono?",
+    "options": ["6", "5", "7", "8"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-014",
+    "area": "general",
+    "question": "¿En qué año llegó el ser humano a la Luna por primera vez?",
+    "options": ["1969", "1959", "1975", "1965"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-015",
+    "area": "general",
+    "question": "¿Cuál es el animal terrestre más grande del mundo?",
+    "options": ["Elefante africano", "Jirafa", "Rinoceronte blanco", "Hipopótamo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-016",
+    "area": "general",
+    "question": "¿Cuál es el desierto cálido más grande del mundo?",
+    "options": ["Sahara", "Gobi", "Kalahari", "Atacama"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-017",
+    "area": "general",
+    "question": "¿Cuál es el idioma oficial de Brasil?",
+    "options": ["Portugués", "Español", "Inglés", "Francés"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-018",
+    "area": "general",
+    "question": "¿Quién pintó \"La noche estrellada\"?",
+    "options": ["Vincent van Gogh", "Claude Monet", "Pablo Picasso", "Salvador Dalí"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-019",
+    "area": "general",
+    "question": "¿Cuál es la montaña más alta del mundo?",
+    "options": ["Everest", "K2", "Kilimanjaro", "Aconcagua"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-020",
+    "area": "general",
+    "question": "¿Cuál es el país más grande del mundo por superficie?",
+    "options": ["Rusia", "Canadá", "China", "Estados Unidos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-021",
+    "area": "general",
+    "question": "¿Qué instrumento se usa para medir la temperatura?",
+    "options": ["Termómetro", "Barómetro", "Termostato", "Higrómetro"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-022",
+    "area": "general",
+    "question": "¿Cuál es la capital de Canadá?",
+    "options": ["Ottawa", "Toronto", "Vancouver", "Montreal"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-023",
+    "area": "general",
+    "question": "¿En qué país se originó el sushi?",
+    "options": ["Japón", "China", "Corea del Sur", "Tailandia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-024",
+    "area": "general",
+    "question": "¿Cuál es el mamífero marino más grande del mundo?",
+    "options": ["Ballena azul", "Cachalote", "Orca", "Tiburón ballena"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-025",
+    "area": "general",
+    "question": "¿Cuántos colores tiene el arcoíris tradicionalmente?",
+    "options": ["7", "5", "6", "8"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-026",
+    "area": "general",
+    "question": "¿Cuál es la moneda oficial de Estados Unidos?",
+    "options": ["Dólar", "Libra", "Euro", "Peso"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-027",
+    "area": "general",
+    "question": "¿En qué año cayó el Muro de Berlín?",
+    "options": ["1989", "1991", "1985", "1993"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-028",
+    "area": "general",
+    "question": "¿Cuál es el símbolo químico del oro?",
+    "options": ["Au", "Ag", "Or", "Go"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-029",
+    "area": "general",
+    "question": "¿Qué país tiene más husos horarios, gracias a sus territorios de ultramar?",
+    "options": ["Francia", "Rusia", "Estados Unidos", "Reino Unido"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-030",
+    "area": "general",
+    "question": "¿Cuál es la capital de Egipto?",
+    "options": ["El Cairo", "Alejandría", "Luxor", "Guiza"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-031",
+    "area": "general",
+    "question": "¿Quién escribió \"Cien años de soledad\"?",
+    "options": ["Gabriel García Márquez", "Mario Vargas Llosa", "Julio Cortázar", "Isabel Allende"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-032",
+    "area": "general",
+    "question": "¿Cuál es el punto más bajo de la superficie terrestre en tierra firme?",
+    "options": ["Mar Muerto", "Valle de la Muerte", "Mar Caspio", "Depresión de Danakil"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-033",
+    "area": "general",
+    "question": "¿Cuál es la capital de España?",
+    "options": ["Madrid", "Barcelona", "Sevilla", "Valencia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-034",
+    "area": "general",
+    "question": "¿Cuál es la capital de Alemania?",
+    "options": ["Berlín", "Múnich", "Fráncfort", "Hamburgo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-035",
+    "area": "general",
+    "question": "¿Cuál es la capital de Rusia?",
+    "options": ["Moscú", "San Petersburgo", "Kazán", "Ekaterimburgo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-036",
+    "area": "general",
+    "question": "¿Cuál es la capital de Argentina?",
+    "options": ["Buenos Aires", "Córdoba", "Rosario", "Mendoza"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-037",
+    "area": "general",
+    "question": "¿Cuál es la capital de México?",
+    "options": ["Ciudad de México", "Guadalajara", "Monterrey", "Puebla"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-038",
+    "area": "general",
+    "question": "¿En qué país se encuentra el Coliseo Romano?",
+    "options": ["Italia", "Grecia", "España", "Francia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-039",
+    "area": "general",
+    "question": "¿Cuál es el río más largo de Sudamérica?",
+    "options": ["Amazonas", "Orinoco", "Paraná", "Magdalena"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-040",
+    "area": "general",
+    "question": "¿Cuál es el continente más grande del mundo?",
+    "options": ["Asia", "África", "América", "Europa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-041",
+    "area": "general",
+    "question": "¿Quién escribió \"Romeo y Julieta\"?",
+    "options": ["William Shakespeare", "Charles Dickens", "Jane Austen", "Oscar Wilde"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-042",
+    "area": "general",
+    "question": "¿Quién pintó \"El grito\"?",
+    "options": ["Edvard Munch", "Gustav Klimt", "Wassily Kandinsky", "Henri Matisse"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-043",
+    "area": "general",
+    "question": "¿Quién compuso la \"Novena Sinfonía\"?",
+    "options": ["Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Franz Schubert"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-044",
+    "area": "general",
+    "question": "¿En qué deporte se usa un volante (\"birdie\")?",
+    "options": ["Bádminton", "Tenis", "Squash", "Tenis de mesa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-045",
+    "area": "general",
+    "question": "¿En qué país se originó la pizza margarita?",
+    "options": ["Italia", "España", "Grecia", "Francia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-046",
+    "area": "general",
+    "question": "¿Cuántos jugadores tiene un equipo de fútbol en el campo, contando al portero?",
+    "options": ["11", "9", "10", "12"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-047",
+    "area": "general",
+    "question": "¿Cuál es la moneda oficial de la Unión Europea?",
+    "options": ["Euro", "Franco", "Marco", "Libra"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-048",
+    "area": "general",
+    "question": "¿Cuál es el país más pequeño del mundo por superficie?",
+    "options": ["Ciudad del Vaticano", "Mónaco", "San Marino", "Liechtenstein"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-049",
+    "area": "general",
+    "question": "¿En qué año comenzó la Segunda Guerra Mundial?",
+    "options": ["1939", "1914", "1945", "1929"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-050",
+    "area": "general",
+    "question": "¿Qué país regaló la Estatua de la Libertad a Estados Unidos?",
+    "options": ["Francia", "Reino Unido", "España", "Países Bajos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-051",
+    "area": "general",
+    "question": "¿Qué elemento químico tiene el símbolo \"O\"?",
+    "options": ["Oxígeno", "Oro", "Osmio", "Óxido"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-052",
+    "area": "general",
+    "question": "¿Cuántas patas tiene una araña?",
+    "options": ["8", "6", "10", "4"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-053",
+    "area": "general",
+    "question": "¿Qué instrumento musical tiene teclas blancas y negras?",
+    "options": ["Piano", "Acordeón", "Órgano de boca", "Arpa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-054",
+    "area": "general",
+    "question": "¿En qué país se originó el yoga?",
+    "options": ["India", "China", "Nepal", "Tailandia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-055",
+    "area": "general",
+    "question": "¿Cuál es el lago más grande del mundo (llamado \"mar\" por su tamaño)?",
+    "options": ["Mar Caspio", "Lago Superior", "Lago Victoria", "Lago Baikal"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-056",
+    "area": "general",
+    "question": "¿Cuál es la capital de Portugal?",
+    "options": ["Lisboa", "Oporto", "Faro", "Braga"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-057",
+    "area": "general",
+    "question": "¿Quién formuló la teoría de la relatividad?",
+    "options": ["Albert Einstein", "Isaac Newton", "Niels Bohr", "Stephen Hawking"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-058",
+    "area": "general",
+    "question": "¿Cuántas estrellas tiene la bandera de Estados Unidos?",
+    "options": ["50", "48", "13", "52"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-059",
+    "area": "general",
+    "question": "¿Cuál es la isla más grande del mundo?",
+    "options": ["Groenlandia", "Madagascar", "Borneo", "Nueva Guinea"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-060",
+    "area": "general",
+    "question": "¿Cuál es el deporte con más aficionados en el mundo?",
+    "options": ["Fútbol", "Baloncesto", "Críquet", "Tenis"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-061",
+    "area": "general",
+    "question": "¿Qué instrumento usan los astrónomos para observar el cielo?",
+    "options": ["Telescopio", "Microscopio", "Periscopio", "Sextante"],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-062",
+    "area": "general",
+    "question": "¿Cuál es la capital de Grecia?",
+    "options": ["Atenas", "Tesalónica", "Esparta", "Corinto"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-002",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"CPU\"?",
+    "options": ["Central Processing Unit", "Central Print Unit", "Computer Processing Utility", "Core Program Unit"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-003",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"URL\"?",
+    "options": ["Uniform Resource Locator", "Universal Reference Link", "Unified Resource Locator", "User Resource Location"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-004",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"USB\"?",
+    "options": ["Universal Serial Bus", "United System Bus", "Universal System Backup", "Unified Serial Board"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-005",
+    "area": "technology",
+    "question": "¿A quién se le atribuye la creación de la World Wide Web?",
+    "options": ["Tim Berners-Lee", "Bill Gates", "Steve Jobs", "Mark Zuckerberg"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-006",
+    "area": "technology",
+    "question": "¿En qué año se fundó Apple?",
+    "options": ["1976", "1980", "1971", "1984"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-007",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"RAM\"?",
+    "options": ["Random Access Memory", "Read Access Memory", "Rapid Access Module", "Remote Access Memory"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-008",
+    "area": "technology",
+    "question": "¿Qué lenguaje se usa principalmente para dar interactividad a las páginas web en el navegador?",
+    "options": ["JavaScript", "Python", "C++", "Java"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-009",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"GPU\"?",
+    "options": ["Graphics Processing Unit", "General Processing Unit", "Graphic Program Utility", "Global Processing Unit"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-010",
+    "area": "technology",
+    "question": "¿Qué sistema operativo de código abierto creó Linus Torvalds?",
+    "options": ["Linux", "Unix", "Windows", "macOS"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-011",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"PDF\"?",
+    "options": ["Portable Document Format", "Personal Data File", "Printed Document Format", "Public Document Format"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-012",
+    "area": "technology",
+    "question": "¿Qué empresa creó el sistema operativo Windows?",
+    "options": ["Microsoft", "Apple", "IBM", "Google"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-013",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"HTTP\"?",
+    "options": ["HyperText Transfer Protocol", "High Transfer Text Protocol", "HyperLink Text Protocol", "Home Text Transfer Protocol"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-014",
+    "area": "technology",
+    "question": "¿En qué año se fundó Google?",
+    "options": ["1998", "1995", "2001", "2004"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-015",
+    "area": "technology",
+    "question": "¿Qué colores forman el modelo \"RGB\" usado en pantallas?",
+    "options": ["Rojo, verde y azul", "Rojo, gris y azul", "Rosa, verde y amarillo", "Rojo, verde y amarillo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-016",
+    "area": "technology",
+    "question": "¿Qué dispositivo se usa para señalar y hacer clic en una computadora de escritorio?",
+    "options": ["Ratón", "Teclado", "Monitor", "Escáner"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-017",
+    "area": "technology",
+    "question": "¿Qué significan las siglas \"IA\" en tecnología?",
+    "options": ["Inteligencia Artificial", "Interfaz Automática", "Información Analítica", "Integración Avanzada"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-018",
+    "area": "technology",
+    "question": "¿Qué tipo de memoria de una computadora pierde su contenido al apagar el equipo?",
+    "options": ["RAM", "ROM", "Disco duro", "Memoria flash"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-019",
+    "area": "technology",
+    "question": "¿Cuál ha sido el buscador de internet más usado del mundo durante las últimas dos décadas?",
+    "options": ["Google", "Bing", "Yahoo", "DuckDuckGo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-020",
+    "area": "technology",
+    "question": "¿Qué unidad de almacenamiento representa la sigla \"GB\"?",
+    "options": ["Gigabyte", "Gigabit", "Global Byte", "Ground Base"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-021",
+    "area": "technology",
+    "question": "¿Qué empresa creó el iPhone?",
+    "options": ["Apple", "Samsung", "Google", "Nokia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-022",
+    "area": "technology",
+    "question": "¿Qué lenguaje de programación lleva el nombre de una serpiente?",
+    "options": ["Python", "Java", "Ruby", "Perl"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-023",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"SSD\"?",
+    "options": ["Solid State Drive", "Standard Storage Device", "System Save Disk", "Secure Storage Drive"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-024",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"VPN\"?",
+    "options": ["Virtual Private Network", "Verified Public Network", "Virtual Public Node", "Very Private Network"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-025",
+    "area": "technology",
+    "question": "¿Quién cofundó Microsoft junto a Paul Allen?",
+    "options": ["Bill Gates", "Steve Jobs", "Larry Page", "Jeff Bezos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-026",
+    "area": "technology",
+    "question": "¿Qué significa \"QR\" en \"código QR\"?",
+    "options": ["Quick Response", "Quality Recognition", "Query Read", "Quick Registry"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-027",
+    "area": "technology",
+    "question": "¿Qué unidad mide la velocidad de un procesador?",
+    "options": ["Hercios (Hz)", "Voltios", "Amperios", "Bytes"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-028",
+    "area": "technology",
+    "question": "¿Qué empresa desarrolla el sistema operativo Android?",
+    "options": ["Google", "Apple", "Samsung", "Microsoft"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-029",
+    "area": "technology",
+    "question": "¿Qué significa la sigla \"LAN\"?",
+    "options": ["Local Area Network", "Long Access Network", "Limited Area Node", "Line Area Network"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-030",
+    "area": "technology",
+    "question": "¿Qué disco óptico se popularizó en los años 90 para música y datos?",
+    "options": ["CD (disco compacto)", "DVD", "Blu-ray", "Disquete"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-031",
+    "area": "technology",
+    "question": "¿Qué significan las siglas \"IoT\"?",
+    "options": [
+      "Internet de las cosas",
+      "Internet de operaciones técnicas",
+      "Interfaz de objetos táctiles",
+      "Integración de operaciones tecnológicas"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-032",
+    "area": "technology",
+    "question": "En \"HTTPS\", ¿qué añade la \"S\" respecto a \"HTTP\"?",
+    "options": ["Secure (seguro)", "Server (servidor)", "System (sistema)", "Standard (estándar)"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-033",
+    "area": "technology",
+    "question": "¿Quién fundó Facebook?",
+    "options": ["Mark Zuckerberg", "Jack Dorsey", "Elon Musk", "Larry Page"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-034",
+    "area": "technology",
+    "question": "¿Qué empresa fabrica los procesadores \"Core i7\" e \"i9\"?",
+    "options": ["Intel", "AMD", "Qualcomm", "Nvidia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-035",
+    "area": "technology",
+    "question": "¿Qué empresa desarrolla el navegador Chrome?",
+    "options": ["Google", "Microsoft", "Apple", "Mozilla"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-036",
+    "area": "technology",
+    "question": "¿Qué red social, conocida por sus publicaciones breves, ahora se llama \"X\"?",
+    "options": ["Twitter", "Facebook", "LinkedIn", "Instagram"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-037",
+    "area": "technology",
+    "question": "¿Qué empresa fabrica los chips \"Snapdragon\" usados en muchos celulares?",
+    "options": ["Qualcomm", "Intel", "AMD", "MediaTek"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-038",
+    "area": "technology",
+    "question": "¿Qué significa \"app\"?",
+    "options": ["Aplicación", "Programa base", "Interfaz gráfica", "Sistema operativo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-039",
+    "area": "technology",
+    "question": "¿Qué protocolo se usa para enviar correos electrónicos?",
+    "options": ["SMTP", "POP3", "IMAP", "FTP"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-040",
+    "area": "technology",
+    "question": "¿Qué significa \"OS\" en informática?",
+    "options": ["Operating System", "Output System", "Online Server", "Open Source"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-041",
+    "area": "technology",
+    "question": "¿Qué empresa creó el navegador Edge?",
+    "options": ["Microsoft", "Google", "Apple", "Mozilla"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-042",
+    "area": "technology",
+    "question": "¿Qué tecnología se usa para conectar audífonos inalámbricos a corta distancia?",
+    "options": ["Bluetooth", "Wi-Fi", "NFC", "Infrarrojo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-043",
+    "area": "technology",
+    "question": "¿Cómo se llama el asistente de voz de Amazon?",
+    "options": ["Alexa", "Siri", "Cortana", "Google Assistant"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-044",
+    "area": "technology",
+    "question": "¿Cómo se llama el asistente de voz de Apple?",
+    "options": ["Siri", "Alexa", "Cortana", "Bixby"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-045",
+    "area": "technology",
+    "question": "¿Qué empresa es dueña de YouTube?",
+    "options": ["Google", "Microsoft", "Amazon", "Meta"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-046",
+    "area": "technology",
+    "question": "¿Qué significan las \"www\" al inicio de una dirección web?",
+    "options": ["World Wide Web", "Web World Wide", "Wide World Web", "World Wide Wire"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-047",
+    "area": "technology",
+    "question": "¿Qué dispositivo convierte señales para conectar una computadora a internet por línea telefónica?",
+    "options": ["Módem", "Router", "Switch", "Hub"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-048",
+    "area": "technology",
+    "question": "¿Qué significa \"e-mail\"?",
+    "options": ["Correo electrónico", "Mensaje enviado", "Enlace de mensaje", "Correo empresarial"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-049",
+    "area": "technology",
+    "question": "¿Qué empresa creó la consola PlayStation?",
+    "options": ["Sony", "Microsoft", "Nintendo", "Sega"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-050",
+    "area": "technology",
+    "question": "¿Qué empresa creó la consola Xbox?",
+    "options": ["Microsoft", "Sony", "Nintendo", "Atari"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-051",
+    "area": "technology",
+    "question": "¿Qué empresa creó la Nintendo Switch?",
+    "options": ["Nintendo", "Sony", "Microsoft", "Sega"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-052",
+    "area": "technology",
+    "question": "¿Qué significa \"CSS\", el lenguaje que da estilo visual a las páginas web?",
+    "options": ["Cascading Style Sheets", "Computer Style System", "Creative Style Sheets", "Coded Style Structure"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-053",
+    "area": "technology",
+    "question": "¿Qué red social, centrada en fotos y videos cortos, es propiedad de Meta?",
+    "options": ["Instagram", "LinkedIn", "Twitter/X", "Pinterest"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-054",
+    "area": "technology",
+    "question": "¿Qué empresa es dueña de Instagram y WhatsApp?",
+    "options": ["Meta", "Google", "Microsoft", "Amazon"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-055",
+    "area": "technology",
+    "question": "¿Para qué sirve el atajo \"Ctrl+Z\" en la mayoría de programas?",
+    "options": ["Deshacer", "Rehacer", "Guardar", "Copiar"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-056",
+    "area": "technology",
+    "question": "¿Para qué sirven los atajos \"Ctrl+C\" y \"Ctrl+V\"?",
+    "options": ["Copiar y pegar", "Cortar y pegar", "Guardar y abrir", "Deshacer y rehacer"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-057",
+    "area": "technology",
+    "question": "¿Cómo se llama el software dañino que se disfraza de programa legítimo?",
+    "options": ["Troyano", "Antivirus", "Cortafuegos", "Firewall"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-058",
+    "area": "technology",
+    "question": "¿A qué se refiere el término \"spam\"?",
+    "options": [
+      "Correo o mensajes no deseados",
+      "Un tipo de virus informático",
+      "Una red social",
+      "Un lenguaje de programación"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-059",
+    "area": "technology",
+    "question": "¿Cuál es el navegador de código abierto desarrollado por Mozilla?",
+    "options": ["Firefox", "Chrome", "Opera", "Brave"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-060",
+    "area": "technology",
+    "question": "¿Quién fundó Twitter en 2006?",
+    "options": ["Jack Dorsey", "Mark Zuckerberg", "Elon Musk", "Evan Spiegel"],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-061",
+    "area": "technology",
+    "question": "¿Qué empresa fabrica los procesadores \"Ryzen\"?",
+    "options": ["AMD", "Intel", "Qualcomm", "Nvidia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-002",
+    "area": "health",
+    "question": "¿Cuántos huesos tiene el cuerpo de una persona adulta?",
+    "options": ["206", "186", "226", "246"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-003",
+    "area": "health",
+    "question": "¿Cuál es el órgano más grande del cuerpo humano?",
+    "options": ["La piel", "El hígado", "Los pulmones", "El corazón"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-004",
+    "area": "health",
+    "question": "¿Cuántos litros de sangre tiene aproximadamente una persona adulta?",
+    "options": ["5 litros", "2 litros", "8 litros", "10 litros"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-005",
+    "area": "health",
+    "question": "¿Cuál es el músculo más fuerte del cuerpo humano según su fuerza relativa?",
+    "options": ["El masetero (mandíbula)", "El bíceps", "El cuádriceps", "El corazón"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-006",
+    "area": "health",
+    "question": "¿Cuántos litros de agua se recomienda beber al día, como referencia general?",
+    "options": ["Alrededor de 2 litros", "Alrededor de 0.5 litros", "Alrededor de 5 litros", "Alrededor de 1 litro"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-007",
+    "area": "health",
+    "question": "¿Qué órgano se encarga de bombear la sangre por el cuerpo?",
+    "options": ["El corazón", "El hígado", "El riñón", "El pulmón"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-008",
+    "area": "health",
+    "question": "¿Cuál es el rango normal de latidos del corazón por minuto en reposo?",
+    "options": ["60 a 100", "100 a 140", "30 a 50", "150 a 180"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-009",
+    "area": "health",
+    "question": "¿Qué vitamina se obtiene principalmente con la exposición al sol?",
+    "options": ["Vitamina D", "Vitamina C", "Vitamina A", "Vitamina B12"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-010",
+    "area": "health",
+    "question": "¿Cuál es la unidad básica de todo ser vivo?",
+    "options": ["La célula", "El átomo", "El tejido", "El órgano"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-011",
+    "area": "health",
+    "question": "¿Cuántos sentidos básicos se enseñan tradicionalmente?",
+    "options": ["5", "4", "6", "3"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-012",
+    "area": "health",
+    "question": "¿Qué órganos filtran la sangre y producen la orina?",
+    "options": ["Los riñones", "Los pulmones", "El hígado", "Los intestinos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-013",
+    "area": "health",
+    "question": "Según la OMS, ¿cuántos minutos de actividad física moderada a la semana se recomiendan a un adulto, como referencia general?",
+    "options": ["150 minutos", "30 minutos", "500 minutos", "60 minutos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-014",
+    "area": "health",
+    "question": "¿Cuál es el hueso más largo del cuerpo humano?",
+    "options": ["El fémur", "El húmero", "La tibia", "El radio"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-015",
+    "area": "health",
+    "question": "¿Qué gas necesita el cuerpo humano para respirar y vivir?",
+    "options": ["Oxígeno", "Dióxido de carbono", "Nitrógeno", "Hidrógeno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-016",
+    "area": "health",
+    "question": "¿Cuál es el órgano principal del sistema nervioso?",
+    "options": ["El cerebro", "El corazón", "La médula ósea", "El hígado"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-017",
+    "area": "health",
+    "question": "¿Cuántos dientes tiene una persona adulta, contando las muelas del juicio?",
+    "options": ["32", "28", "30", "36"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-018",
+    "area": "health",
+    "question": "¿Qué mineral es esencial para tener huesos fuertes?",
+    "options": ["Calcio", "Hierro", "Potasio", "Zinc"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-019",
+    "area": "health",
+    "question": "¿Cuál es la temperatura corporal promedio de una persona sana?",
+    "options": ["Alrededor de 37 °C", "Alrededor de 39 °C", "Alrededor de 34 °C", "Alrededor de 41 °C"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-020",
+    "area": "health",
+    "question": "¿Qué hábito simple ayuda a prevenir el contagio de muchas enfermedades?",
+    "options": ["Lavarse las manos con frecuencia", "Dormir con la luz encendida", "Evitar tomar agua", "Comer más azúcar"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-021",
+    "area": "health",
+    "question": "¿Qué grupo de alimentos aporta principalmente proteínas?",
+    "options": ["Carnes, huevos y legumbres", "Frutas", "Aceites", "Azúcares"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-022",
+    "area": "health",
+    "question": "¿Qué parte del cuerpo se encarga de la respiración?",
+    "options": ["Los pulmones", "El estómago", "El hígado", "El páncreas"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-023",
+    "area": "health",
+    "question": "¿Qué sistema del cuerpo nos defiende de las enfermedades?",
+    "options": ["El sistema inmunológico", "El sistema digestivo", "El sistema óseo", "El sistema circulatorio"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-024",
+    "area": "health",
+    "question": "¿Qué tipo de alimentos son ricos en fibra y ayudan a la digestión?",
+    "options": ["Frutas y verduras", "Frituras", "Refrescos", "Embutidos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-025",
+    "area": "health",
+    "question": "¿Qué hábito es clave para una buena salud bucal?",
+    "options": ["Cepillarse los dientes", "Comer solo dulces", "Evitar tomar agua", "No dormir"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-026",
+    "area": "health",
+    "question": "¿Qué líquido compone la mayor parte del cuerpo humano?",
+    "options": ["El agua", "La grasa", "La sangre", "El aire"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-027",
+    "area": "health",
+    "question": "¿Qué actividad ayuda a reducir el estrés y mejorar el ánimo?",
+    "options": ["El ejercicio físico", "El sedentarismo", "El ayuno prolongado", "El desvelo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-028",
+    "area": "health",
+    "question": "¿Cuántos pares de costillas tiene el ser humano?",
+    "options": ["12", "10", "14", "8"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-029",
+    "area": "health",
+    "question": "¿Qué parte del ojo controla la cantidad de luz que entra?",
+    "options": ["El iris", "La retina", "La córnea", "El cristalino"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-030",
+    "area": "health",
+    "question": "¿Qué sentido está asociado a los oídos?",
+    "options": ["La audición", "El olfato", "El gusto", "El tacto"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-031",
+    "area": "health",
+    "question": "¿Qué hace el cuerpo mientras dormimos que es clave para la memoria y la recuperación?",
+    "options": ["Consolidar la memoria y recuperarse", "Perder memoria", "Aumentar el estrés", "Detener la respiración"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-032",
+    "area": "health",
+    "question": "¿Cuál es el hueso más pequeño del cuerpo humano?",
+    "options": ["El estribo (en el oído)", "El dedo meñique", "Una vértebra", "Una costilla"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-033",
+    "area": "health",
+    "question": "¿Qué órgano produce la insulina?",
+    "options": ["El páncreas", "El hígado", "El riñón", "El bazo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-034",
+    "area": "health",
+    "question": "¿Cómo se llama la capa externa de la piel?",
+    "options": ["Epidermis", "Dermis", "Hipodermis", "Membrana"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-035",
+    "area": "health",
+    "question": "¿Qué vitamina ayuda a la coagulación de la sangre?",
+    "options": ["Vitamina K", "Vitamina A", "Vitamina D", "Vitamina E"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-036",
+    "area": "health",
+    "question": "¿Cuántas cámaras tiene el corazón humano?",
+    "options": ["4", "2", "3", "6"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-037",
+    "area": "health",
+    "question": "¿Qué tipo de glóbulos transportan el oxígeno en la sangre?",
+    "options": ["Glóbulos rojos", "Glóbulos blancos", "Plaquetas", "Linfocitos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-038",
+    "area": "health",
+    "question": "¿Qué órgano almacena la bilis?",
+    "options": ["La vesícula biliar", "El páncreas", "El bazo", "El estómago"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-039",
+    "area": "health",
+    "question": "¿Cuál es el músculo más grande del cuerpo humano por tamaño?",
+    "options": ["El glúteo mayor", "El bíceps", "El trapecio", "El cuádriceps"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-040",
+    "area": "health",
+    "question": "¿Qué proceso realizan los pulmones para intercambiar gases con la sangre?",
+    "options": ["La respiración", "La digestión", "La circulación", "La filtración"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-041",
+    "area": "health",
+    "question": "¿Qué sustancia libera el cuerpo durante el ejercicio y ayuda a mejorar el ánimo?",
+    "options": ["Endorfinas", "Insulina", "Bilis", "Melanina"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-042",
+    "area": "health",
+    "question": "¿Qué parte del oído es responsable del equilibrio?",
+    "options": ["El oído interno", "El tímpano", "El oído externo", "El pabellón auricular"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-043",
+    "area": "health",
+    "question": "¿Qué grupo de alimentos aporta principalmente energía rápida?",
+    "options": ["Los carbohidratos", "Las proteínas", "Las grasas saturadas", "Las fibras"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-044",
+    "area": "health",
+    "question": "¿Cuál es la función principal de las plaquetas en la sangre?",
+    "options": ["Ayudar a que la sangre coagule", "Transportar oxígeno", "Combatir infecciones", "Producir hormonas"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-045",
+    "area": "health",
+    "question": "¿Qué parte del cuerpo produce los glóbulos rojos?",
+    "options": ["La médula ósea", "El hígado", "El bazo", "Los pulmones"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-046",
+    "area": "health",
+    "question": "¿Qué hábito ayuda a proteger la piel del daño solar?",
+    "options": ["Usar protector solar", "Evitar el agua", "Dormir de día", "Comer más sal"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-047",
+    "area": "health",
+    "question": "¿Cómo se llama el proceso por el que el cuerpo convierte los alimentos en energía?",
+    "options": ["Metabolismo", "Digestión", "Respiración", "Circulación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-048",
+    "area": "health",
+    "question": "¿Qué mineral es esencial para transportar el oxígeno en la sangre?",
+    "options": ["Hierro", "Calcio", "Potasio", "Zinc"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-049",
+    "area": "health",
+    "question": "¿Cuántas horas de sueño se recomiendan en promedio a un adolescente?",
+    "options": ["8 a 10", "4 a 5", "12 a 14", "2 a 3"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-050",
+    "area": "health",
+    "question": "¿Cuál es el músculo principal que se usa para respirar?",
+    "options": ["El diafragma", "El bíceps", "El trapecio", "El deltoides"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-051",
+    "area": "health",
+    "question": "¿Qué parte del cerebro controla principalmente el equilibrio y la coordinación?",
+    "options": ["El cerebelo", "El bulbo raquídeo", "El lóbulo frontal", "El hipotálamo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-052",
+    "area": "health",
+    "question": "¿Qué vitamina se encuentra en abundancia en los cítricos, como la naranja?",
+    "options": ["Vitamina C", "Vitamina D", "Vitamina K", "Vitamina B12"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-053",
+    "area": "health",
+    "question": "Además de cubrir el cuerpo, ¿cuál es otra función importante de la piel?",
+    "options": ["Proteger de infecciones y regular la temperatura", "Producir sangre", "Digerir alimentos", "Filtrar el aire"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-054",
+    "area": "health",
+    "question": "¿Qué órgano digiere los alimentos usando ácidos?",
+    "options": ["El estómago", "El hígado", "El páncreas", "El intestino grueso"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-055",
+    "area": "health",
+    "question": "¿Qué tipo de ejercicio fortalece principalmente el corazón y los pulmones?",
+    "options": ["El ejercicio aeróbico (cardio)", "El estiramiento", "El sedentarismo", "El ayuno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-056",
+    "area": "health",
+    "question": "¿Cómo se llaman las estructuras que conectan los músculos con los huesos?",
+    "options": ["Tendones", "Ligamentos", "Cartílagos", "Nervios"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-057",
+    "area": "health",
+    "question": "¿Cómo se llaman las estructuras que conectan un hueso con otro hueso?",
+    "options": ["Ligamentos", "Tendones", "Cartílagos", "Nervios"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-058",
+    "area": "health",
+    "question": "¿Qué parte del cuerpo produce el sudor para regular la temperatura?",
+    "options": ["Las glándulas sudoríparas", "Los riñones", "El hígado", "Los pulmones"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-059",
+    "area": "health",
+    "question": "¿Qué unidad se usa para medir la energía que aportan los alimentos?",
+    "options": ["Calorías", "Gramos", "Litros", "Miligramos"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-060",
+    "area": "health",
+    "question": "¿Qué hábito ayuda a mantener una postura saludable si se pasa mucho tiempo sentado?",
+    "options": ["Hacer pausas activas y estirarse", "No moverse en todo el día", "Encorvar la espalda", "Evitar caminar"],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-061",
+    "area": "health",
+    "question": "¿Cuál es el nombre del hueso de la cadera?",
+    "options": ["La pelvis", "El sacro", "El fémur", "El coxis"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-002",
+    "area": "science",
+    "question": "¿Cuál es el planeta más grande del sistema solar?",
+    "options": ["Júpiter", "Saturno", "Neptuno", "Urano"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-003",
+    "area": "science",
+    "question": "¿Cuántos planetas hay en el sistema solar según la clasificación actual?",
+    "options": ["8", "9", "7", "10"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-004",
+    "area": "science",
+    "question": "¿Cuál es la estrella más cercana a la Tierra?",
+    "options": ["El Sol", "Próxima Centauri", "Sirio", "Alfa Centauri"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-005",
+    "area": "science",
+    "question": "¿Qué gas conforma la mayor parte de la atmósfera terrestre?",
+    "options": ["Nitrógeno", "Oxígeno", "Dióxido de carbono", "Argón"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-006",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso por el que las plantas producen su alimento usando luz solar?",
+    "options": ["Fotosíntesis", "Respiración", "Fermentación", "Polinización"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-007",
+    "area": "science",
+    "question": "¿Qué fuerza mantiene a los planetas en órbita alrededor del Sol?",
+    "options": ["La gravedad", "El magnetismo", "La inercia", "La fricción"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-008",
+    "area": "science",
+    "question": "¿Cuál es la velocidad de la luz, aproximadamente?",
+    "options": ["300,000 km/s", "150,000 km/s", "1,000,000 km/s", "30,000 km/s"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-009",
+    "area": "science",
+    "question": "¿Qué instrumento se usa para medir terremotos?",
+    "options": ["Sismógrafo", "Barómetro", "Anemómetro", "Termómetro"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-010",
+    "area": "science",
+    "question": "¿Cuál es el animal terrestre más rápido del mundo?",
+    "options": ["El guepardo", "El león", "El caballo", "El águila"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-011",
+    "area": "science",
+    "question": "¿Cuál es el elemento químico más ligero del universo?",
+    "options": ["Hidrógeno", "Helio", "Oxígeno", "Carbono"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-012",
+    "area": "science",
+    "question": "¿Qué partícula subatómica tiene carga negativa?",
+    "options": ["El electrón", "El protón", "El neutrón", "El fotón"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-013",
+    "area": "science",
+    "question": "¿Qué capa de la atmósfera nos protege de la radiación ultravioleta?",
+    "options": ["La capa de ozono", "La troposfera", "La ionosfera", "La mesosfera"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-014",
+    "area": "science",
+    "question": "¿Cómo se llama la división celular que da lugar a las células reproductivas?",
+    "options": ["Meiosis", "Mitosis", "Fisión", "Gemación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-015",
+    "area": "science",
+    "question": "¿Qué tipo de roca se forma por el enfriamiento del magma?",
+    "options": ["Roca ígnea", "Roca sedimentaria", "Roca metamórfica", "Roca caliza"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-016",
+    "area": "science",
+    "question": "¿Qué metal es líquido a temperatura ambiente?",
+    "options": ["Mercurio", "Plomo", "Estaño", "Zinc"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-017",
+    "area": "science",
+    "question": "¿Qué científico propuso la teoría de la evolución por selección natural?",
+    "options": ["Charles Darwin", "Gregor Mendel", "Isaac Newton", "Louis Pasteur"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-018",
+    "area": "science",
+    "question": "¿Cuál es la unidad básica de la herencia genética?",
+    "options": ["El gen", "El cromosoma", "La proteína", "El núcleo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-019",
+    "area": "science",
+    "question": "¿Qué fenómeno óptico produce el arcoíris?",
+    "options": [
+      "La refracción y dispersión de la luz",
+      "La reflexión total",
+      "La difracción del sonido",
+      "La polarización magnética"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-020",
+    "area": "science",
+    "question": "¿Cuál es el satélite natural de la Tierra?",
+    "options": ["La Luna", "Fobos", "Titán", "Europa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-021",
+    "area": "science",
+    "question": "¿Qué proceso libera energía al dividir el núcleo de un átomo?",
+    "options": ["Fisión nuclear", "Fusión nuclear", "Ionización", "Radiactividad natural"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-022",
+    "area": "science",
+    "question": "¿Cuál es el ave más grande del mundo, aunque no puede volar?",
+    "options": ["El avestruz", "El pingüino emperador", "El cóndor", "El águila"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-023",
+    "area": "science",
+    "question": "¿En qué escala se mide tradicionalmente la magnitud de los terremotos?",
+    "options": ["Escala de Richter", "Escala de Kelvin", "Escala Beaufort", "Escala de Mohs"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-024",
+    "area": "science",
+    "question": "¿En qué estado se encuentra el agua a 0 °C?",
+    "options": ["Sólido (hielo)", "Líquido", "Gaseoso", "Plasma"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-025",
+    "area": "science",
+    "question": "¿A qué temperatura hierve el agua a nivel del mar?",
+    "options": ["100 °C", "90 °C", "120 °C", "80 °C"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-026",
+    "area": "science",
+    "question": "¿Qué parte de la célula contiene el material genético?",
+    "options": ["El núcleo", "La mitocondria", "El citoplasma", "La membrana"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-027",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso por el que una oruga se convierte en mariposa?",
+    "options": ["Metamorfosis", "Mutación", "Polinización", "Fotosíntesis"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-028",
+    "area": "science",
+    "question": "¿Qué tipo de energía se obtiene directamente del Sol?",
+    "options": ["Energía solar", "Energía eólica", "Energía hidráulica", "Energía geotérmica"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-029",
+    "area": "science",
+    "question": "¿Qué planeta es conocido como el \"planeta rojo\"?",
+    "options": ["Marte", "Venus", "Júpiter", "Mercurio"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-030",
+    "area": "science",
+    "question": "¿Qué gas liberan las plantas durante la fotosíntesis?",
+    "options": ["Oxígeno", "Dióxido de carbono", "Nitrógeno", "Hidrógeno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-031",
+    "area": "science",
+    "question": "¿Cómo se llama la capa sólida y externa de la Tierra, formada por placas?",
+    "options": ["La corteza terrestre", "El manto", "El núcleo externo", "El núcleo interno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-032",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso inverso a la fotosíntesis, con el que los seres vivos obtienen energía?",
+    "options": ["Respiración celular", "Fermentación", "Digestión", "Excreción"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-033",
+    "area": "science",
+    "question": "¿Qué capa de la Tierra se encuentra entre la corteza y el núcleo?",
+    "options": ["El manto", "La litosfera", "La atmósfera", "La hidrosfera"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-034",
+    "area": "science",
+    "question": "¿Cuál es el material natural más duro conocido?",
+    "options": ["El diamante", "El cuarzo", "El granito", "El acero"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-035",
+    "area": "science",
+    "question": "¿A qué tipo de animal pertenece la serpiente?",
+    "options": ["Reptil", "Anfibio", "Mamífero", "Ave"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-036",
+    "area": "science",
+    "question": "¿Cuántos corazones tiene un pulpo?",
+    "options": ["3", "1", "2", "4"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-037",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso por el que el vapor de agua se convierte en líquido?",
+    "options": ["Condensación", "Evaporación", "Sublimación", "Solidificación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-038",
+    "area": "science",
+    "question": "¿Cuál es el principal gas del efecto invernadero producido por la actividad humana?",
+    "options": ["Dióxido de carbono", "Oxígeno", "Nitrógeno", "Hidrógeno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-039",
+    "area": "science",
+    "question": "¿Cuál es el árbol más alto del mundo?",
+    "options": ["La secuoya", "El roble", "El baobab", "El eucalipto"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-040",
+    "area": "science",
+    "question": "¿Qué tipo de estrella es el Sol?",
+    "options": ["Una enana amarilla", "Una gigante roja", "Una enana blanca", "Una supergigante azul"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-041",
+    "area": "science",
+    "question": "¿Qué animal es capaz de regenerar la cola si la pierde?",
+    "options": ["La lagartija", "El perro", "El gato", "El delfín"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-042",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso por el que un líquido pasa a estado sólido?",
+    "options": ["Solidificación", "Fusión", "Sublimación", "Condensación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-043",
+    "area": "science",
+    "question": "¿Cómo se llama la capa gaseosa que rodea la Tierra?",
+    "options": ["La atmósfera", "La litosfera", "La hidrosfera", "La biosfera"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-044",
+    "area": "science",
+    "question": "¿Qué insecto produce miel?",
+    "options": ["La abeja", "La hormiga", "La avispa", "La mariposa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-045",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso por el que las abejas ayudan a las plantas a reproducirse?",
+    "options": ["Polinización", "Fotosíntesis", "Germinación", "Fermentación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-046",
+    "area": "science",
+    "question": "¿Qué animal cambia de color para camuflarse en su entorno?",
+    "options": ["El camaleón", "El elefante", "El tigre", "El oso"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-047",
+    "area": "science",
+    "question": "¿Qué parte de la planta realiza principalmente la fotosíntesis?",
+    "options": ["Las hojas", "Las raíces", "El tallo", "Las flores"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-048",
+    "area": "science",
+    "question": "¿Qué causa principalmente las mareas en los océanos?",
+    "options": ["La atracción gravitacional de la Luna", "El viento", "Las corrientes marinas", "La rotación terrestre"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-049",
+    "area": "science",
+    "question": "¿Qué gas usan las plantas durante la fotosíntesis?",
+    "options": ["Dióxido de carbono", "Oxígeno", "Nitrógeno", "Hidrógeno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-050",
+    "area": "science",
+    "question": "¿Cómo se llama el giro de la Tierra sobre su propio eje, que causa el día y la noche?",
+    "options": ["Rotación", "Traslación", "Precesión", "Nutación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-051",
+    "area": "science",
+    "question": "¿Cómo se llama el giro de la Tierra alrededor del Sol, que causa las estaciones?",
+    "options": ["Traslación", "Rotación", "Precesión", "Nutación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-052",
+    "area": "science",
+    "question": "¿Qué científico formuló las leyes del movimiento y la gravedad universal?",
+    "options": ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Nikola Tesla"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-053",
+    "area": "science",
+    "question": "¿Qué unidad mide la distancia entre astros y equivale a la distancia de la Tierra al Sol?",
+    "options": ["Unidad astronómica", "Año luz", "Pársec", "Milla náutica"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-054",
+    "area": "science",
+    "question": "¿Qué tipo de célula no tiene un núcleo definido?",
+    "options": ["Célula procariota", "Célula eucariota", "Célula madre", "Célula nerviosa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-055",
+    "area": "science",
+    "question": "¿Cómo se forman las nubes?",
+    "options": [
+      "Por la condensación del vapor de agua",
+      "Por la evaporación del hielo",
+      "Por la solidificación del aire",
+      "Por la sublimación del suelo"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-056",
+    "area": "science",
+    "question": "¿Qué animal hiberna durante el invierno?",
+    "options": ["El oso", "El león", "El tigre", "El elefante"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-057",
+    "area": "science",
+    "question": "¿Qué energía renovable aprovecha la fuerza del viento?",
+    "options": ["Energía eólica", "Energía solar", "Energía nuclear", "Energía fósil"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-058",
+    "area": "science",
+    "question": "¿Qué capa de la Tierra está formada principalmente por hierro y níquel fundidos?",
+    "options": ["El núcleo externo", "La corteza", "El manto", "La litosfera"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-059",
+    "area": "science",
+    "question": "¿Cómo se llama el proceso por el que una célula se divide en dos células idénticas?",
+    "options": ["Mitosis", "Meiosis", "Fecundación", "Gemación"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-060",
+    "area": "science",
+    "question": "¿Cómo se llama el fenómeno luminoso que se observa cerca de los polos, causado por partículas del Sol?",
+    "options": ["Aurora boreal", "Eclipse", "Cometa", "Meteorito"],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-061",
+    "area": "science",
+    "question": "¿A qué reino biológico pertenecen los hongos?",
+    "options": ["Reino Fungi", "Reino Animalia", "Reino Plantae", "Reino Monera"],
+    "correctIndex": 0
+  }
+]

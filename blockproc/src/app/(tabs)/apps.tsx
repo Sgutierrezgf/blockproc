@@ -4,7 +4,7 @@ import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "r
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BlockprocNative from "../../../modules/blockproc-native/src/BlockprocNativeModule";
-import { categoryLabel, groupAppsByCategory } from "../../core/appCategories";
+import { categoryLabel, groupAppsByCategory, sortAppsWithRestrictedFirst } from "../../core/appCategories";
 import { filterAppsByQuery } from "../../core/appSearch";
 import { createSystemClock } from "../../core/clock";
 import { filterEssentialApps, toggleRestrictedPackage } from "../../core/exclusions";
@@ -31,6 +31,13 @@ async function readSelectableApps(): Promise<InstalledApp[]> {
   return filterEssentialApps(apps, essentialPackages);
 }
 
+// RF-50 (Fase 9): hora local en formato HH:mm, para el aviso de bloqueo
+// horario programado.
+function formatTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
 // T70 (Fase 7, sistema "Mindful Calm"): mismo comportamiento de siempre
 // (RF-1, RF-19, RF-28, RF-29), solo cambia la presentación: `SelectableRow`
 // y `Banner` en vez de `AppRow` y las cajas de color sueltas de antes.
@@ -42,7 +49,7 @@ export default function Apps() {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [state, setState] = useState(() => readCurrentConfigState(defaultStore, clock.now()));
-  const { config, pending, isEditingLocked } = state;
+  const { config, pending, isEditingLocked, pendingRestBlock } = state;
   // RF-49: el buscador y la categoría son combinables (C8), ambos criterios
   // se aplican a la vez. Las categorías disponibles se calculan sobre la
   // lista completa, no sobre lo ya filtrado por texto, para que un chip no
@@ -53,7 +60,10 @@ export default function Apps() {
     apps && selectedCategory
       ? apps.filter((app) => categoryLabel(app.category) === selectedCategory)
       : apps;
-  const visibleApps = categoryFiltered ? filterAppsByQuery(categoryFiltered, query) : [];
+  const searchFiltered = categoryFiltered ? filterAppsByQuery(categoryFiltered, query) : [];
+  // RF-52: se aplica al final, sobre lo que ya quedó visible tras el
+  // buscador y la categoría — para ver de un vistazo qué se va a restringir.
+  const visibleApps = sortAppsWithRestrictedFirst(searchFiltered, config.restrictedPackages);
 
   useEffect(() => {
     let cancelled = false;
@@ -165,6 +175,13 @@ export default function Apps() {
                 tone="locked"
                 title="Bloqueo horario activo"
                 description="Hay un bloqueo horario activo: no se puede editar la configuración hasta que termine."
+              />
+            )}
+            {pendingRestBlock && (
+              <Banner
+                tone="pending"
+                title="Bloqueo horario programado"
+                description={`Empieza a las ${formatTime(pendingRestBlock.startAt)}.`}
               />
             )}
             {pendingAffectsApps && (

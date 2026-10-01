@@ -72,6 +72,13 @@ function describePendingChanges(config: Config, pending: PendingConfig): string 
   return partes.length > 0 ? partes.join(", ") : "cambios pendientes";
 }
 
+// RF-50 (Fase 9): hora local en formato HH:mm, para el aviso de bloqueo
+// horario programado.
+function formatTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
 // RF-2 a RF-6, RF-19, RF-29, RF-35, RF-44 (T55-T57): toda la configuración
 // global, validada por el core antes de guardar (fase 2) y aplicada según
 // haya o no una app bloqueada por límite diario y un bloqueo horario activo
@@ -89,7 +96,7 @@ const clock = createSystemClock();
 // cajas de color sueltas de antes.
 export default function Settings() {
   const [state, setState] = useState(() => readCurrentConfigState(defaultStore, clock.now()));
-  const { config, pending, isEditingLocked } = state;
+  const { config, pending, isEditingLocked, pendingRestBlock } = state;
 
   // T91 (Fase 8, Plan D20): con pestañas, esta pantalla ya no se desmonta al
   // cambiar de pestaña (a diferencia del push/pop de antes), así que un
@@ -199,6 +206,17 @@ export default function Settings() {
           />
         )}
 
+        {/* RF-50 (Fase 9): un bloqueo horario programado para más tarde (el de
+            siempre, o uno "próximo" mientras otro está activo) — para que
+            confirmar uno nunca vuelva a ser una sorpresa. No bloquea nada. */}
+        {pendingRestBlock && (
+          <Banner
+            tone="pending"
+            title="Bloqueo horario programado"
+            description={`Empieza a las ${formatTime(pendingRestBlock.startAt)}.`}
+          />
+        )}
+
         {/* RF-29: lo que quedó pendiente hasta las 04:00, mientras haya una app bloqueada. */}
         {pending && (
           <Banner
@@ -207,6 +225,20 @@ export default function Settings() {
             description={`${describePendingChanges(config, pending)}.`}
           />
         )}
+
+        {/* RF-51, D24 (Fase 9): aclara cómo se relacionan los tres campos de
+            abajo y en qué se diferencia el bloqueo horario, reportado como
+            confuso tras un día de uso real. Texto fijo, sin estado. */}
+        <View className="gap-1 rounded-2xl bg-surface-container-low p-4 dark:bg-surface-container-low-dark">
+          <Text className="font-label-md text-label-md font-semibold text-on-surface dark:text-on-surface-dark">
+            Cómo funciona
+          </Text>
+          <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
+            Usás las apps restringidas hasta agotar el límite diario; a partir de ahí, respondé correctamente las
+            preguntas del reto para ganar la ventana de acceso y seguir un rato más. El bloqueo horario es distinto:
+            mientras está activo no hay ningún reto que lo desbloquee antes de su hora de fin.
+          </Text>
+        </View>
 
         <Field
           label={`Límite diario, en minutos (de ${DAILY_LIMIT_MIN} a ${DAILY_LIMIT_MAX}, en pasos de ${DAILY_LIMIT_STEP})`}

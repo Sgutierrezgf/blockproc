@@ -53,3 +53,22 @@ export function groupAppsByCategory(apps: InstalledApp[]): AppCategoryGroup[] {
     apps: buckets.get(label) as InstalledApp[],
   }));
 }
+
+function byLabel(a: InstalledApp, b: InstalledApp): number {
+  return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+}
+
+/**
+ * RF-52: las apps ya marcadas para restringir van primero, para ver de un
+ * vistazo qué se va a restringir; alfabético dentro de cada grupo. No sabe
+ * nada de buscador (RF-46) ni categorías (RF-49) — se aplica después de
+ * esos dos, sobre lo que ya haya quedado visible.
+ */
+export function sortAppsWithRestrictedFirst(apps: InstalledApp[], restrictedPackages: string[]): InstalledApp[] {
+  const restricted: InstalledApp[] = [];
+  const rest: InstalledApp[] = [];
+  for (const app of apps) {
+    (restrictedPackages.includes(app.packageName) ? restricted : rest).push(app);
+  }
+  return [...restricted.sort(byLabel), ...rest.sort(byLabel)];
+}

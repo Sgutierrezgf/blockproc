@@ -54,6 +54,7 @@ describe("retomar tras un reinicio — RF-45", () => {
         [PKG_A]: { windowEndsAt: 500_000, cooldownUntil: null, warnedLimit: false, warnedWindow: false },
       },
       restBlock: null,
+      nextRestBlock: null,
     };
 
     expect(handleTick(estadoTrasReinicio, config, 100_000).actions).toEqual([]); // dentro de la ventana
@@ -76,6 +77,7 @@ describe("retomar tras un reinicio — RF-45", () => {
         [PKG_A]: { windowEndsAt: null, cooldownUntil: 180_000, warnedLimit: false, warnedWindow: false },
       },
       restBlock: null,
+      nextRestBlock: null,
     };
 
     expect(handleTick(estadoTrasReinicio, config, 100_000).actions).toEqual([
@@ -92,6 +94,7 @@ describe("retomar tras un reinicio — RF-45", () => {
       usage: { usedMs: {}, foregroundPackage: PKG_A, segmentStartedAt: null, screenOn: true, dayKey: null },
       apps: {},
       restBlock: { startAt: 0, endAt: 500_000, cancelled: false, warned2min: false },
+      nextRestBlock: null,
     };
 
     expect(handleTick(estadoTrasReinicio, config, 100_000).actions).toEqual([{ type: "ShowRestBlock" }]);

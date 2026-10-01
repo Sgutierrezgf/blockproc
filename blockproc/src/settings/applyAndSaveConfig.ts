@@ -1,7 +1,8 @@
 import type { Config } from "../core/config";
 import { applyConfigUpdate, resolvePendingConfig } from "../core/configUpdate";
 import type { PendingConfig } from "../core/configUpdate";
-import { isRestBlockActive } from "../core/restBlock";
+import { getPendingRestBlock, isRestBlockActive } from "../core/restBlock";
+import type { RestBlockState } from "../core/restBlock";
 import { hasAnyAppReachedDailyLimit } from "../core/usage";
 import { loadConfig, loadPendingConfig, saveConfig, savePendingConfig } from "../storage/appRepository";
 import type { KeyValueStore } from "../storage/keyValueStore";
@@ -12,11 +13,18 @@ export interface ConfigSyncResult {
   pending: PendingConfig | null;
   /** RF-19: con el bloqueo horario activo no se permite editar nada. */
   isEditingLocked: boolean;
+  /** RF-50 (Fase 9): el bloqueo horario "programado para más tarde", o null si no hay ninguno. */
+  pendingRestBlock: RestBlockState | null;
 }
 
 function isEditingLockedNow(store: KeyValueStore, now: number): boolean {
   const { restBlock } = loadPolicyState(store);
   return restBlock !== null && isRestBlockActive(restBlock, now);
+}
+
+function pendingRestBlockNow(store: KeyValueStore, now: number): RestBlockState | null {
+  const { restBlock, nextRestBlock } = loadPolicyState(store);
+  return getPendingRestBlock(restBlock, nextRestBlock, now);
 }
 
 /**
@@ -38,6 +46,7 @@ export function readCurrentConfigState(store: KeyValueStore, now: number): Confi
     config: resolved.effectiveConfig,
     pending: resolved.pending,
     isEditingLocked: isEditingLockedNow(store, now),
+    pendingRestBlock: pendingRestBlockNow(store, now),
   };
 }
 
@@ -69,5 +78,10 @@ export function applyAndSaveConfig(
   saveConfig(store, result.effectiveConfig);
   savePendingConfig(store, result.pending);
 
-  return { config: result.effectiveConfig, pending: result.pending, isEditingLocked: restBlockActive };
+  return {
+    config: result.effectiveConfig,
+    pending: result.pending,
+    isEditingLocked: restBlockActive,
+    pendingRestBlock: getPendingRestBlock(policyState.restBlock, policyState.nextRestBlock, now),
+  };
 }

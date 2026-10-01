@@ -27,6 +27,7 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 - RF-46: CUANDO el usuario escribe texto en el buscador de la pantalla de selección de apps, EL SISTEMA filtra la lista para mostrar solo las apps cuyo nombre contiene ese texto, sin distinguir mayúsculas ni tildes, actualizando el resultado con cada carácter escrito; SI ningún nombre coincide, ENTONCES EL SISTEMA muestra un mensaje indicando que no hay resultados, sin ocultar el buscador.
 - RF-48: CUANDO el usuario abre la pantalla de selección de apps, EL SISTEMA muestra junto al nombre de cada app su ícono tal como aparece en el lanzador de Android, y un indicador de carga mientras los íconos se están resolviendo; SI el sistema no puede obtener el ícono de alguna app, ENTONCES la muestra solo con su nombre, sin excluirla de la lista.
 - RF-49: EL SISTEMA agrupa las apps de la pantalla de selección por categoría (la que declara el sistema operativo, traducida a una etiqueta en español, o "Otras" si no declara ninguna) y permite filtrar tocando una categoría, de forma combinable con el buscador de texto (RF-46): ambos criterios se aplican a la vez.
+- RF-52: EL SISTEMA muestra las apps ya marcadas para restringir antes que las demás en la lista de selección, tanto en la lista completa como al combinarse con el buscador (RF-46) y las categorías (RF-49).
 - RF-2: EL SISTEMA aplica una única configuración global a todas las apps restringidas: límite diario, áreas de preguntas, cantidad de preguntas, ventana de acceso y mensaje de enfoque.
 - RF-3: SI el usuario no define un límite diario, ENTONCES EL SISTEMA usa 30 minutos por defecto.
 - RF-4: EL SISTEMA permite elegir un límite diario de 5 a 240 minutos en pasos de 5, de 1 a 3 preguntas por reto y una ventana de acceso de 5 a 10 minutos, y rechaza valores fuera de esos rangos.
@@ -36,6 +37,7 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 - RF-29: MIENTRAS al menos una app restringida esté bloqueada por límite diario y no haya un bloqueo horario activo, EL SISTEMA aplica de inmediato los cambios de configuración que aumentan la restricción (bajar el límite, añadir apps, subir la cantidad de preguntas, acortar la ventana) y aplica desde las 04:00 siguientes los que la reducen (subir el límite, quitar apps, bajar la cantidad de preguntas, alargar la ventana); los cambios de áreas de preguntas y de mensajes se aplican siempre al instante.
 - RF-41: SI la configuración guardada está corrupta o es la primera ejecución, ENTONCES EL SISTEMA restaura los valores por defecto (límite 30 min, 2 preguntas, ventana de 5 min, área de conocimiento general), reinicia a cero los contadores dañados y pide al usuario revisar la configuración.
 - RF-44: EL SISTEMA muestra en los ajustes una nota fija: "Si el sistema cierra la app para ahorrar batería, el bloqueo puede dejar de funcionar."
+- RF-51: EL SISTEMA muestra en la pantalla de Ajustes un texto que explica cómo se relacionan el límite diario, las preguntas por reto y la ventana de acceso, y aclara que el bloqueo horario, a diferencia del límite diario, no tiene ningún reto para desbloquear antes de su hora de fin.
 
 ### Límite de uso y bloqueo
 - RF-36: EL SISTEMA cuenta como tiempo de uso de una app únicamente el tiempo en que está en primer plano con la pantalla encendida, e ignora los intervalos de menos de 1 segundo.
@@ -61,7 +63,7 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 ### Bloqueo horario
 - RF-17: EL SISTEMA permite al usuario definir una hora de inicio y una de fin para el bloqueo horario, incluso si el rango cruza la medianoche (por ejemplo, 21:00 a 06:00 o 8:00 a 12:00), con una duración máxima de 12 horas; SI el rango supera 12 horas, ENTONCES EL SISTEMA lo rechaza.
 - RF-18: MIENTRAS el bloqueo horario está activo, EL SISTEMA muestra en las apps restringidas un bloqueo con el mensaje del bloqueo horario y **sin** reto.
-- RF-19: MIENTRAS el bloqueo horario está activo, EL SISTEMA no ofrece ninguna forma de salir de él antes de la hora de fin y no permite editar ninguna parte de la configuración.
+- RF-19: MIENTRAS el bloqueo horario está activo, EL SISTEMA no ofrece ninguna forma de salir de él antes de la hora de fin y no permite editar ninguna parte de la configuración, salvo programar un bloqueo horario nuevo para después (RF-53), que no afecta al que está en curso.
 - RF-20: SI el usuario cancela el bloqueo horario antes de la hora de inicio, ENTONCES EL SISTEMA no lo activa.
 - RF-21: SI el bloqueo horario y el límite diario coinciden, ENTONCES EL SISTEMA aplica el bloqueo horario (sin reto).
 - RF-40: CUANDO empieza un bloqueo horario mientras una app tiene una ventana de acceso activa, EL SISTEMA corta la ventana y bloquea la app sin reto.
@@ -71,6 +73,9 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 - RF-34: SI el bloqueo horario se confirma con menos de 2 minutos para el inicio, o con la hora de inicio ya pasada, ENTONCES EL SISTEMA no muestra el aviso previo y lo activa de inmediato.
 - RF-35: EL SISTEMA permite personalizar el mensaje del bloqueo horario, de hasta 120 caracteres; SI no hay ninguno, ENTONCES muestra el mensaje por defecto: "Bloqueo activo hasta las {hora de fin}. Este tiempo es para ti."
 - RF-42: EL SISTEMA calcula los rangos con la hora local del dispositivo y confía en la hora del sistema; SI el reloj cambia con el bloqueo en marcha (horario de verano, zona horaria), ENTONCES el bloqueo termina a la hora de fin marcada en el reloj.
+- RF-50: CUANDO hay un bloqueo horario programado para más tarde (todavía no activo), EL SISTEMA muestra, en Ajustes y en la pantalla de selección de apps, un aviso con la hora en que empezará, sin impedir editar la configuración mientras tanto.
+- RF-53: MIENTRAS el bloqueo horario está activo, EL SISTEMA permite, desde esa misma pantalla, definir y confirmar un bloqueo horario nuevo para después de que termine el actual, sin alterar el bloqueo en curso ni ninguna otra parte de la configuración; SI ya hay uno programado para después, ENTONCES el nuevo lo reemplaza.
+- RF-54: EL SISTEMA calcula el inicio del bloqueo horario programado para después a partir de la hora elegida, buscando la primera vez que ocurra en el instante en que termina el bloqueo activo, o después (si esa hora ya pasó ese día, la busca al día siguiente); nunca rechaza un rango válido (RF-17) por el momento en que se confirma.
 
 ### Preguntas y datos
 - RF-23: EL SISTEMA obtiene las preguntas de un banco local en español incluido en la app, sin necesitar conexión a internet.
@@ -107,13 +112,16 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 - Una app no tiene categoría declarada por el sistema: se agrupa en "Otras" (RF-49).
 - El sistema no puede generar el ícono de alguna app: se muestra sin ícono, sin excluirla de la lista (RF-48).
 - El buscador no encuentra ninguna coincidencia, sola o combinada con una categoría: se muestra un mensaje de "sin resultados", sin ocultar el buscador (RF-46, RF-49).
+- El usuario programa un bloqueo horario nuevo para después mientras ya hay uno activo, eligiendo una hora que, tomada tal cual hoy, ya pasó o cae dentro del bloqueo activo: el sistema la programa para la primera vez que ocurra después de que termine, nunca la rechaza (RF-54).
+- Ya hay un bloqueo horario programado para después y el usuario confirma otro: el nuevo reemplaza al anterior (RF-53).
+- El bloqueo horario activo termina y había uno programado para después: se convierte en el vigente con normalidad, sin ninguna acción del usuario.
 
 ## Fuera de alcance
 - iOS.
 - Preguntas desde una API externa (Open Trivia) y su traducción.
 - Servicio de Accesibilidad y bloqueo de los Ajustes del sistema.
 - Límites o configuración distintos por app.
-- Bloqueo horario recurrente o con varios rangos por día.
+- Bloqueo horario recurrente o con varios rangos por día: el activo más, como mucho, uno programado para después (RF-53) no cuenta como esto — sigue siendo como máximo dos bloqueos puntuales, nunca una lista ni una repetición diaria.
 - Preguntas editables por el usuario y banco descargable.
 - Estadísticas, sincronización en la nube y cuentas de usuario.
 - Publicación en Google Play.
@@ -124,7 +132,7 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 
 ## Criterios de finalización
 - Todos los RF verificables sin dispositivo (lógica en TypeScript pura, con reloj inyectable) con test en verde.
-- Verificados por demo manual en un móvil real: RF-9, RF-15, RF-18, RF-22, RF-26, RF-27, RF-30, RF-31, RF-33, RF-43 y RF-45; la lógica de decisión detrás de cada uno también se prueba con tests en TypeScript.
+- Verificados por demo manual en un móvil real: RF-9, RF-15, RF-18, RF-22, RF-26, RF-27, RF-30, RF-31, RF-33, RF-43, RF-45, RF-50, RF-53 y RF-54; la lógica de decisión detrás de cada uno también se prueba con tests en TypeScript.
 - Un test valida el formato del banco local (4 opciones, `correctIndex` válido, área conocida, sin duplicados).
 - El banco local tiene al menos 60 preguntas por cada área de texto (general, tecnología, salud, ciencia).
 - Demo manual en un móvil Android real, incluido el modo avión: límite alcanzado con la app abierta, reto, ventana, aviso, nuevo bloqueo, fallo con espera de 3 min, bloqueo horario con confirmación y reinicio del móvil durante un bloqueo.
@@ -155,6 +163,10 @@ El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferir
 - C8: el buscador y los chips de categoría de la pantalla de selección de apps son combinables (RF-46, RF-49), no excluyentes.
 - C9: mientras se resuelven los íconos de las apps (ahora un proceso asíncrono), se muestra un indicador de carga en vez de la lista vacía (RF-48).
 - C10: con la navegación por pestañas (Ajustes/Apps/Bloqueo horario), el botón/gesto atrás desde Apps o Bloqueo horario vuelve primero a la pestaña Ajustes, y solo desde ahí un segundo atrás sale de la app — convención estándar de Android para evitar salidas accidentales (sin RF nuevo: no cambia ningún comportamiento de bloqueo, solo la navegación).
+- C11: el modelo de datos del bloqueo horario pasa de un solo espacio a dos: el bloqueo en curso (intocable) y, aparte, como mucho uno programado para después (RF-53) — nunca una lista ni algo recurrente (ver "Fuera de alcance").
+- C12: el bloqueo horario nuevo para después solo se puede programar desde la propia pantalla de Bloqueo horario activo, no desde las pantallas del reto o la espera de 3 minutos (RF-53): protege un mecanismo distinto (el límite diario) sin necesidad de tocar esas pantallas.
+- C13: se amendó el texto de RF-19 para dejar explícita la única excepción a "no permite editar ninguna parte de la configuración": programar el bloqueo horario de después (RF-53), que nunca afecta al que está en curso.
+- C14: se corrigió RF-54 durante la implementación (T97): el cálculo original reutilizaba la lógica de `confirmRestBlock` (hora relativa a "ahora", con arranque inmediato si ya pasó), pero "ahora" siempre cae dentro del bloqueo activo al programar el próximo — una hora de mañana que ya "pasó hoy" se interpretaba como "empezar ya", y se rechazaba sin motivo real. Se cambió a calcular relativo a la **hora de fin del bloqueo activo**, buscando la próxima ocurrencia válida en vez de rechazar.
 
 ## Dudas abiertas
 Ninguna.

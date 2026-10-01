@@ -91,6 +91,36 @@ describe("readCurrentConfigState", () => {
     expect(readCurrentConfigState(store, 2000).isEditingLocked).toBe(false);
   });
 
+  // RF-50, D23 (Fase 9): el bloqueo horario "programado para más tarde",
+  // visible fuera de la pestaña Bloqueo horario.
+  it("sin ningún bloqueo horario, no hay nada pendiente que mostrar", () => {
+    const store = createInMemoryStore();
+    expect(readCurrentConfigState(store, 0).pendingRestBlock).toBeNull();
+  });
+
+  it("con un bloqueo horario programado (todavía no activo), lo da como pendiente", () => {
+    const store = createInMemoryStore();
+    const restBlock = { startAt: 1000, endAt: 2000, cancelled: false, warned2min: false };
+    guardarEstado(store, { restBlock });
+    expect(readCurrentConfigState(store, 0).pendingRestBlock).toEqual(restBlock);
+  });
+
+  it("con el bloqueo horario ya activo, no hay nada pendiente (eso lo cubre isEditingLocked)", () => {
+    const store = createInMemoryStore();
+    guardarEstado(store, { restBlock: { startAt: 0, endAt: 1000, cancelled: false, warned2min: false } });
+    expect(readCurrentConfigState(store, 500).pendingRestBlock).toBeNull();
+  });
+
+  it("con el bloqueo horario activo y uno próximo programado, da el próximo como pendiente", () => {
+    const store = createInMemoryStore();
+    const nextRestBlock = { startAt: 1000, endAt: 2000, cancelled: false, warned2min: false };
+    guardarEstado(store, {
+      restBlock: { startAt: 0, endAt: 1000, cancelled: false, warned2min: false },
+      nextRestBlock,
+    });
+    expect(readCurrentConfigState(store, 500).pendingRestBlock).toEqual(nextRestBlock);
+  });
+
   it("resuelve lo pendiente en cuanto cruza las 04:00 (RF-29)", () => {
     const store = createInMemoryStore();
     const config = configCon({ dailyLimitMin: 30 });

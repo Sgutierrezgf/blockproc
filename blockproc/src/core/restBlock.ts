@@ -73,6 +73,31 @@ export function confirmRestBlock(start: TimeOfDay, end: TimeOfDay, now: Timestam
   return { startAt, endAt, cancelled: false, warned2min: startsImmediately };
 }
 
+const MS_PER_DAY = 24 * 60 * 60_000;
+
+/**
+ * RF-54, C14/D22b (Fase 9): a diferencia de `confirmRestBlock`, el inicio se
+ * calcula relativo al **fin del bloqueo activo** (`currentEndAt`), no a
+ * "ahora": mientras se programa el próximo, "ahora" siempre cae dentro del
+ * bloqueo en curso, así que una hora de mañana que ya "pasó hoy" no debe
+ * interpretarse como "empezar ya" (esa lógica es de RF-34, para confirmar
+ * desde un estado libre). Si la hora elegida, tomada el mismo día que
+ * `currentEndAt`, cae en ese instante o después, se usa tal cual; si no, se
+ * busca al día siguiente. Nunca rechaza un rango válido (RF-17).
+ */
+export function computeNextRestBlockStart(start: TimeOfDay, currentEndAt: Timestamp): Timestamp {
+  const sameDayAsEnd = setTimeOfDay(currentEndAt, start);
+  return sameDayAsEnd >= currentEndAt ? sameDayAsEnd : sameDayAsEnd + MS_PER_DAY;
+}
+
+/** RF-53, RF-54: arma el bloqueo horario "próximo" completo, para `nextRestBlock`. */
+export function confirmNextRestBlock(start: TimeOfDay, end: TimeOfDay, currentEndAt: Timestamp): RestBlockState {
+  const durationMin = getRestBlockDurationMin(start, end);
+  const startAt = computeNextRestBlockStart(start, currentEndAt);
+  const endAt = startAt + durationMin * 60_000;
+  return { startAt, endAt, cancelled: false, warned2min: false };
+}
+
 /** RF-18: si el bloqueo está en curso ahora mismo, según su estado. */
 export function getRestBlockStatus(state: RestBlockState, now: Timestamp): RestBlockStatus {
   if (state.cancelled) return "cancelled";
@@ -83,6 +108,47 @@ export function getRestBlockStatus(state: RestBlockState, now: Timestamp): RestB
 
 export function isRestBlockActive(state: RestBlockState, now: Timestamp): boolean {
   return getRestBlockStatus(state, now) === "active";
+}
+
+/**
+ * RF-50, D23 (Fase 9): el bloqueo a mostrar como "programado para más
+ * tarde" fuera de la pestaña Bloqueo horario — el propio `restBlock` si
+ * todavía no empezó (caso ya existente, antes invisible en Ajustes/Apps:
+ * la causa real del bug reportado), si no el "próximo" si hay uno
+ * (mientras el actual está activo), si no nada.
+ */
+export function getPendingRestBlock(
+  restBlock: RestBlockState | null,
+  nextRestBlock: RestBlockState | null,
+  now: Timestamp
+): RestBlockState | null {
+  if (restBlock !== null && getRestBlockStatus(restBlock, now) === "scheduled") {
+    return restBlock;
+  }
+  return nextRestBlock;
+}
+
+export interface RestBlockPair {
+  restBlock: RestBlockState | null;
+  nextRestBlock: RestBlockState | null;
+}
+
+/**
+ * RF-53, D21 (Fase 9): el único lugar donde "nextRestBlock" deja de ser
+ * invisible y pasa a ser el bloqueo vigente — nunca se evalúa por su cuenta
+ * (isRestBlockActive/getRestBlockStatus siempre miran "restBlock"). Solo
+ * asciende cuando el actual terminó de verdad (no cuando se cancela: eso no
+ * cuenta como terminado, RF-20).
+ */
+export function resolveRestBlocks(
+  restBlock: RestBlockState | null,
+  nextRestBlock: RestBlockState | null,
+  now: Timestamp
+): RestBlockPair {
+  if (restBlock !== null && nextRestBlock !== null && getRestBlockStatus(restBlock, now) === "ended") {
+    return { restBlock: nextRestBlock, nextRestBlock: null };
+  }
+  return { restBlock, nextRestBlock };
 }
 
 /**

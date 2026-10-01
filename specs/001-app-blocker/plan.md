@@ -1,6 +1,6 @@
 # Plan 001 — Bloqueo consciente de apps con reto y bloqueo horario
 
-Cubre la spec `specs/001-app-blocker/spec.md` (RF-1 a RF-49). Respeta `docs/constitution.md`.
+Cubre la spec `specs/001-app-blocker/spec.md` (RF-1 a RF-54). Respeta `docs/constitution.md`.
 Sin código: solo módulos, datos, decisiones y estrategia de pruebas.
 
 ## 1. Enfoque general
@@ -69,8 +69,9 @@ Todo se guarda en el dispositivo (RF-25) mediante el repositorio de `storage/`.
 - `warnedLimit`, `warnedWindow` (para no repetir avisos)
 - `challenge?`: reto en curso (preguntas ya barajadas, índice, respuestas) hasta las 04:00 (RF-39)
 
-**Bloqueo horario** (uno solo a la vez)
-- `startAt`, `endAt` (marcas de tiempo absolutas), `confirmedAt`, `warned2min`
+**Bloqueo horario** (el activo/programado de siempre, más uno "próximo" nuevo — D21)
+- `restBlock: RestBlockState | null` (el de siempre): `startAt`, `endAt` (marcas de tiempo absolutas), `cancelled`, `warned2min`
+- `nextRestBlock: RestBlockState | null` (nuevo, Fase 9): mismo shape, nunca se evalúa con `isRestBlockActive`/`getRestBlockStatus` mientras `restBlock` siga activo — solo se "asciende" a `restBlock` cuando este termina (RF-53)
 
 **Ciclo de preguntas**
 - `usedIds` por área, para no repetir hasta agotar (RF-11)
@@ -105,6 +106,11 @@ Todos los tiempos se guardan como **marcas absolutas**, por eso sobreviven al re
 | D18 | Categoría: Kotlin solo pasa el **entero crudo** de `ApplicationInfo.category` (disponible desde API 26, coincide con `minSdkVersion 26`, ya presente en la misma consulta `queryIntentActivities()` que usa D10, sin consultas adicionales), o `null` si es `CATEGORY_UNDEFINED`; el mapeo a una etiqueta en español y el agrupamiento viven en **TS puro** (`core/appCategories.ts`), con tests. El buscador (D16) y las categorías se combinan (C8): ambos criterios se aplican a la vez | Mapear a texto en español directamente en Kotlin | Es una decisión de categorización/presentación testeable sin dispositivo (constitución 6); mantiene lo nativo "tonto" (solo reporta el dato del sistema), igual que ya hace `exclusions.ts` con los paquetes esenciales que reporta lo nativo | RF-49 |
 | D19 | Nueva función nativa **`moveToBackground()`**: `appContext.currentActivity?.moveTaskToBack(true)`, sin lanzar si no hay actividad actual. Se usa tanto para el botón "Continuar a la app" como para el botón/gesto Atrás en la pantalla de éxito del reto (C7) | Reutilizar `goHome()` (D13) para el botón de éxito; usar `Activity.finish()` | `goHome()` navega explícitamente al lanzador (Intent `ACTION_MAIN`/`CATEGORY_HOME`) — no revela lo que había debajo, contradice el objetivo del botón. `finish()` destruye la única actividad de una app `singleTask`, obligando a reconstruirla en el próximo enlace profundo. `moveTaskToBack(true)` es el mecanismo estándar de Android para "actuar como si se hubiera presionado Inicio" dejando la tarea viva en segundo plano, revelando lo que sea que esté inmediatamente debajo en la pila de tareas del sistema, sin prometer qué es (RF-47) | RF-47 |
 | D20 | Ajustes/Apps/Bloqueo horario pasan a un grupo `app/(tabs)/` de Expo Router (`Tabs`, `headerShown:false`, comportamiento de Atrás: vuelve primero a la pestaña Ajustes antes de salir de la app, C10), **sin renombrar** `settings.tsx`/`apps.tsx`/`schedule.tsx` (solo se mueven de carpeta). `/dev` queda fuera del grupo, alcanzable por `push` desde dentro de Ajustes, igual que hoy. Cada una de las 3 pantallas agrega un refresco de su estado de configuración por foco (`useFocusEffect`, ya disponible vía `@react-navigation/native`, dependencia transitiva de Expo Router — no es una dependencia nueva) | Mantener `Stack` (statu quo); un `Drawer`; renombrar las rutas a `/(tabs)/settings` etc.; salir de la app directo desde cualquier pestaña | Un grupo `(tabs)` de Expo Router **no aparece en la URL** — `app/(tabs)/settings.tsx` sigue resolviendo a la ruta `/settings`, así que `router.replace("/settings")` en `index.tsx` no necesita cambiar. Lo que sí cambia: por defecto cada pestaña queda montada una vez y no se desmonta al cambiar de pestaña (a diferencia de hoy, que con `push`/`pop` cada pantalla se remonta) — así que si el usuario activa un bloqueo horario en una pestaña y cambia a otra, esa otra no se entera sola, hace falta refrescar por foco. La lista de apps con íconos (D17, cara) solo se carga una vez por sesión al montar `apps.tsx` — el refresco por foco de esa pantalla relee *solo* el estado de configuración (barato, MMKV), no vuelve a pedir la lista de apps con íconos | — (sin RF nuevos: mismo comportamiento ya especificado en RF-19/RF-29, solo cambia la navegación; ver C10) |
+| D21 | **Fase 9.** `PolicyState` suma `nextRestBlock: RestBlockState \| null` junto al `restBlock` de siempre (C11): un segundo espacio, nunca una lista. `nextRestBlock` nunca se evalúa con `isRestBlockActive`/`getRestBlockStatus` mientras `restBlock` siga activo; al terminar este (`getRestBlockStatus(restBlock, now) === "ended"`), el reductor lo "asciende" a `restBlock` y limpia `nextRestBlock` | Un array de bloqueos futuros; reemplazar directamente `restBlock` al confirmar uno nuevo | Un array abriría la puerta a lo que "Fuera de alcance" ya excluye (bloqueo recurrente/múltiples franjas). Reemplazar `restBlock` directo sería una forma indirecta de cancelar el bloqueo en curso, justo lo que RF-19 protege | RF-53, 54 |
+| D22 | **Fase 9.** La pantalla de bloqueo horario activo (`restblock.tsx`) gana un botón "Programar otro bloqueo horario" que alterna a un **estado local de la misma pantalla** (sin navegar a ninguna ruta nueva), mostrando el mismo formulario que ya tiene `schedule.tsx` (`TimeCard` × 2, resumen, confirmar) pero apuntando a `nextRestBlock`, con el inicio calculado por `computeNextRestBlockStart(start, currentEndAt)` (C14: relativo al fin del bloqueo activo, no a "ahora" — ver D22b) | Una ruta nueva (ej. `/restblock/schedule-next`) con su propio manejo de `hardwareBackPress` | Evita duplicar el manejo de Atrás "sin salida" en una segunda pantalla: al ser el mismo componente, el único `hardwareBackPress` que ya tiene `restblock.tsx` sigue siendo la única fuente de verdad (Atrás desde el sub-formulario cancela y vuelve a la vista de bloqueo, un segundo Atrás va a Inicio como siempre) | RF-53, 54 |
+| D22b | **Fase 9, C14 (corrección durante T97).** `computeNextRestBlockStart(start, currentEndAt)` calcula el inicio tomando `currentEndAt` (no "ahora") como referencia de día, y si esa hora cae en o después de `currentEndAt` lo usa; si no, suma 24 h (día siguiente) | Reutilizar `confirmRestBlock(start, end, now)` tal cual (el plan original) | "Ahora" siempre cae *dentro* del bloqueo activo mientras se programa el próximo: una hora de mañana ya "pasada hoy" se interpretaba como "empezar ya" (lógica de RF-34, pensada para confirmar desde un estado libre) y se rechazaba sin motivo. Calcular desde `currentEndAt` elimina el caso por completo: cualquier rango válido (RF-17) siempre encuentra cuándo ocurre, sin rechazos | RF-54 |
+| D23 | **Fase 9.** Indicador de "programado" (RF-50): nueva función pura en `core/restBlock.ts`, `getPendingRestBlock(restBlock, nextRestBlock, now)`, que devuelve el bloqueo relevante a mostrar como "programado" — `restBlock` si su estado es `"scheduled"` (caso ya existente, hoy invisible fuera de la pestaña Bloqueo horario — la causa real del bug reportado), si no `nextRestBlock` si existe, si no `null`. `settings.tsx` y `apps.tsx` la consultan junto a `isEditingLocked` | Mirar `restBlock`/`nextRestBlock` por separado en cada pantalla | Lógica de negocio pura, testeable sin dispositivo (constitución 6); evita repetir el mismo `if` en cada pantalla que lo muestre | RF-50 |
+| D24 | **Fase 9.** Texto explicativo de RF-51 como contenido estático en `settings.tsx` (un párrafo fijo, sin configuración ni estado) | Tooltips por campo; modal "¿Cómo funciona?" | Cambio mínimo y de bajo riesgo para resolver la confusión reportada; no agrega ningún componente ni estado nuevo | RF-51 |
 
 ## 5. Módulos y RF que cubre cada uno
 
@@ -365,6 +371,49 @@ cambio de RF: es una decisión de build, no de comportamiento funcional para el 
 final (la fricción/reto sigue exactamente igual). La firma de esa build `release` sigue
 siendo la de debug por decisión explícita — no apta para publicar, documentado en
 `README.md`.
+
+### Bug real en producción: notificaciones nunca se pedían (2026-10-01)
+
+Tras un día de uso real con la build de producción, el usuario reportó que WhatsApp se
+bloqueó solo a las 21:00 sin ningún aviso. Causa confirmada en el código, mismo patrón
+que el bug de `MonitorService` de la auditoría anterior: `PermissionsAndroid.request
+(POST_NOTIFICATIONS)` solo existía en `src/app/dev.tsx` (T09) — oculto en producción
+desde el fix de `__DEV__` del día anterior. El flujo real de permisos (`index.tsx`)
+nunca lo pedía. En Android 13+, sin este permiso, Android descarta en silencio **todas**
+las notificaciones de aviso (RF-15, RF-30, y el aviso de "2 minutos antes" de RF-33) —
+de ahí que el bloqueo horario empezara "sin avisar en el camino" (más la naturaleza
+puntual, no recurrente, de `core/restBlock.ts`, que tampoco es un bug: un bloqueo
+confirmado antes se activa solo cuando llega su hora, sin repetirse cada día).
+
+**Corrección**: `POST_NOTIFICATIONS` pasa a ser un tercer permiso obligatorio en
+`index.tsx`, igual que estadísticas de uso y superposición — a diferencia de esos dos,
+tiene diálogo estándar de Android (se pide directo, sin pasar por Ajustes del sistema).
+En Android <13 se trata como ya concedido (el permiso no existe ahí). No es un RF nuevo:
+restaura RF-15/30/33, que ya existían, a que funcionen de verdad.
+
+Verificado en el dispositivo con una instalación limpia (los tres permisos en
+"Pendiente"): se piden los tres en orden, con los tres concedidos arranca el servicio y
+pasa a Ajustes, y una notificación de aviso real ("Bloqueo horario — El bloqueo horario
+empieza en 2 minutos") aparece en la bandeja — antes de este fix, nunca lo hacía.
+`tsc`/`lint`/`jest` en verde.
+
+### T104: verificación final de la Fase 9 (bloqueo horario programable, textos, orden de apps)
+
+Verificación en el Pixel 6a, de punta a punta, de las 4 features de la Fase 9 (RF-50 a RF-54):
+
+| Feature | Verificado | Notas |
+|---|---|---|
+| Texto "Cómo funciona" (RF-51) | ✅ | Visible en Ajustes, modo claro y oscuro, sin romper el formulario (T101) |
+| Orden de apps restringidas primero (RF-52) | ✅ | Aplicado después del buscador y la categoría; combinable con ambos (T100) |
+| Banner "programado" en Ajustes/Apps (RF-50) | ✅ | Independiente de `isEditingLocked`: visible sin bloquear la edición (T102) |
+| Programar un bloqueo nuevo durante uno activo (RF-53) | ✅ | Sub-formulario en `restblock.tsx` sin ruta nueva (D22); con una hora que ya "pasó" respecto al `endAt` actual, el resumen ofrece correctamente el día siguiente, sin rechazo (RF-54, corrección C14/D22b) |
+| Ascenso automático (`resolveRestBlocks`, RF-53) | ✅ | Confirmado en vivo, no solo por unit tests: con un bloqueo activo real y uno programado para justo después, un sondeo del dispositivo cada ~15 s (forzando refresco real vía `useFocusEffect` al alternar pestañas) capturó la secuencia completa — banner "programado" presente mientras el primero seguía activo; al llegar la hora del segundo, el banner "programado" desaparece y "activo" se mantiene sin interrupción (el ascenso fue transparente); al llegar el fin del bloqueo *recién ascendido* (no del original), "activo" también desaparece — la única explicación posible es que el ascenso ocurrió y el bloqueo promovido se trató como real |
+
+**Hallazgo de proceso, no de producto:** el primer intento de observar el ascenso en vivo usó un sondeo que reabría la misma pantalla con el mismo enlace profundo (`blockproc://settings`) repetidamente; Android entrega ese intent a la instancia ya corriendo sin disparar un nuevo evento de foco, así que `useFocusEffect` nunca releía el estado y la pantalla quedó con una captura congelada 16 minutos seguidos. Se corrigió alternando entre dos pestañas reales (Apps ⇄ Ajustes) en cada sondeo, lo que sí fuerza el refresco, y permitió capturar la secuencia real documentada arriba.
+
+**Sin regresiones de comportamiento.** `tsc --noEmit`, `expo lint` y los 311 tests de Jest (incluyendo los nuevos de `restBlockNext`/`restBlockNextRange`/`restBlockPending`/`restBlockNextPromotion`/`policyRepository`/`appCategoriesRestrictedFirst` y la extensión de `applyAndSaveConfig` de la Fase 9) quedaron en verde. Ningún RF validado en T63/T64/T77-T79/T95 se vio afectado. El dispositivo quedó restaurado a su estado de fábrica (sin bloqueo horario activo ni programado, servicio de monitoreo corriendo).
+
+**Veredicto: Fase 9 completa.** Las 4 features aprobadas por el usuario están implementadas con SDD completo (RF-50 a RF-54, C11-C14, D21-D24), verificadas en el dispositivo real incluyendo el ascenso automático observado en vivo, sin alterar ningún comportamiento previo.
 
 ## 8. Cambios a la spec (aplicados)
 

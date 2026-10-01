@@ -1,31 +1,54 @@
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { AppState, ScrollView, Text, View } from "react-native";
+import { AppState, PermissionsAndroid, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
 import { PrimaryButton } from "../components/PrimaryButton";
 
-// RF-26: mientras falte el permiso de estadísticas de uso o el de
-// superposición, se explica cada uno que falta y se guía a concederlo desde
-// Ajustes del sistema (no hay diálogo estándar para ninguno de los dos).
-// Con ambos concedidos, se pasa de largo a los ajustes de la app.
-function readPermissions() {
+// RF-26: mientras falte el permiso de estadísticas de uso, el de
+// superposición o el de notificaciones, se explica cada uno que falta y se
+// guía a concederlo. Con los tres concedidos, se pasa de largo a los
+// ajustes de la app.
+function readSyncPermissions() {
   return {
     usageAccess: BlockprocNative.hasUsageAccessPermission(),
     overlay: BlockprocNative.hasOverlayPermission(),
   };
 }
 
+// RF-15, RF-30, RF-33: en Android 13+ (API 33), sin este permiso las
+// notificaciones de aviso (incluido el de "2 minutos antes" del bloqueo
+// horario) se descartan en silencio — hasta ahora solo se pedía desde
+// `/dev` (T09), nunca en el flujo real, así que ningún usuario real llegaba
+// a verlas. En versiones anteriores no existe el permiso: se trata como ya
+// concedido.
+async function hasNotificationPermission(): Promise<boolean> {
+  if (Platform.OS !== "android" || Platform.Version < 33) return true;
+  return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+}
+
 // T68 (Fase 7, sistema "Mindful Calm"): mismo comportamiento de siempre,
 // solo cambia la presentación (tarjetas y colores del sistema de diseño en
 // vez de colores sueltos de Tailwind).
 export default function Permissions() {
-  const [permissions, setPermissions] = useState(readPermissions);
+  const [permissions, setPermissions] = useState(() => ({ ...readSyncPermissions(), notifications: false }));
+
+  // Los dos primeros se leen de forma síncrona (ya en el estado inicial);
+  // el de notificaciones solo se sabe de forma asíncrona (PermissionsAndroid
+  // siempre devuelve una Promise), así que llega un instante después.
+  useEffect(() => {
+    hasNotificationPermission().then((notifications) => setPermissions((prev) => ({ ...prev, notifications })));
+  }, []);
+
+  const refreshPermissions = () => {
+    setPermissions((prev) => ({ ...prev, ...readSyncPermissions() }));
+    hasNotificationPermission().then((notifications) => setPermissions((prev) => ({ ...prev, notifications })));
+  };
 
   useEffect(() => {
-    if (permissions.usageAccess && permissions.overlay) {
-      // RF-27: con los dos permisos concedidos, arranca el servicio de
+    if (permissions.usageAccess && permissions.overlay && permissions.notifications) {
+      // RF-27: con los tres permisos concedidos, arranca el servicio de
       // vigilancia. Antes de esto, nada en la app real lo arrancaba nunca
       // (solo `/dev` a mano, o BootReceiver tras un reinicio real): un
       // usuario que instalara la app, concediera los permisos y configurara
@@ -43,11 +66,19 @@ export default function Permissions() {
     // del cambio (patrón ya usado en /dev, T07).
     const subscription = AppState.addEventListener("change", (state) => {
       if (state === "active") {
-        setPermissions(readPermissions());
+        refreshPermissions();
       }
     });
     return () => subscription.remove();
   }, []);
+
+  // A diferencia de los otros dos, este sí tiene diálogo estándar de
+  // Android: se pide directo, sin pasar por Ajustes del sistema.
+  const requestNotifications = async () => {
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    const notifications = await hasNotificationPermission();
+    setPermissions((prev) => ({ ...prev, notifications }));
+  };
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
@@ -60,7 +91,7 @@ export default function Permissions() {
             Permisos necesarios
           </Text>
           <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-            blockproc necesita estos dos permisos para poder aplicar los límites que configures.
+            blockproc necesita estos permisos para poder aplicar los límites que configures.
           </Text>
         </View>
 
@@ -75,6 +106,12 @@ export default function Permissions() {
           description="Para mostrar el reto encima de la app restringida cuando toca."
           granted={permissions.overlay}
           onPress={() => BlockprocNative.openOverlaySettings()}
+        />
+        <PermissionCard
+          title="Notificaciones"
+          description="Para avisar cuando falta poco para el límite diario o antes de que empiece un bloqueo horario."
+          granted={permissions.notifications}
+          onPress={requestNotifications}
         />
 
         <View className="gap-1 rounded-2xl bg-surface-container-low p-4 dark:bg-surface-container-low-dark">

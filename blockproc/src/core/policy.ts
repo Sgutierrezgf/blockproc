@@ -1,5 +1,5 @@
 import type { Config } from "./config";
-import { isRestBlockActive, markRestBlockWarned, shouldShowRestBlockWarning } from "./restBlock";
+import { isRestBlockActive, markRestBlockWarned, resolveRestBlocks, shouldShowRestBlockWarning } from "./restBlock";
 import type { RestBlockState } from "./restBlock";
 import type { Timestamp } from "./types";
 import { createUsageState, getUsedMsIncludingOpenSegment, onForegroundChanged, onScreenOff, onScreenOn } from "./usage";
@@ -31,10 +31,26 @@ export interface PolicyState {
   apps: Record<string, AppPolicyState>;
   /** El bloqueo horario vigente (T25/T26), o null si no hay ninguno. */
   restBlock: RestBlockState | null;
+  /** RF-53 (Fase 9): el próximo, programado mientras `restBlock` está activo. */
+  nextRestBlock: RestBlockState | null;
 }
 
 export function createPolicyState(): PolicyState {
-  return { usage: createUsageState(), apps: {}, restBlock: null };
+  return { usage: createUsageState(), apps: {}, restBlock: null, nextRestBlock: null };
+}
+
+/**
+ * RF-53, D21 (Fase 9): punto único donde "nextRestBlock" puede ascender a
+ * "restBlock" — se llama al principio de cada evento que evalúa el bloqueo
+ * horario, antes de decidir qué mostrar (si no, el recién ascendido
+ * tardaría un evento más en aplicarse).
+ */
+function promoteNextRestBlockIfNeeded(state: PolicyState, now: Timestamp): PolicyState {
+  const resolved = resolveRestBlocks(state.restBlock, state.nextRestBlock, now);
+  if (resolved.restBlock === state.restBlock && resolved.nextRestBlock === state.nextRestBlock) {
+    return state;
+  }
+  return { ...state, restBlock: resolved.restBlock, nextRestBlock: resolved.nextRestBlock };
 }
 
 function getAppState(state: PolicyState, packageName: string): AppPolicyState {
@@ -147,8 +163,9 @@ export function handleForegroundChanged(
   config: Config,
   now: Timestamp
 ): PolicyResult {
-  const usage = onForegroundChanged(state.usage, packageName, now);
-  let nextState: PolicyState = { ...state, usage };
+  const promoted = promoteNextRestBlockIfNeeded(state, now);
+  const usage = onForegroundChanged(promoted.usage, packageName, now);
+  let nextState: PolicyState = { ...promoted, usage };
 
   if (packageName !== null && packageName !== state.usage.foregroundPackage) {
     // Empieza una visita nueva a esta app: se puede volver a avisar.
@@ -173,7 +190,8 @@ function evaluateRestBlockWarning(state: PolicyState, now: Timestamp): PolicyRes
 
 /** Sondeo periódico (evento Tick), mientras no cambia la app en primer plano. */
 export function handleTick(state: PolicyState, config: Config, now: Timestamp): PolicyResult {
-  const warning = evaluateRestBlockWarning(state, now);
+  const promoted = promoteNextRestBlockIfNeeded(state, now);
+  const warning = evaluateRestBlockWarning(promoted, now);
   const app = evaluateForegroundApp(warning.state, config, now);
   return { state: app.state, actions: [...warning.actions, ...app.actions] };
 }
@@ -184,8 +202,9 @@ export function handleTick(state: PolicyState, config: Config, now: Timestamp): 
  * apagada (una ventana, una espera), se detecta ya mismo.
  */
 export function handleScreenOn(state: PolicyState, config: Config, now: Timestamp): PolicyResult {
-  const usage = onScreenOn(state.usage, now);
-  const withUsage: PolicyState = { ...state, usage };
+  const promoted = promoteNextRestBlockIfNeeded(state, now);
+  const usage = onScreenOn(promoted.usage, now);
+  const withUsage: PolicyState = { ...promoted, usage };
   const warning = evaluateRestBlockWarning(withUsage, now);
   const app = evaluateForegroundApp(warning.state, config, now);
   return { state: app.state, actions: [...warning.actions, ...app.actions] };

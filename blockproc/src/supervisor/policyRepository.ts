@@ -15,7 +15,12 @@ export function loadPolicyState(store: KeyValueStore): PolicyState {
     return createPolicyState();
   }
   try {
-    return JSON.parse(raw) as PolicyState;
+    // RF-53 (Fase 9): un estado guardado antes de que existiera
+    // "nextRestBlock" no trae esa clave — se completa con null (vía
+    // createPolicyState()), para no confundir "undefined" (campo que nunca
+    // existió) con "hay un próximo".
+    const parsed = JSON.parse(raw) as Partial<PolicyState>;
+    return { ...createPolicyState(), ...parsed };
   } catch {
     return createPolicyState();
   }

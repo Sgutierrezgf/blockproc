@@ -4,14 +4,11 @@ import { BackHandler, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
+import { findActiveBlockForPackage } from "../core/blocks";
 import { createSystemClock } from "../core/clock";
-import { loadConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
 import { loadPolicyState } from "../supervisor/policyRepository";
 
-// Principio 7 de la constitución: nunca Date.now() directo, siempre un
-// Clock inyectable (aquí, el real: no hay reloj falso que inyectar en una
-// pantalla real).
 const clock = createSystemClock();
 
 function formatCountdown(remainingMs: number): string {
@@ -21,38 +18,34 @@ function formatCountdown(remainingMs: number): string {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-// RF-38, RF-6 (T60): la pantalla que Kotlin abre por enlace profundo
-// (`blockproc://wait?pkg=…`, T48) mientras dura la espera de 3 min tras
-// fallar un reto (RF-13, policy.ts). El fin de la espera (`cooldownUntil`)
+function readState(packageName: string) {
+  const policyState = loadPolicyState(defaultStore);
+  const block = findActiveBlockForPackage(policyState.blocks, packageName, clock.now());
+  return {
+    cooldownUntil: policyState.apps[packageName]?.cooldownUntil ?? null,
+    focusMessage: block?.focusMessage ?? "",
+  };
+}
+
+// RF-66 (Fase 10): la pantalla que Kotlin abre por enlace profundo
+// (`blockproc://wait?pkg=…`) mientras dura la espera de 5 min tras fallar
+// el reto (2 respuestas incorrectas). El fin de la espera (`cooldownUntil`)
 // vive en el PolicyState, no en la URL: el enlace solo trae el paquete.
-// T73 (Fase 7, sistema "Mindful Calm"): mismo comportamiento de siempre,
-// solo cambia la presentación: el círculo es un simple `View` con borde
-// redondeado (sin SVG ni animación), sin el texto decorativo "inhala/exhala"
-// del mock (no aporta nada sobre el mensaje de enfoque, que ya es
-// configurable por RF-6).
-// T78: sin BackButton a propósito (RF-38: sin ninguna salida durante la
-// espera); ver la misma nota en challenge.tsx.
+// Sin BackButton a propósito (RF-66: sin ninguna salida durante la espera).
 export default function Wait() {
-  // "t" (T63, ver challenge.tsx y BlockprocNativeModule.kt): mismo motivo,
-  // para que un segundo aviso de espera para la misma app (una nueva espera,
-  // tras un segundo fallo) no se quede con el `cooldownUntil` ya vencido de
-  // la primera.
   const { pkg, t } = useLocalSearchParams<{ pkg?: string; t?: string }>();
   const packageName = pkg ?? "";
 
-  const [config, setConfig] = useState(() => loadConfig(defaultStore));
-  const [cooldownUntil, setCooldownUntil] = useState(
-    () => loadPolicyState(defaultStore).apps[packageName]?.cooldownUntil ?? null
-  );
+  const [{ cooldownUntil, focusMessage }, setState] = useState(() => readState(packageName));
   const [now, setNow] = useState(() => clock.now());
 
-  // Ajuste de estado durante el render (no en un efecto) al cambiar "t":
-  // ver la misma nota en challenge.tsx.
+  // Ajuste de estado durante el render (no en un efecto) al cambiar "t": un
+  // segundo aviso de espera para la misma app (tras un segundo fallo) no
+  // debe quedarse con el `cooldownUntil` ya vencido del primero.
   const [loadedTrigger, setLoadedTrigger] = useState(t);
   if (t !== loadedTrigger) {
     setLoadedTrigger(t);
-    setConfig(loadConfig(defaultStore));
-    setCooldownUntil(loadPolicyState(defaultStore).apps[packageName]?.cooldownUntil ?? null);
+    setState(readState(packageName));
   }
 
   useEffect(() => {
@@ -60,8 +53,8 @@ export default function Wait() {
     return () => clearInterval(id);
   }, []);
 
-  // RF-38 (T62, Plan D13): Atrás durante la espera tampoco vuelve a la app
-  // restringida; manda al inicio de Android.
+  // RF-66: Atrás durante la espera tampoco vuelve a la app bloqueada; manda
+  // al inicio de Android.
   useEffect(() => {
     const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
       BlockprocNative.goHome();
@@ -90,7 +83,7 @@ export default function Wait() {
           </View>
         </View>
         <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
-          {config.focusMessage}
+          {focusMessage}
         </Text>
       </ScrollView>
     </SafeAreaView>

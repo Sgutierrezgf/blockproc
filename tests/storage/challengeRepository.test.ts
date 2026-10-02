@@ -28,7 +28,7 @@ describe("challengeRepository", () => {
 
   it("guarda y recupera el reto de una app sin afectar a otra", () => {
     const store = createInMemoryStore();
-    const challenge = startChallenge([question("g1"), question("g2")], 1000);
+    const challenge = startChallenge([question("g1"), question("g2")], "b1");
 
     saveChallenge(store, PKG_A, challenge);
 
@@ -38,7 +38,7 @@ describe("challengeRepository", () => {
 
   it("borra el reto guardado al pasarle null", () => {
     const store = createInMemoryStore();
-    const challenge = startChallenge([question("g1")], 1000);
+    const challenge = startChallenge([question("g1")], "b1");
     saveChallenge(store, PKG_A, challenge);
 
     saveChallenge(store, PKG_A, null);

@@ -145,11 +145,6 @@ class BlockprocNativeModule : Module() {
       launchDeepLink("blockproc://wait?pkg=$packageName&t=${System.currentTimeMillis()}")
     }
 
-    // RF-18: sin reto, así que no necesita saber qué app lo disparó.
-    Function("showRestBlock") {
-      launchDeepLink("blockproc://restblock?t=${System.currentTimeMillis()}")
-    }
-
     // RF-13, RF-39 (D13 del plan): al fallar el reto o pulsar Atrás, se
     // envía al usuario al inicio de Android, no a la propia app, para que la
     // app restringida no quede visible debajo.

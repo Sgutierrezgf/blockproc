@@ -56,7 +56,7 @@ export default function Permissions() {
       // vigilancia corriendo. Arrancarlo aquí es seguro de repetir (Android
       // no reinicia un servicio que ya está en marcha).
       BlockprocNative.startMonitorService();
-      router.replace("/settings");
+      router.replace("/blocks");
     }
   }, [permissions]);
 
@@ -97,19 +97,19 @@ export default function Permissions() {
 
         <PermissionCard
           title="Estadísticas de uso"
-          description="Para saber qué app está abierta y aplicar el límite diario."
+          description="Para saber qué app está abierta y aplicar tus bloqueos."
           granted={permissions.usageAccess}
           onPress={() => BlockprocNative.openUsageAccessSettings()}
         />
         <PermissionCard
           title="Mostrar sobre otras apps"
-          description="Para mostrar el reto encima de la app restringida cuando toca."
+          description="Para mostrar el reto encima de la app bloqueada cuando toca."
           granted={permissions.overlay}
           onPress={() => BlockprocNative.openOverlaySettings()}
         />
         <PermissionCard
           title="Notificaciones"
-          description="Para avisar cuando falta poco para el límite diario o antes de que empiece un bloqueo horario."
+          description="Para avisar antes de que empiece un bloqueo programado."
           granted={permissions.notifications}
           onPress={requestNotifications}
         />

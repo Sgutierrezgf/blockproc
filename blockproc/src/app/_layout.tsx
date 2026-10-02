@@ -34,10 +34,10 @@ export default function RootLayout() {
 
   // T78 (Fase 7, corrección post-diagnóstico): el header nativo por defecto
   // (sin esta opción) mostraba el nombre de archivo de cada ruta como título
-  // ("settings", "apps"...) y, más grave, en las pantallas sin salida
-  // (challenge/wait/restblock) exponía una flecha "atrás" táctil que llama a
+  // ("settings", "blocks"...) y, más grave, en las pantallas sin salida
+  // (challenge/wait) exponía una flecha "atrás" táctil que llama a
   // navigation.goBack() sin pasar por el listener de hardwareBackPress que
-  // esas pantallas usan para forzar goHome() (RF-13/18/19). Cada pantalla ya
+  // esas pantallas usan para forzar goHome() (RF-62/66). Cada pantalla ya
   // trae su propio título y, donde hace falta, su propio BackButton.
   return <Stack screenOptions={{ headerShown: false }} />;
 }

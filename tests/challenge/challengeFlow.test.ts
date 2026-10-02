@@ -1,75 +1,93 @@
-import { getUsageDayKey } from "../../blockproc/src/core/clock";
-import { createDefaultConfig } from "../../blockproc/src/core/config";
-import type { Config } from "../../blockproc/src/core/config";
 import { createSeededRandom } from "../../blockproc/src/core/random";
 import type { Question } from "../../blockproc/src/core/questions";
 import { loadOrStartChallenge, submitAnswer } from "../../blockproc/src/challenge/challengeFlow";
-import { loadChallenge, saveChallenge } from "../../blockproc/src/storage/challengeRepository";
+import { loadChallenge } from "../../blockproc/src/storage/challengeRepository";
 import { createInMemoryStore } from "../../blockproc/src/storage/keyValueStore";
-import { loadPolicyState } from "../../blockproc/src/supervisor/policyRepository";
+import { ACCESS_WINDOW_MS, COOLDOWN_MS, createPolicyState } from "../../blockproc/src/core/policy";
+import { loadPolicyState, savePolicyState } from "../../blockproc/src/supervisor/policyRepository";
+import type { Block } from "../../blockproc/src/core/blocks";
+import type { KeyValueStore } from "../../blockproc/src/storage/keyValueStore";
 
 const PKG = "com.instagram.android";
+const BLOCK_ID = "b1";
 
 function bank(): Question[] {
   return [
     { id: "g1", area: "general", question: "¿Pregunta 1?", options: ["a", "b", "c", "d"], correctIndex: 0 },
     { id: "g2", area: "general", question: "¿Pregunta 2?", options: ["a", "b", "c", "d"], correctIndex: 1 },
     { id: "g3", area: "general", question: "¿Pregunta 3?", options: ["a", "b", "c", "d"], correctIndex: 2 },
+    { id: "g4", area: "general", question: "¿Pregunta 4?", options: ["a", "b", "c", "d"], correctIndex: 3 },
   ];
 }
 
-function config(cambios: Partial<Config> = {}): Config {
-  return { ...createDefaultConfig(), areas: ["general"], questionCount: 2, accessWindowMin: 5, ...cambios };
+function seedActiveBlock(store: KeyValueStore, overrides: Partial<Block> = {}): void {
+  const block: Block = {
+    id: BLOCK_ID,
+    packages: [PKG],
+    type: "duration",
+    startAt: 0,
+    endAt: 1_000_000,
+    category: "general",
+    focusMessage: "foco",
+    blockMessage: "bloqueado",
+    warnedStart: false,
+    ...overrides,
+  };
+  savePolicyState(store, { ...createPolicyState(), blocks: [block] });
 }
 
-// RF-11, RF-12, RF-13, RF-37, RF-39 (T59): conecta las piezas del core (T19
-// a T23, ya probadas a fondo) con el almacenamiento real, para la pantalla
-// `/challenge`: arma o retoma el reto, y aplica el resultado de responder.
+// RF-65, RF-39 (adaptado): conecta las piezas del core con el almacenamiento
+// real para la pantalla `challenge.tsx`: arma o retoma el reto, y aplica el
+// resultado de responder.
 describe("loadOrStartChallenge", () => {
-  it("sin reto guardado, arma uno nuevo con las preguntas pedidas y lo persiste", () => {
+  it("sin reto guardado, arma uno de 3 preguntas de la categoría del bloqueo y lo persiste", () => {
     const store = createInMemoryStore();
     const random = createSeededRandom(1);
+    seedActiveBlock(store);
 
-    const { challenge } = loadOrStartChallenge(store, PKG, bank(), config(), 1000, random);
+    const { challenge } = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 1000, random);
 
-    expect(challenge.questions).toHaveLength(2);
+    expect(challenge.questions).toHaveLength(3);
     expect(challenge.outcome).toBe("in_progress");
+    expect(challenge.blockId).toBe(BLOCK_ID);
     expect(loadChallenge(store, PKG)).toEqual(challenge);
   });
 
-  it("con un reto guardado sin caducar, retoma el mismo (RF-39)", () => {
+  it("con un reto guardado y el bloqueo todavía activo, retoma el mismo", () => {
     const store = createInMemoryStore();
     const random = createSeededRandom(1);
-    const primero = loadOrStartChallenge(store, PKG, bank(), config(), 1000, random).challenge;
+    seedActiveBlock(store);
+    const primero = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 1000, random).challenge;
 
-    const retomado = loadOrStartChallenge(store, PKG, bank(), config(), 2000, random).challenge;
+    const retomado = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 2000, random).challenge;
 
     expect(retomado).toEqual(primero);
   });
 
-  it("con un reto guardado ya caducado (cruzó las 04:00), arma uno nuevo", () => {
+  it("con un reto guardado pero el bloqueo que lo generó ya no está activo, arma uno nuevo", () => {
     const store = createInMemoryStore();
     const random = createSeededRandom(1);
-    const primerDia = loadOrStartChallenge(store, PKG, bank(), config(), 1000, random).challenge.dayKey;
+    seedActiveBlock(store, { endAt: 1500 });
+    const primero = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 1000, random).challenge;
 
-    // Bien pasadas las 04:00 del día siguiente.
-    const unDiaDespues = 30 * 60 * 60_000;
-    const { challenge } = loadOrStartChallenge(store, PKG, bank(), config(), unDiaDespues, random);
+    // El bloqueo ya terminó: un bloqueo nuevo y distinto cubre la app ahora.
+    seedActiveBlock(store, { id: "b2", startAt: 1500, endAt: 100_000 });
+    const { challenge } = loadOrStartChallenge(store, PKG, "b2", "general", bank(), 2000, random);
 
-    expect(challenge.dayKey).not.toBe(primerDia);
-    expect(challenge.dayKey).toBe(getUsageDayKey(unDiaDespues));
+    expect(challenge).not.toEqual(primero);
+    expect(challenge.blockId).toBe("b2");
   });
 });
 
 describe("submitAnswer", () => {
-  it("al acertar todas, concede la ventana de acceso y descarta el reto guardado", () => {
+  it("al acertar las 3 preguntas, concede la ventana de 2 min y descarta el reto guardado", () => {
     const store = createInMemoryStore();
     const random = createSeededRandom(1);
-    const cfg = config();
-    let { challenge } = loadOrStartChallenge(store, PKG, bank(), cfg, 1000, random);
+    seedActiveBlock(store);
+    let { challenge } = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 1000, random);
 
     for (const pregunta of challenge.questions) {
-      const result = submitAnswer(store, PKG, challenge, pregunta.correctIndex, cfg, 1000);
+      const result = submitAnswer(store, PKG, challenge, pregunta.correctIndex, 1000);
       challenge = result.challenge;
       expect(result.correct).toBe(true);
     }
@@ -77,34 +95,35 @@ describe("submitAnswer", () => {
     expect(challenge.outcome).toBe("success");
     expect(loadChallenge(store, PKG)).toBeNull();
     const policy = loadPolicyState(store);
-    expect(policy.apps[PKG].windowEndsAt).toBe(1000 + cfg.accessWindowMin * 60_000);
+    expect(policy.apps[PKG].windowEndsAt).toBe(1000 + ACCESS_WINDOW_MS);
   });
 
-  it("al fallar, corta el reto, registra la espera de 3 min y descarta el reto guardado", () => {
+  it("al fallar 2 preguntas, corta el reto, registra la espera de 5 min y descarta el reto guardado", () => {
     const store = createInMemoryStore();
     const random = createSeededRandom(1);
-    const cfg = config();
-    const { challenge } = loadOrStartChallenge(store, PKG, bank(), cfg, 1000, random);
-    const primera = challenge.questions[0];
-    const incorrecta = (primera.correctIndex + 1) % primera.options.length;
+    seedActiveBlock(store);
+    const { challenge } = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 1000, random);
+    const incorrectaDe = (q: Question) => (q.correctIndex + 1) % q.options.length;
 
-    const result = submitAnswer(store, PKG, challenge, incorrecta, cfg, 1000);
+    const first = submitAnswer(store, PKG, challenge, incorrectaDe(challenge.questions[0]), 1000);
+    expect(first.challenge.outcome).toBe("in_progress");
+    const second = submitAnswer(store, PKG, first.challenge, incorrectaDe(challenge.questions[1]), 1000);
 
-    expect(result.correct).toBe(false);
-    expect(result.challenge.outcome).toBe("failure");
-    expect(result.challenge.failedQuestion).toEqual(primera);
+    expect(second.correct).toBe(false);
+    expect(second.challenge.outcome).toBe("failure");
+    expect(second.challenge.failedQuestions).toHaveLength(2);
     expect(loadChallenge(store, PKG)).toBeNull();
     const policy = loadPolicyState(store);
-    expect(policy.apps[PKG].cooldownUntil).toBe(1000 + 3 * 60_000);
+    expect(policy.apps[PKG].cooldownUntil).toBe(1000 + COOLDOWN_MS);
   });
 
-  it("mientras el reto sigue en curso (acertó pero no la última), persiste el avance", () => {
+  it("mientras el reto sigue en curso (acertó la primera, faltan más), persiste el avance", () => {
     const store = createInMemoryStore();
     const random = createSeededRandom(1);
-    const cfg = config({ questionCount: 2 });
-    const { challenge } = loadOrStartChallenge(store, PKG, bank(), cfg, 1000, random);
+    seedActiveBlock(store);
+    const { challenge } = loadOrStartChallenge(store, PKG, BLOCK_ID, "general", bank(), 1000, random);
 
-    const result = submitAnswer(store, PKG, challenge, challenge.questions[0].correctIndex, cfg, 1000);
+    const result = submitAnswer(store, PKG, challenge, challenge.questions[0].correctIndex, 1000);
 
     expect(result.challenge.outcome).toBe("in_progress");
     expect(loadChallenge(store, PKG)).toEqual(result.challenge);

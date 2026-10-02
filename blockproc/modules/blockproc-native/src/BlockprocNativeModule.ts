@@ -41,7 +41,6 @@ declare class BlockprocNativeModule extends NativeModule<BlockprocNativeEvents> 
   // goHome, envía al usuario al inicio de Android).
   showChallenge(packageName: string): void;
   showWait(packageName: string): void;
-  showRestBlock(): void;
   goHome(): void;
   // RF-47 (T87, D19 del plan): envía blockproc a segundo plano (como si se
   // hubiera presionado Inicio, pero sin navegar ahí) para revelar lo que

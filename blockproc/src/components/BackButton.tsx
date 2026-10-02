@@ -3,8 +3,8 @@ import { router } from "expo-router";
 
 // T78 (Fase 7, corrección post-diagnóstico): reemplaza la flecha del header
 // nativo (quitado en _layout.tsx) en las pantallas que sí navegan hacia atrás
-// (apps, schedule, dev). Las pantallas sin salida (challenge/wait/restblock)
-// no usan este componente a propósito.
+// (dev). Las pantallas sin salida (challenge/wait) no usan este componente a
+// propósito.
 export interface BackButtonProps {
   onPress?: () => void;
 }

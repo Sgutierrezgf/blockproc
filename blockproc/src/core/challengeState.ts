@@ -1,29 +1,35 @@
-import { getUsageDayKey } from "./clock";
+import { isBlockActive } from "./blocks";
+import type { Block } from "./blocks";
 import type { Question } from "./questions";
 import type { Timestamp } from "./types";
 
-// RF-12, RF-13, RF-14, RF-39: el estado de un reto ya preparado (T22, con
-// las opciones barajadas) mientras el usuario lo responde. Inmutable, como
-// el resto del core: cada respuesta produce un estado nuevo.
+// Fase 10 (rediseño): el estado de un reto de hasta 3 preguntas (RF-65),
+// siempre asociado al bloqueo que lo generó (`blockId`), no a un día de uso
+// — ya no existe el concepto de "día de uso" (RF-7 retirado). Inmutable,
+// como el resto del core: cada respuesta produce un estado nuevo.
 export type ChallengeOutcome = "in_progress" | "success" | "failure";
 
 export interface ChallengeState {
-  /** Preguntas del reto, en el orden fijo con que se mostrarán (ya barajadas por T22). */
+  /** Hasta 3 preguntas, en el orden fijo con que se mostrarán (ya barajadas). */
   questions: Question[];
   currentIndex: number;
+  /** RF-65: el intento corta al llegar a 2, sin importar en qué posición cayeron. */
+  wrongCount: number;
+  /** RF-66: las preguntas falladas, para mostrar ambas respuestas correctas (D29). */
+  failedQuestions: Question[];
   outcome: ChallengeOutcome;
-  /** Día de uso (RF-7) en que empezó el reto; RF-39 lo descarta al cruzar las 04:00. */
-  dayKey: string;
-  /** La pregunta en la que falló, para mostrar la respuesta correcta (RF-13). */
-  failedQuestion?: Question;
+  /** El bloqueo que generó este reto; isChallengeExpired lo consulta (RF-39 adaptado). */
+  blockId: string;
 }
 
-export function startChallenge(questions: Question[], now: Timestamp): ChallengeState {
+export function startChallenge(questions: Question[], blockId: string): ChallengeState {
   return {
     questions,
     currentIndex: 0,
+    wrongCount: 0,
+    failedQuestions: [],
     outcome: "in_progress",
-    dayKey: getUsageDayKey(now),
+    blockId,
   };
 }
 
@@ -33,9 +39,11 @@ export interface AnswerResult {
 }
 
 /**
- * RF-12: si es la última pregunta y se acierta, el reto termina en éxito.
- * RF-13: si se falla, el reto se corta ahí mismo, en fallo, sin seguir a la
- * siguiente pregunta.
+ * RF-65: hasta 3 preguntas; el intento corta en "failure" apenas se acumulan
+ * 2 respuestas incorrectas (en cualquier posición), sin mostrar una pregunta
+ * más. Llegar a la última pregunta solo es posible con 0 o 1 fallo previo,
+ * así que responderla (bien o mal) siempre termina en "success" (D28): no
+ * hace falta una cuenta aparte de "al menos 2 de 3 correctas".
  */
 export function answerCurrentQuestion(state: ChallengeState, selectedIndex: number): AnswerResult {
   if (state.outcome !== "in_progress") {
@@ -44,16 +52,30 @@ export function answerCurrentQuestion(state: ChallengeState, selectedIndex: numb
 
   const currentQuestion = state.questions[state.currentIndex];
   const correct = selectedIndex === currentQuestion.correctIndex;
+  const nextIndex = state.currentIndex + 1;
+  const isLastQuestion = nextIndex >= state.questions.length;
 
   if (!correct) {
+    const wrongCount = state.wrongCount + 1;
+    const failedQuestions = [...state.failedQuestions, currentQuestion];
+    if (wrongCount >= 2) {
+      return {
+        correct: false,
+        state: { ...state, wrongCount, failedQuestions, outcome: "failure" },
+      };
+    }
     return {
       correct: false,
-      state: { ...state, outcome: "failure", failedQuestion: currentQuestion },
+      state: {
+        ...state,
+        currentIndex: nextIndex,
+        wrongCount,
+        failedQuestions,
+        outcome: isLastQuestion ? "success" : "in_progress",
+      },
     };
   }
 
-  const nextIndex = state.currentIndex + 1;
-  const isLastQuestion = nextIndex >= state.questions.length;
   return {
     correct: true,
     state: {
@@ -73,10 +95,13 @@ export function getCurrentQuestion(state: ChallengeState): Question | null {
 }
 
 /**
- * RF-39: un reto abandonado se conserva tal cual (mismas preguntas, mismo
- * progreso) hasta que se resuelva, falle, o cruce las 04:00. Esta función
- * solo informa si ya caducó; quien la llama decide si lo descarta.
+ * RF-39 adaptado (C32): un reto abandonado se conserva (mismas preguntas,
+ * mismo progreso) hasta resolverse, fallar, o que el bloqueo que lo generó
+ * deje de estar activo — ya no hay corte a las 04:00, porque no hay más
+ * "día de uso". Caso límite (spec): si el bloqueo termina a mitad del reto,
+ * se considera expirado (se libera la app de inmediato, sin exigir terminar).
  */
-export function isChallengeExpired(state: ChallengeState, now: Timestamp): boolean {
-  return getUsageDayKey(now) !== state.dayKey;
+export function isChallengeExpired(state: ChallengeState, blocks: Block[], now: Timestamp): boolean {
+  const owningBlock = blocks.find((block) => block.id === state.blockId);
+  return owningBlock === undefined || !isBlockActive(owningBlock, now);
 }

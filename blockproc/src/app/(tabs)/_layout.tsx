@@ -12,19 +12,16 @@ const TINT = {
 const TAB_BAR_BG = { light: "#ebeef6", dark: "#181c22" };
 const TAB_BAR_BORDER = { light: "#c0c7d5", dark: "#3f4550" };
 
-// T90 (Fase 8, Plan D20): agrupa Ajustes/Apps/Bloqueo horario bajo una barra
-// de pestañas real. El grupo "(tabs)" no cambia la URL de sus rutas
-// (settings.tsx sigue resolviendo a "/settings"), así que index.tsx no
-// necesita tocarse. Sin header propio: cada pantalla ya trae su título.
+// Fase 10 (rediseño, T138): "Apps" y "Bloqueo horario" desaparecen como
+// pestañas propias (D32): la selección de apps pasa a ser el paso 1 del
+// asistente de creación de un bloqueo, y el "Bloqueo horario" único deja de
+// existir, reemplazado por la lista de bloqueos. Quedan solo Ajustes y
+// Bloqueos.
 export default function TabsLayout() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
 
   return (
     <Tabs
-      // T94 (Plan D20): Atrás desde Apps/Bloqueo horario vuelve primero a
-      // Ajustes (la primera pestaña, registrada arriba); "firstRoute" ya es
-      // el valor por defecto de React Navigation, se deja explícito para que
-      // la decisión no dependa de un default que la librería podría cambiar.
       backBehavior="firstRoute"
       screenOptions={{
         headerShown: false,
@@ -44,16 +41,9 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="apps"
+        name="blocks"
         options={{
-          title: "Apps",
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>▦</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="schedule"
-        options={{
-          title: "Bloqueo horario",
+          title: "Bloqueos",
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>◷</Text>,
         }}
       />

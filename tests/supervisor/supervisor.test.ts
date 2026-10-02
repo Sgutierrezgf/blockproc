@@ -1,8 +1,8 @@
-import { createDefaultConfig } from "../../blockproc/src/core/config";
-import type { Config } from "../../blockproc/src/core/config";
 import { createFakeClock } from "../../blockproc/src/core/clock";
 import { createInMemoryStore } from "../../blockproc/src/storage/keyValueStore";
-import { loadPolicyState } from "../../blockproc/src/supervisor/policyRepository";
+import { createPolicyState } from "../../blockproc/src/core/policy";
+import type { Block } from "../../blockproc/src/core/blocks";
+import { loadPolicyState, savePolicyState } from "../../blockproc/src/supervisor/policyRepository";
 import { createSupervisor } from "../../blockproc/src/supervisor/supervisor";
 import type { NativeAdapter } from "../../blockproc/src/supervisor/nativeAdapter";
 
@@ -11,7 +11,6 @@ const PKG = "com.instagram.android";
 type Call =
   | { type: "showChallenge"; packageName: string }
   | { type: "showWait"; packageName: string }
-  | { type: "showRestBlock" }
   | { type: "goHome" }
   | { type: "showNotification"; notifyType: string; text: string };
 
@@ -21,100 +20,101 @@ function createFakeNativeAdapter(): NativeAdapter & { calls: Call[] } {
     calls,
     showChallenge: (packageName) => calls.push({ type: "showChallenge", packageName }),
     showWait: (packageName) => calls.push({ type: "showWait", packageName }),
-    showRestBlock: () => calls.push({ type: "showRestBlock" }),
     goHome: () => calls.push({ type: "goHome" }),
     showNotification: (notifyType, text) => calls.push({ type: "showNotification", notifyType, text }),
   };
 }
 
-function configCon(cambios: Partial<Config>): Config {
-  return { ...createDefaultConfig(), restrictedPackages: [PKG], dailyLimitMin: 5, ...cambios }; // 300_000 ms
+function makeBlock(overrides: Partial<Block> = {}): Block {
+  return {
+    id: "b1",
+    packages: [PKG],
+    type: "duration",
+    startAt: 0,
+    endAt: 1_000_000,
+    category: "general",
+    focusMessage: "foco",
+    blockMessage: "bloqueado",
+    warnedStart: false,
+    ...overrides,
+  };
 }
 
-// RF-9, RF-27: el supervisor conecta eventos nativos con el reductor
-// (policy.ts) y con lo nativo, guardando el estado tras cada evento.
+function seedBlocks(store: ReturnType<typeof createInMemoryStore>, blocks: Block[]): void {
+  savePolicyState(store, { ...createPolicyState(), blocks });
+}
+
+// RF-27, RF-62, RF-63: el supervisor conecta eventos nativos con el
+// reductor (policy.ts) y con lo nativo, guardando el estado tras cada evento.
 describe("createSupervisor", () => {
-  it("un ForegroundChanged que abre una app ya bloqueada dispara ShowChallenge y guarda el estado", () => {
-    const config = configCon({});
+  it("un ForegroundChanged con un bloqueo activo cubriendo la app dispara ShowAccess y guarda el estado", () => {
     const clock = createFakeClock(0);
     const store = createInMemoryStore();
+    seedBlocks(store, [makeBlock()]);
     const native = createFakeNativeAdapter();
-    const supervisor = createSupervisor({ native, store, clock, getConfig: () => config });
+    const supervisor = createSupervisor({ native, store, clock });
 
-    supervisor.onForegroundChanged(PKG); // abre la app restringida
-    clock.advance(300_000); // agota el límite mientras sigue abierta
-    supervisor.onForegroundChanged(null); // la cierra
-    clock.advance(1_000);
+    supervisor.onForegroundChanged(PKG);
 
-    supervisor.onForegroundChanged(PKG); // la vuelve a abrir: ya está bloqueada
     expect(native.calls).toEqual([{ type: "showChallenge", packageName: PKG }]);
-
     const saved = loadPolicyState(store);
-    expect(saved.usage.foregroundPackage).toBe(PKG);
-    expect(saved.usage.usedMs[PKG]).toBeGreaterThanOrEqual(300_000);
+    expect(saved.foregroundPackage).toBe(PKG);
   });
 
-  it("una app no restringida en primer plano no dispara ninguna acción, pero igual guarda el estado", () => {
-    const config = configCon({});
+  it("una app sin ningún bloqueo que la cubra no dispara ninguna acción, pero igual guarda el estado", () => {
     const clock = createFakeClock(0);
     const store = createInMemoryStore();
     const native = createFakeNativeAdapter();
-    const supervisor = createSupervisor({ native, store, clock, getConfig: () => config });
+    const supervisor = createSupervisor({ native, store, clock });
 
     supervisor.onForegroundChanged("com.chrome.browser");
     expect(native.calls).toEqual([]);
 
     const saved = loadPolicyState(store);
-    expect(saved.usage.foregroundPackage).toBe("com.chrome.browser");
+    expect(saved.foregroundPackage).toBe("com.chrome.browser");
   });
 
-  it("NotifyLimitWarning se traduce en showNotification con el tipo \"limit\"", () => {
-    const config = configCon({});
+  it("NotifyBlockStarting se traduce en showNotification con el tipo \"blockStarting\"", () => {
     const clock = createFakeClock(0);
     const store = createInMemoryStore();
+    seedBlocks(store, [makeBlock({ type: "scheduled", startAt: 100_000, endAt: 200_000 })]);
     const native = createFakeNativeAdapter();
-    const supervisor = createSupervisor({ native, store, clock, getConfig: () => config });
+    const supervisor = createSupervisor({ native, store, clock });
 
-    supervisor.onForegroundChanged(PKG);
-    clock.advance(300_000 - 60_000); // a falta de 1 min del límite (RF-30)
+    clock.advance(100_000 - 60_000); // 1 minuto antes de que empiece (RF-68)
     supervisor.onTick();
 
     expect(native.calls).toEqual([
-      { type: "showNotification", notifyType: "limit", text: expect.any(String) },
+      { type: "showNotification", notifyType: "blockStarting", text: expect.any(String) },
     ]);
   });
 
   it("una segunda instancia del supervisor retoma el estado guardado por la primera (como tras un reinicio)", () => {
-    const config = configCon({});
     const clock = createFakeClock(0);
     const store = createInMemoryStore();
-    const primero = createSupervisor({ native: createFakeNativeAdapter(), store, clock, getConfig: () => config });
+    seedBlocks(store, [makeBlock()]);
+    const primero = createSupervisor({ native: createFakeNativeAdapter(), store, clock });
 
-    primero.onForegroundChanged(PKG);
-    clock.advance(120_000);
-    primero.onForegroundChanged(null); // se guarda con 120_000 ms acumulados
+    primero.onForegroundChanged(PKG); // guarda foregroundPackage = PKG
 
     const native = createFakeNativeAdapter();
-    const segundo = createSupervisor({ native, store, clock, getConfig: () => config });
+    const segundo = createSupervisor({ native, store, clock });
     // Si de verdad partió del estado guardado (no de uno nuevo en blanco),
-    // con 180_000 ms más alcanza justo el límite de 300_000 ms.
-    segundo.onForegroundChanged(PKG);
-    clock.advance(180_000);
+    // el bloqueo sembrado sigue ahí y un Tick ya dispara ShowAccess.
     segundo.onTick();
 
     expect(native.calls).toEqual([{ type: "showChallenge", packageName: PKG }]);
   });
 
-  it("onScreenOff / onScreenOn no disparan acciones por sí solos", () => {
-    const config = configCon({});
+  it("onScreenOff / onScreenOn no disparan acciones por sí solos sin ningún bloqueo", () => {
     const clock = createFakeClock(0);
     const store = createInMemoryStore();
     const native = createFakeNativeAdapter();
-    const supervisor = createSupervisor({ native, store, clock, getConfig: () => config });
+    const supervisor = createSupervisor({ native, store, clock });
 
     supervisor.onForegroundChanged(PKG);
     supervisor.onScreenOff();
-    clock.advance(10_000_000); // pasa mucho tiempo con la pantalla apagada
+    clock.advance(10_000_000);
     supervisor.onScreenOn();
 
     expect(native.calls).toEqual([]);

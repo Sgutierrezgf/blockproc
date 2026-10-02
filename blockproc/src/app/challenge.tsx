@@ -5,85 +5,64 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
 import { loadOrStartChallenge, submitAnswer } from "../challenge/challengeFlow";
+import { findActiveBlockForPackage } from "../core/blocks";
+import type { Block } from "../core/blocks";
 import { getCurrentQuestion } from "../core/challengeState";
 import { createSystemClock } from "../core/clock";
-import type { Config } from "../core/config";
 import { createSystemRandom } from "../core/random";
 import type { ChallengeState } from "../core/challengeState";
 import type { Question } from "../core/questions";
 import questionBankData from "../data/questions.es.json";
-import { loadConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
+import { loadPolicyState } from "../supervisor/policyRepository";
 import { Banner } from "../components/Banner";
 import { PrimaryButton } from "../components/PrimaryButton";
 
 const questionBank = questionBankData as Question[];
 
 // Principio 7 de la constitución: nunca Date.now()/Math.random() directo,
-// siempre un Clock/Random inyectable (aquí, los reales: no hay ninguno
-// falso que inyectar en una pantalla real).
+// siempre un Clock/Random inyectable (aquí, los reales).
 const clock = createSystemClock();
 const random = createSystemRandom();
 
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 
-// RF-11, RF-12, RF-13, RF-37, RF-39 (T59): la pantalla que Kotlin abre por
-// enlace profundo (`blockproc://challenge?pkg=…`, T48) sobre la app
-// bloqueada. Arma o retoma el reto con el core ya probado (challengeFlow.ts
-// conecta T19 a T23 con el almacenamiento real) y solo se ocupa de mostrar
-// la pregunta actual, o el resultado final si ya se acertó o se falló.
-// T72 (Fase 7, sistema "Mindful Calm"): mismo comportamiento de siempre,
-// solo cambia la presentación. Sin el círculo de check ni la cuenta atrás
-// visual del mock. El botón "Continuar a la app" del mock sí se agregó
-// (T89, RF-47) una vez que hubo una acción real que hacer con él
-// (moveToBackground); "Volver sin abrir" no: no hay ninguna acción
-// distinta de "ir a Inicio" que ya no cubra el botón físico Atrás en el
-// resto de pantallas de bloqueo.
-// T78: sin BackButton a propósito (RF-13: sin ninguna salida durante el
-// reto); el header nativo que antes exponía una flecha "atrás" tocable
-// (bypass de esta misma regla) ya no existe (ver _layout.tsx).
+type Step = "reflect" | "confirm" | "questions";
+
+// RF-62 a RF-67 (Fase 10): la pantalla que Kotlin abre por enlace profundo
+// (`blockproc://challenge?pkg=…`) sobre la app cubierta por un bloqueo
+// activo. D30: el paso reflexivo (RF-63) y la confirmación (RF-64) son
+// estados locales de esta misma pantalla, antes de llegar al reto de
+// siempre — mismo archivo y ruta que ya abre lo nativo, sin tocar Kotlin.
+// Sin BackButton a propósito (RF-62: sin ninguna salida salvo el reto).
 export default function Challenge() {
-  // "t" (T63, ver BlockprocNativeModule.kt): MainActivity es singleTask y
-  // sigue viva mientras la app restringida la tapa, así que Expo Router
-  // nunca deja de estar en "/challenge"; un segundo aviso para la misma app
-  // llega con el mismo "pkg" y, sin este instante que cambia cada vez, esta
-  // pantalla no se entera y se queda mostrando el resultado del reto
-  // anterior en vez de pedir uno nuevo (RF-14).
   const { pkg, t } = useLocalSearchParams<{ pkg?: string; t?: string }>();
   const packageName = pkg ?? "";
 
-  const [config, setConfig] = useState<Config>(() => loadConfig(defaultStore));
-  const [challenge, setChallenge] = useState<ChallengeState>(
-    () => loadOrStartChallenge(defaultStore, packageName, questionBank, config, clock.now(), random).challenge
-  );
-  // Ajuste de estado durante el render (no en un efecto) al cambiar "t":
-  // React documenta este patrón para "reiniciar" el estado de una pantalla
-  // que se reutiliza con props/params distintos sin volver a montarse.
+  const loadBlock = (): Block | null => findActiveBlockForPackage(loadPolicyState(defaultStore).blocks, packageName, clock.now());
+
+  const [step, setStep] = useState<Step>("reflect");
+  const [block, setBlock] = useState<Block | null>(loadBlock);
+  const [challenge, setChallenge] = useState<ChallengeState | null>(null);
+
+  // Ajuste de estado durante el render (no en un efecto) al cambiar "t": ver
+  // la misma nota que ya usaban las pantallas de bloqueo de versiones
+  // anteriores — MainActivity es singleTask y sigue viva mientras la app
+  // bloqueada la tapa, así que esta ruta nunca deja de estar montada.
   const [loadedTrigger, setLoadedTrigger] = useState(t);
   if (t !== loadedTrigger) {
     setLoadedTrigger(t);
-    const freshConfig = loadConfig(defaultStore);
-    setConfig(freshConfig);
-    setChallenge(
-      loadOrStartChallenge(defaultStore, packageName, questionBank, freshConfig, clock.now(), random).challenge
-    );
+    setStep("reflect");
+    setBlock(loadBlock());
+    setChallenge(null);
   }
 
-  const answer = (selectedIndex: number) => {
-    const result = submitAnswer(defaultStore, packageName, challenge, selectedIndex, config, clock.now());
-    setChallenge(result.challenge);
-  };
-
-  // RF-13, RF-39 (T62, Plan D13): Atrás en el reto nunca vuelve a la app
-  // restringida a medio resolver; manda al inicio de Android, igual que un
-  // fallo. RF-47, C7 (T89): la única excepción es el estado de éxito — ahí
-  // ya no hay nada que proteger (la ventana de acceso ya se concedió), así
-  // que Atrás hace lo mismo que el botón "Continuar a la app": revela lo
-  // que haya debajo en vez de ir a Inicio. El efecto se vuelve a registrar
-  // cuando cambia el resultado para que el listener siempre vea el actual.
+  // RF-62: Atrás nunca vuelve a la app bloqueada a medio resolver; manda al
+  // inicio de Android — salvo en el éxito del reto, donde ya no hay nada que
+  // proteger (D30, mismo criterio que versiones anteriores).
   useEffect(() => {
     const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
-      if (challenge.outcome === "success") {
+      if (step === "questions" && challenge?.outcome === "success") {
         BlockprocNative.moveToBackground();
       } else {
         BlockprocNative.goHome();
@@ -91,7 +70,80 @@ export default function Challenge() {
       return true;
     });
     return () => subscription.remove();
-  }, [challenge.outcome]);
+  }, [step, challenge?.outcome]);
+
+  // RF-62: si por algún motivo ya no hay ningún bloqueo activo cubriendo
+  // esta app (terminó justo ahora), no hay nada que mostrar: se libera.
+  if (block === null) {
+    return null;
+  }
+
+  if (step === "reflect") {
+    return (
+      <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
+        <ScrollView
+          contentContainerClassName="flex-1 items-center justify-center gap-6 bg-surface p-6 dark:bg-surface-dark"
+          className="bg-surface dark:bg-surface-dark"
+        >
+          <Text className="text-center font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
+            ¿Para qué querés usar esta app?
+          </Text>
+          <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+            {block.focusMessage}
+          </Text>
+          <View className="w-full">
+            <PrimaryButton title="Continuar" onPress={() => setStep("confirm")} />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  if (step === "confirm") {
+    return (
+      <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
+        <ScrollView
+          contentContainerClassName="flex-1 items-center justify-center gap-6 bg-surface p-6 dark:bg-surface-dark"
+          className="bg-surface dark:bg-surface-dark"
+        >
+          <Text className="text-center font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
+            ¿Estás seguro?
+          </Text>
+          <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+            Te voy a hacer 3 preguntas para darte acceso.
+          </Text>
+          <View className="w-full flex-row gap-3">
+            <Pressable
+              onPress={() => setStep("reflect")}
+              className="flex-1 items-center justify-center rounded-2xl bg-surface-container-high p-4 dark:bg-surface-container-high-dark"
+            >
+              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">No</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                const result = loadOrStartChallenge(defaultStore, packageName, block.id, block.category, questionBank, clock.now(), random);
+                setChallenge(result.challenge);
+                setStep("questions");
+              }}
+              className="flex-1 items-center justify-center rounded-2xl bg-primary p-4 dark:bg-primary-dark"
+            >
+              <Text className="font-label-lg text-label-lg text-on-primary dark:text-on-primary-dark">Sí</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  // step === "questions"
+  if (challenge === null) {
+    return null;
+  }
+
+  const answer = (selectedIndex: number) => {
+    const result = submitAnswer(defaultStore, packageName, challenge, selectedIndex, clock.now());
+    setChallenge(result.challenge);
+  };
 
   if (challenge.outcome === "success") {
     return (
@@ -104,13 +156,10 @@ export default function Challenge() {
             ¡Correcto!
           </Text>
           <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
-            Ya podés usar la app durante {config.accessWindowMin} min.
+            Ya podés usar la app durante 2 min.
           </Text>
           <View className="mt-4 w-full">
-            <PrimaryButton
-              title="Continuar a la app"
-              onPress={() => BlockprocNative.moveToBackground()}
-            />
+            <PrimaryButton title="Continuar a la app" onPress={() => BlockprocNative.moveToBackground()} />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -118,7 +167,6 @@ export default function Challenge() {
   }
 
   if (challenge.outcome === "failure") {
-    const failed = challenge.failedQuestion;
     return (
       <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
         <ScrollView
@@ -126,10 +174,10 @@ export default function Challenge() {
           className="bg-surface dark:bg-surface-dark"
         >
           <Text className="font-headline-lg text-headline-lg font-bold text-error dark:text-error-dark">
-            Respuesta incorrecta
+            Respuestas incorrectas
           </Text>
-          {failed && (
-            <View className="gap-2 rounded-3xl bg-surface-container p-4 shadow-sm dark:bg-surface-container-dark">
+          {challenge.failedQuestions.map((failed, index) => (
+            <View key={index} className="gap-2 rounded-3xl bg-surface-container p-4 shadow-sm dark:bg-surface-container-dark">
               <Text className="font-headline-sm text-headline-sm font-semibold text-on-surface dark:text-on-surface-dark">
                 {failed.question}
               </Text>
@@ -142,12 +190,8 @@ export default function Challenge() {
                 </Text>
               )}
             </View>
-          )}
-          <Banner
-            tone="locked"
-            title="Espacio de descanso activado"
-            description="Esta app queda bloqueada durante 3 minutos."
-          />
+          ))}
+          <Banner tone="locked" title="Espacio de descanso activado" description="Esta app queda bloqueada durante 5 minutos." />
         </ScrollView>
       </SafeAreaView>
     );
@@ -160,19 +204,14 @@ export default function Challenge() {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
-      <ScrollView
-        contentContainerClassName="gap-6 bg-surface p-6 dark:bg-surface-dark"
-        className="bg-surface dark:bg-surface-dark"
-      >
+      <ScrollView contentContainerClassName="gap-6 bg-surface p-6 dark:bg-surface-dark" className="bg-surface dark:bg-surface-dark">
         <View className="gap-3">
           <View className="flex-row gap-2">
             {challenge.questions.map((_, index) => (
               <View
                 key={index}
                 className={`h-1.5 flex-1 rounded-full ${
-                  index <= challenge.currentIndex
-                    ? "bg-primary dark:bg-primary-dark"
-                    : "bg-surface-container-high dark:bg-surface-container-high-dark"
+                  index <= challenge.currentIndex ? "bg-primary dark:bg-primary-dark" : "bg-surface-container-high dark:bg-surface-container-high-dark"
                 }`}
               />
             ))}
@@ -196,9 +235,7 @@ export default function Challenge() {
                   {OPTION_LETTERS[index] ?? index + 1}
                 </Text>
               </View>
-              <Text className="flex-1 font-body-lg text-body-lg text-on-surface dark:text-on-surface-dark">
-                {option}
-              </Text>
+              <Text className="flex-1 font-body-lg text-body-lg text-on-surface dark:text-on-surface-dark">{option}</Text>
             </Pressable>
           ))}
         </View>
@@ -206,3 +243,4 @@ export default function Challenge() {
     </SafeAreaView>
   );
 }
+

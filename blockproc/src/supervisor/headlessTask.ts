@@ -2,7 +2,6 @@ import { AppRegistry } from "react-native";
 
 import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
 import { createSystemClock } from "../core/clock";
-import { loadConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
 import { dispatchSupervisorEvent } from "./dispatchSupervisorEvent";
 import type { SupervisorTaskData } from "./dispatchSupervisorEvent";
@@ -16,7 +15,6 @@ export const SUPERVISOR_TASK_NAME = "BlockprocSupervisor";
 const realNativeAdapter: NativeAdapter = {
   showChallenge: (packageName) => BlockprocNative.showChallenge(packageName),
   showWait: (packageName) => BlockprocNative.showWait(packageName),
-  showRestBlock: () => BlockprocNative.showRestBlock(),
   goHome: () => BlockprocNative.goHome(),
   showNotification: (type, text) => BlockprocNative.showNotification(type, text),
 };
@@ -29,7 +27,6 @@ function createRealSupervisor() {
     native: realNativeAdapter,
     store: defaultStore,
     clock: createSystemClock(),
-    getConfig: () => loadConfig(defaultStore),
   });
 }
 

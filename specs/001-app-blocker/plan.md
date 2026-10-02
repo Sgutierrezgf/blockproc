@@ -1,7 +1,15 @@
-# Plan 001 — Bloqueo consciente de apps con reto y bloqueo horario
+# Plan 001 — Bloqueo consciente de apps con bloqueos múltiples y reto
 
-Cubre la spec `specs/001-app-blocker/spec.md` (RF-1 a RF-54). Respeta `docs/constitution.md`.
-Sin código: solo módulos, datos, decisiones y estrategia de pruebas.
+Cubre la spec `specs/001-app-blocker/spec.md` (RF-1 a RF-72, tras el rediseño de 2026-10-01).
+Respeta `docs/constitution.md`. Sin código: solo módulos, datos, decisiones y estrategia de
+pruebas.
+
+> **Nota de versión:** las secciones 1 a 6 describen la arquitectura **vigente tras el
+> rediseño** (sistema de bloqueos múltiples). Las decisiones D1 a D24 y las secciones
+> narrativas de abajo documentan el historial completo hasta la Fase 9 (modelo anterior,
+> límite diario + bloqueo horario único) y se conservan tal cual por trazabilidad, aunque
+> varias ya no describan el comportamiento actual — ver la nota de migración de `spec.md`
+> para saber exactamente qué RF sigue vigente.
 
 ## 1. Enfoque general
 
@@ -16,11 +24,13 @@ La app se divide en **tres capas** con una frontera estricta (constitución, pri
 **Idea central: el cerebro es una función pura.** El core expone un único reductor:
 
 ```
-reduce(state, event, now, config) → { state, actions }
+reduce(state, event, now) → { state, actions }
 ```
 
-- **Eventos** (llegan de lo nativo o de la UI): `ForegroundChanged(pkg)`, `Tick`, `ScreenOn`, `ScreenOff`, `BootCompleted`, `AnswerSubmitted`, `RestBlockConfirmed`, `RestBlockCancelled`, `ConfigChanged`.
-- **Acciones** (las ejecuta lo nativo o la UI): `ShowChallenge(pkg)`, `ShowWait(pkg, hasta)`, `ShowRestBlock(hasta)`, `Notify(tipo)`, `GoHome`.
+- **Eventos** (llegan de lo nativo o de la UI): `ForegroundChanged(pkg)`, `Tick`, `ScreenOn`, `ScreenOff`, `BootCompleted`, `AnswerSubmitted`, `BlockCreated`, `BlockEdited`, `BlockDeleted`.
+- **Acciones** (las ejecuta lo nativo o la UI): `ShowAccess(pkg)` (el paso reflexivo, RF-63), `ShowWait(pkg, hasta)`, `NotifyBlockStarting(blockId)`, `GoHome`.
+- `config` deja de pasarse al reductor: ya no hay configuración global que afecte la decisión (límite, preguntas, ventana eran por `Config`; ahora cada `Block` ya trae su propia categoría y mensajes incluidos en el estado).
+- `ShowRestBlock` desaparece: ningún bloqueo es "sin salida", todos usan `ShowAccess`.
 - Como no toca el reloj ni el sistema, cada criterio de aceptación se reproduce con eventos y un reloj falso.
 
 ## 2. Estructura del proyecto
@@ -30,25 +40,31 @@ El proyecto Expo vive en `blockproc/`. Se usa **Continuous Native Generation**: 
 ```
 blockproc/
 ├── src/
-│   ├── app/             # rutas (Expo Router): ajustes, apps, bloqueo horario, reto, espera
+│   ├── app/
+│   │   ├── (tabs)/
+│   │   │   ├── settings.tsx    # Ajustes: mensajes por defecto (RF-70), nota de batería (RF-44)
+│   │   │   └── blocks.tsx      # Bloqueos: lista tipo alarma (RF-55), botón "+"
+│   │   ├── create-block.tsx    # asistente de creación (RF-56 a RF-60), paso a paso con estado local
+│   │   ├── challenge.tsx        # mismo archivo/ruta de siempre, extendido: reflexión → confirmación → reto (RF-63 a RF-67, D30)
+│   │   ├── wait.tsx             # espera de 5 min tras fallar (RF-66), adaptado
+│   │   └── index.tsx            # permisos (sin cambios)
 │   ├── core/            # TS puro, sin imports de react-native
 │   │   ├── clock.ts         # Clock (real y falso)
-│   │   ├── config.ts        # tipos, valores por defecto, validación
-│   │   ├── configChange.ts  # cambios inmediatos vs. diferidos a las 04:00
+│   │   ├── config.ts        # mensajes por defecto (RF-70), validación
 │   │   ├── exclusions.ts    # apps no restringibles
-│   │   ├── usage.ts         # contadores y día de uso 04:00–04:00
-│   │   ├── restBlock.ts     # bloqueo horario
-│   │   ├── challenge.ts     # sesión de reto (barajar, responder, persistir)
+│   │   ├── blocks.ts        # NUEVO: Block, estado, solapamiento, filtrar terminados (reemplaza restBlock.ts)
+│   │   ├── challengeState.ts    # adaptado: wrongCount, blockId en vez de dayKey
+│   │   ├── challengeQuestions.ts / challengeSession.ts / questionSelector.ts  # reusados, una sola categoría
 │   │   ├── questions.ts     # banco local, ciclo sin repetición, generador
-│   │   ├── policy.ts        # reductor: estado por app + eventos → acciones
+│   │   ├── policy.ts        # reductor: estado por app + bloqueos → acciones
 │   │   └── types.ts
+│   │   # usage.ts se borra (RF-36 retirado, C33)
 │   ├── data/questions.es.json
 │   ├── storage/         # repositorio sobre MMKV (única puerta de persistencia)
-│   ├── native/          # tipos TS de los módulos Kotlin
-│   ├── runtime/         # supervisor: conecta eventos nativos con el core
-│   └── ui/              # componentes
-├── modules/blockproc-native/   # módulo local de Expo (Kotlin): servicio, permisos, apps, notificaciones, lanzar reto
-└── plugins/withBlockprocAndroid   # plugin de configuración: permisos, servicio, receptor de arranque
+│   ├── supervisor/      # conecta eventos nativos con el core (sin cambios de forma)
+│   └── components/      # AppPicker (extraído de apps.tsx, reusado por create-block.tsx), Banner, etc.
+├── modules/blockproc-native/   # módulo local de Expo (Kotlin): servicio, permisos, apps, notificaciones, lanzar reto/espera (showRestBlock se retira)
+└── plugins/withBlockprocAndroid   # plugin de configuración: permisos, servicio, receptor de arranque (sin cambios)
 tests/                   # pruebas del core (carpeta de la raíz del repo)
 ```
 
@@ -56,27 +72,30 @@ tests/                   # pruebas del core (carpeta de la raíz del repo)
 
 Todo se guarda en el dispositivo (RF-25) mediante el repositorio de `storage/`.
 
-**Configuración** (global, RF-2)
-- `restrictedPackages: string[]`
-- `dailyLimitMin` (5–240, paso 5; por defecto 30), `questionCount` (1–3), `accessWindowMin` (5–10)
-- `areas: Area[]` (mínimo una), `focusMessage`, `restBlockMessage` (máx. 120 caracteres)
-- `pendingChanges: { applyAt, changes }` para los cambios que relajan la restricción (RF-29)
+**Bloqueos** (`blocks: Block[]`, RF-55 a RF-62)
+- `Block`: `{ id, packages: string[], type: "duration" | "scheduled", startAt, endAt, category: Area (una sola, RF-57), focusMessage, blockMessage, warnedStart }` — ambos tipos terminan con `startAt`/`endAt` concretos (D25): "por tiempo" calcula `endAt` al confirmarse (`startAt = ahora`), "programado" usa los elegidos por el usuario.
+- La lista nunca contiene bloqueos ya terminados: se filtran al leer (RF-55, D33), igual que `promoteNextRestBlockIfNeeded` de la Fase 9 pero removiendo en vez de ascender.
+- Duración válida para ambos tipos: > 0 min y ≤ 12 h (RF-56, igual que el viejo `isValidRestBlockRange`).
 
-**Estado por app** (`appState[pkg]`)
-- `dayKey` (día de uso, corte a las 04:00) y `usedMs`
-- `mode`: `free | blocked | window | cooldown`
-- `windowEndsAt`, `cooldownUntil`
-- `warnedLimit`, `warnedWindow` (para no repetir avisos)
-- `challenge?`: reto en curso (preguntas ya barajadas, índice, respuestas) hasta las 04:00 (RF-39)
+**Estado de acceso por app** (`apps: Record<string, AppAccessState>`)
+- `AppAccessState`: `{ windowEndsAt, cooldownUntil }` — más simple que antes: sin `warnedLimit`/`warnedWindow` (esos avisos desaparecieron) ni `dayKey`/`usedMs` (RF-36 retirado, C33 de la spec).
+- `windowEndsAt`: cronómetro fijo de 2 min desde que se acierta el reto (RF-67), no acumulación de uso.
+- `cooldownUntil`: cronómetro fijo de 5 min desde que se acumulan 2 fallos (RF-66).
 
-**Bloqueo horario** (el activo/programado de siempre, más uno "próximo" nuevo — D21)
-- `restBlock: RestBlockState | null` (el de siempre): `startAt`, `endAt` (marcas de tiempo absolutas), `cancelled`, `warned2min`
-- `nextRestBlock: RestBlockState | null` (nuevo, Fase 9): mismo shape, nunca se evalúa con `isRestBlockActive`/`getRestBlockStatus` mientras `restBlock` siga activo — solo se "asciende" a `restBlock` cuando este termina (RF-53)
+**Reto en curso** (`challenge?: ChallengeState`, por app)
+- `ChallengeState`: `{ questions (≤3), currentIndex, wrongCount, failedQuestions: Question[], outcome, blockId }` (D27, D28).
+- `blockId` reemplaza `dayKey`: el reto se conserva (preguntas, progreso) hasta resolverse, fallar, o que ese bloqueo deje de estar activo (RF-39 adaptado, C32) — ya no hay corte a las 04:00.
+
+**Ajustes** (RF-70)
+- `defaultFocusMessage`, `defaultBlockMessage` (máx. 120 caracteres cada uno) — prellenan el paso de mensajes de `create-block.tsx`; todo lo demás de la config vieja (`dailyLimitMin`, `questionCount`, `accessWindowMin`, `areas`, `restrictedPackages`) desaparece.
+
+**Foreground tracking**
+- `foregroundPackage: string | null`, simple: ya no hace falta registrar segmentos ni acumular tiempo (RF-36 retirado) — solo para que `Tick` sepa qué app reevaluar.
 
 **Ciclo de preguntas**
-- `usedIds` por área, para no repetir hasta agotar (RF-11)
+- `usedIds` por categoría, para no repetir hasta agotar (sin cambios de mecanismo, ahora se consulta con una sola categoría a la vez en vez de varias combinadas).
 
-**Banco de preguntas** (`data/questions.es.json`)
+**Banco de preguntas** (`data/questions.es.json`, sin cambios)
 - `{ id, area, question, options[4], correctIndex, explanation? }`
 - Las áreas de texto: `general`, `technology`, `health`, `science`. La matemática y lógica no está en el JSON: la produce el generador (RF-24).
 
@@ -111,29 +130,42 @@ Todos los tiempos se guardan como **marcas absolutas**, por eso sobreviven al re
 | D22b | **Fase 9, C14 (corrección durante T97).** `computeNextRestBlockStart(start, currentEndAt)` calcula el inicio tomando `currentEndAt` (no "ahora") como referencia de día, y si esa hora cae en o después de `currentEndAt` lo usa; si no, suma 24 h (día siguiente) | Reutilizar `confirmRestBlock(start, end, now)` tal cual (el plan original) | "Ahora" siempre cae *dentro* del bloqueo activo mientras se programa el próximo: una hora de mañana ya "pasada hoy" se interpretaba como "empezar ya" (lógica de RF-34, pensada para confirmar desde un estado libre) y se rechazaba sin motivo. Calcular desde `currentEndAt` elimina el caso por completo: cualquier rango válido (RF-17) siempre encuentra cuándo ocurre, sin rechazos | RF-54 |
 | D23 | **Fase 9.** Indicador de "programado" (RF-50): nueva función pura en `core/restBlock.ts`, `getPendingRestBlock(restBlock, nextRestBlock, now)`, que devuelve el bloqueo relevante a mostrar como "programado" — `restBlock` si su estado es `"scheduled"` (caso ya existente, hoy invisible fuera de la pestaña Bloqueo horario — la causa real del bug reportado), si no `nextRestBlock` si existe, si no `null`. `settings.tsx` y `apps.tsx` la consultan junto a `isEditingLocked` | Mirar `restBlock`/`nextRestBlock` por separado en cada pantalla | Lógica de negocio pura, testeable sin dispositivo (constitución 6); evita repetir el mismo `if` en cada pantalla que lo muestre | RF-50 |
 | D24 | **Fase 9.** Texto explicativo de RF-51 como contenido estático en `settings.tsx` (un párrafo fijo, sin configuración ni estado) | Tooltips por campo; modal "¿Cómo funciona?" | Cambio mínimo y de bajo riesgo para resolver la confusión reportada; no agrega ningún componente ni estado nuevo | RF-51 |
+| D25 | **Rediseño.** Un `Block` guarda `startAt`/`endAt` concretos para **ambos** tipos ("por tiempo" los calcula al confirmarse; "programado" usa los elegidos por el usuario) | Dos modelos de datos separados (`DurationBlock`/`ScheduledBlock`) | Unifica la detección de solapamiento (RF-59) y el cálculo de estado (programado/activo/terminado) en una sola función para los dos tipos; solo difieren en cómo se calculan al crear, nunca en tiempo de evaluación | RF-56, 59 |
+| D26 | Solapamiento: función pura `findOverlap(blocks, packages, startAt, endAt, excludeId?)` que compara intervalos cerrados por cada app en común | Dejar que colisionen y resolver en tiempo real cuál manda | RF-59 exige rechazar la creación, no arbitrar un ganador; se llama también al editar un bloqueo programado (RF-61), excluyéndose a sí mismo | RF-59, 61 |
+| D27 | `ChallengeState` reemplaza `dayKey` (expiraba a las 04:00) por `blockId` (expira cuando ese bloqueo deja de estar activo) | Mantener `dayKey` y agregar `blockId` aparte | Ya no existe "día de uso" en el modelo nuevo (RF-7 retirado); `isChallengeExpired` pasa a consultar la lista de bloqueos en vez de un calendario | RF-39 (adaptado) |
+| D28 | El reto corta al acumular 2 respuestas incorrectas (`wrongCount`), sin importar la posición; llegar a la 3ª pregunta solo es posible con 0 o 1 fallo previo, así que terminarlas las 3 siempre es éxito | Comprobar "¿al menos 2 de 3 correctas?" como un paso aparte al final | Más simple: el reductor no necesita una cuenta final separada, el corte temprano y el criterio de éxito son la misma condición vista desde dos lados (ver C28 de la spec) | RF-65, 67 |
+| D29 | Al fallar, se muestran las respuestas correctas de **las dos preguntas falladas**, no solo la última | Mostrar solo la última fallada (como el RF-13 viejo, pensado para un único fallo) | Con dos fallos posibles, ocultar el primero sería menos informativo sin ningún motivo — sigue el espíritu de H5 ("quiero ver la respuesta correcta para aprender") | RF-66 |
+| D30 | El paso reflexivo (RF-63) y la confirmación (RF-64) son estados locales dentro de **`challenge.tsx`** (mismo archivo y ruta de siempre, sin renombrar), con `step: "reflect" \| "confirm" \| "questions"` | Rutas separadas para cada paso; renombrar a `access.tsx` | Mismo patrón que D22 (Fase 9): evita duplicar el manejo de `hardwareBackPress` en varias pantallas. Mantener el nombre/ruta evita tocar el módulo nativo: `BlockprocNative.showChallenge(pkg)` ya abre `blockproc://challenge?pkg=…`, sin ningún cambio en Kotlin | RF-63, 64 |
+| D31 | `restblock.tsx` se elimina por completo; su reemplazo es `access.tsx`, igual que para cualquier otro bloqueo. La función nativa `showRestBlock()` y su enlace profundo se retiran del módulo nativo | Dejar `showRestBlock()` sin uso "por si acaso" | Ya no existe ningún bloqueo "sin salida" (C15); mantener código nativo muerto no tiene beneficio y confunde a quien lea `MonitorService.kt` después | RF-62 |
+| D32 | La selección de apps se extrae a un componente reusable (ya no una pestaña propia), consumido como paso 1 de `create-block.tsx` | Mantener `apps.tsx` como pantalla independiente y navegar hacia ella desde el asistente | El paso 1 del asistente es exactamente esa misma pantalla (buscador, categorías, esenciales — RF-1, 28, 46, 48, 49); separarla en una ruta aparte solo agregaría navegación sin necesidad | RF-56 (C25 de la spec) |
+| D33 | `blocks.tsx` filtra, en cada lectura, los bloqueos cuyo `endAt` ya pasó — no se persiste ningún estado "terminado" | Guardar un campo `status` que se actualiza por evento | Más simple y sin riesgo de quedar desactualizado: el estado siempre se deriva de `now` en el momento de leer, igual que ya hacía `getRestBlockStatus` en la Fase 9 | RF-55 |
+| D34 | Se borra `core/usage.ts` y sus tests por completo | Dejarlo sin usar "por si hace falta después" | RF-36 retirado (C33 de la spec): ningún módulo restante necesita acumulación de tiempo de uso real; `foregroundPackage` pasa a ser un campo simple de `PolicyState`, sin segmentos | RF-36 (retirado) |
+| D35 | Ajustes (mensajes por defecto, RF-70) se puede editar **siempre**, sin ningún `isEditingLocked` global — se borran `core/configChange.ts` y la lógica de "pendiente hasta las 04:00" de `applyAndSaveConfig.ts` | Mantener el bloqueo de edición global mientras cualquier bloqueo esté activo (como el viejo RF-19) | Cambiar el default en Ajustes nunca afecta a un bloqueo ya activo (RF-62: sus mensajes quedan congelados desde que se creó, son una copia, no una referencia) — no hay ningún motivo real para impedir editarlo | RF-70 |
+| D36 | **Corrección durante T112-T116.** Al quitar un bloqueo terminado (`removeEndedBlocksIfNeeded`), también se borra el estado de acceso (`windowEndsAt`/`cooldownUntil`) de cada app de ese bloqueo, no solo el bloqueo | Dejar el estado de acceso tal cual, confiando en el orden de los chequeos de `evaluateForegroundApp` | Un test propio lo encontró: con una espera de 5 min de un bloqueo que ya terminó, un bloqueo *nuevo y distinto* que más tarde cubra la misma app heredaba esa espera vieja, mostrando `ShowWait` en vez del flujo normal — exactamente el caso límite C31 de la spec, pero causado por datos obsoletos, no por el orden de evaluación. Limpiar el estado al quitar el bloqueo lo evita de raíz | RF-62, 66, 67 |
 
 ## 5. Módulos y RF que cubre cada uno
 
+> La tabla de abajo describe el reparto **tras el rediseño**. Ver "Módulos y RF" previos a
+> esta edición (historial en `git log`) para el reparto del modelo anterior.
+
 | Módulo | Contenido | RF | Verificación |
 |---|---|---|---|
-| `core/config` | Valores por defecto, rangos, validación, datos corruptos | 2, 3, 4, 5, 6, 35, 41 | Auto |
-| `core/configChange` | Endurecer al instante, relajar a las 04:00, cambios neutrales | 29 | Auto |
+| `core/config` | Mensajes por defecto, validación, datos corruptos/modelo anterior | 41, 70 | Auto |
 | `core/exclusions` | Filtra apps esenciales a partir de los paquetes que da lo nativo | 28 | Auto (filtro); Manual (identificación real de paquetes) |
-| `core/usage` | Contadores por app, corte 04:00, ignora < 1 s | 7, 8, 36 | Auto |
-| `core/restBlock` | Rango que cruza medianoche, tope 12 h, cancelar antes, activación inmediata, horario de verano | 17, 20, 32, 34, 42 | Auto |
-| `core/challenge` | Reto en curso, barajar opciones, éxito/fallo, conservar al abandonar | 11, 12, 13, 14, 37, 39 | Auto |
-| `core/questions` | Carga y validación del banco, ciclo sin repetir, generador matemático | 11, 23, 24 | Auto |
-| `core/policy` | Reductor: estado por app y bloqueo horario → acciones | 8, 9, 10, 12, 13, 15, 16, 18, 19, 21, 22, 30, 31, 33, 38, 40, 45 | Auto (decisiones) |
-| `storage` | Repositorio sobre MMKV, reinicio de contadores dañados | 25, 41 | Auto (con doble en memoria) |
-| Nativo: servicio y receptor de arranque | Servicio en primer plano, sondeo, pantalla, reanudar tras reinicio | 27, 43, 45 | Manual |
-| Nativo: permisos y lista de apps | Permisos, lista de apps, paquetes esenciales | 1, 26, 28 | Manual |
-| Nativo: lanzar reto y notificar | Abrir `/challenge`, notificaciones | 9, 15, 30, 31, 33 | Manual |
-| UI | Pantallas: permisos, ajustes, selector de apps, bloqueo horario y confirmación, reto, espera, nota de batería | 1–6, 18, 19, 26, 32, 35, 38, 44 | Manual |
+| `core/blocks` | Tipo/estado de bloqueo (programado/activo/terminado), solapamiento, filtrar terminados, validación de duración | 55, 56, 59, 61, 62, 68, 72 | Auto |
+| `core/challengeState` / `challenge/challengeFlow` | Reto de hasta 3 preguntas, corta al 2º fallo, concede ventana o inicia espera, conserva al abandonar | 37, 65, 66, 67 (vía `policy`) | Auto |
+| `core/questions` | Carga y validación del banco, ciclo sin repetir (una categoría), generador matemático | 23, 24 | Auto |
+| `core/policy` | Reductor: estado por app + bloqueos → acciones (`ShowAccess`, `ShowWait`, `NotifyBlockStarting`) | 62, 63, 64, 65, 66, 67, 68, 72 | Auto (decisiones) |
+| `storage` | Repositorio sobre MMKV, descarta datos del modelo anterior | 25, 41 | Auto (con doble en memoria) |
+| Nativo: servicio y receptor de arranque | Sin cambios de comportamiento; deja de invocar `showRestBlock` | 27, 43, 45 | Manual |
+| Nativo: permisos y lista de apps | Sin cambios | 1, 26, 28 | Manual |
+| Nativo: lanzar reto/espera y notificar | `showChallenge`/`showWait` reusados sin cambios (D30); `showRestBlock` retirado (D31); aviso 2 min generalizado a cualquier bloqueo "programado" | 63, 66, 68 | Manual |
+| UI | Lista de bloqueos, asistente de creación (RF-56 a RF-60), acceso (reflexión+confirmación+reto), espera, Ajustes reducido | 1, 46, 48, 49, 55–64, 69, 70, 44 | Manual |
 
 ## 6. Estrategia de pruebas
 
-1. **Unitarias del core (Jest, primero).** Un archivo por módulo en `tests/`, con reloj falso. Casos límite: rango 21:00–06:00, día de uso a las 04:00, exactamente 3 min de espera, ventana activa al empezar un bloqueo horario, ciclo de preguntas con pocas restantes.
-2. **Escenarios de "un día de uso".** Secuencias de eventos sobre el reductor que reproducen los criterios de aceptación de la spec: límite alcanzado con la app abierta, reto, ventana, aviso, fallo con espera, bloqueo horario, reinicio con estado guardado.
+1. **Unitarias del core (Jest, primero).** Un archivo por módulo en `tests/`, con reloj falso. Casos límite: bloqueo que cruza medianoche, duración de 0 min y de más de 12 h (rechazados), solapamiento de franjas por app compartida (duración+duración, duración+programado, programado+programado), exactamente 5 min de espera, ventana de 2 min, corte del reto al 2º fallo en cualquier posición, ciclo de preguntas con pocas restantes en una sola categoría.
+2. **Escenarios de "un bloqueo de punta a punta".** Secuencias de eventos sobre el reductor que reproducen los criterios de aceptación de la spec: crear un bloqueo, que se active, abrir una app incluida (reflexión → confirmación → reto), fallo con espera, acierto con ventana, bloqueo que termina a mitad del reto/espera/ventana (se libera de inmediato), reinicio con bloqueos guardados en cualquier estado.
 3. **Validación del banco.** Un test recorre `questions.es.json`: 4 opciones, `correctIndex` válido, área conocida, sin duplicados, al menos 60 por área de texto.
 4. **Nativo y UI: demo manual** en un móvil real con Android 17, con la lista de RF marcada en la spec, incluido el modo avión y el reinicio durante un bloqueo. Lo nativo se mantiene fino (sin decisiones) para acotar el riesgo.
 5. **Calidad:** `tsc --noEmit` y ESLint en cada tarea (constitución 10).
@@ -415,14 +447,75 @@ Verificación en el Pixel 6a, de punta a punta, de las 4 features de la Fase 9 (
 
 **Veredicto: Fase 9 completa.** Las 4 features aprobadas por el usuario están implementadas con SDD completo (RF-50 a RF-54, C11-C14, D21-D24), verificadas en el dispositivo real incluyendo el ascenso automático observado en vivo, sin alterar ningún comportamiento previo.
 
+### Rediseño de fondo: sistema de bloqueos múltiples (2026-10-01)
+
+Tras un día de uso real sobre la Fase 9 recién terminada, el usuario reportó un bloqueo sin
+preguntas; al diagnosticarlo (ver `spec.md`, nota de rediseño) se descubrió que el modelo
+entero de "límite diario global + bloqueo horario único sin salida" nunca fue lo que el
+usuario pidió — la excepción "sin salida" del bloqueo horario (constitución, principio 3,
+vigente desde la Fase 0) fue una suposición incorrecta arrastrada todo el proyecto, nunca
+confirmada con el usuario. Se corrió el proceso completo de nuevo: constitución (principio 3
+amendado), spec (RF-55 a RF-72, Fases 2 y 3 con QA propio), y este plan (secciones 1 a 6
+reemplazadas para describir la arquitectura nueva; D1-D24 se conservan como historial). Las
+Fases 0 a 9 (RF-1 a RF-54, retirados en su mayoría) quedaron documentadas como el modelo
+anterior, nunca borradas, por trazabilidad.
+
+### T140: verificación final de la Fase 10 (sistema de bloqueos múltiples)
+
+Verificación de punta a punta en el Pixel 6a de las 36 tareas de implementación (T105-T139,
+RF-55 a RF-72) más el recorrido completo en vivo exigido por T140:
+
+| Feature | Verificado | Notas |
+|---|---|---|
+| Lista de bloqueos, estado programado/activo (RF-55) | ✅ | "No tenés ningún bloqueo..." cuando está vacía; un bloqueo terminado desaparece de la lista sin dejar constancia (confirmado dos veces, con un bloqueo de 5 min y uno de 45 min) |
+| Tipos "por tiempo" y "programado" (RF-56) | ✅ | Wizard completo recorrido para ambos tipos; duración por defecto 45 min ajustable con +/- por separado en horas y minutos |
+| Categoría única por bloqueo (RF-57) | ✅ | "Conocimiento general" preseleccionado, un solo checkbox activable a la vez |
+| Mensajes de enfoque/bloqueo por bloqueo, prellenados (RF-58, RF-70) | ✅ | Prellenados con los valores de fábrica en el paso "Mensajes" del wizard |
+| Rechazo completo por solapamiento (RF-59) | ✅ | Con el bloqueo de Chrome activo (16:48-17:33), se intentó crear uno nuevo para Chrome a las 16:55: "No se puede crear — Ya hay un bloqueo en esa franja para 'com.android.chrome' (de 16:48 a 17:33)"; la lista quedó con un solo bloqueo (el original), confirmando que el rechazo es completo y no deja restos |
+| Resumen + confirmación con advertencia (RF-60) | ✅ | Pantalla "Resumen" con todos los campos y el aviso "Una vez creado, no se puede cancelar" antes de "Crear bloqueo" |
+| Editar/borrar un bloqueo programado (RF-61) | ✅ | Un bloqueo "programado" (sin empezar) permitió reabrir el wizard precargado y, por separado, un borrado con confirmación nativa (`Alert.alert`); ambos devolvieron la lista a su estado previo |
+| Bloqueo activo sin edición ni cancelación (RF-62) | ✅ | Mientras "Activo", la tarjeta no ofrece Editar/Borrar; la única salida es el flujo de acceso |
+| Flujo de acceso completo: reflexión → confirmación → 3 preguntas (RF-63 a RF-65) | ✅ | Recorrido en vivo dos veces completas (una con fallo intencional en una prueba anterior de esta misma fase, otra con acierto) |
+| Fallo a las 2 incorrectas + espera de 5 min (RF-66) | ✅ | Verificado en una verificación previa de esta misma tarea (antes de este tramo de la sesión) |
+| Acierto (≥2/3) + ventana de acceso de 2 min (RF-67) | ✅ | "¡Correcto! Ya podés usar la app durante 2 min." + "Continuar a la app" abrió Chrome libremente; confirmado con `dumpsys window` que Chrome quedó en foco |
+| Vencimiento de la ventana con el bloqueo aún activo exige el flujo de nuevo (RF-67, caso límite) | ✅ | Con un bloqueo de 45 min, se concedió la ventana de 2 min a las 16:49:57; al reabrir Chrome a las 16:52 (ventana vencida, bloqueo todavía activo hasta las 17:33) reapareció la pantalla de reflexión desde cero, sin acceso libre |
+| Valores fijos no configurables (RF-69) | ✅ | Sin ningún campo de configuración de cantidad/tiempos en Ajustes ni en el wizard; los textos están hardcodeados ("3 preguntas", "5 min", "2 min") |
+| Aviso 2 min antes de un bloqueo programado (RF-68) | — | No observado en vivo en esta sesión (la ventana de tiempo real se perdió por los mismos cortes de sesión ya documentados en T104); cubierto por 2 tests unitarios en `policy.test.ts`, estructuralmente idéntico al mecanismo de T104 ya verificado en vivo en la Fase 9 |
+| Reinicio del móvil con un bloqueo activo (RF-45 amendado) | — | Se decidió no repetirlo: el mecanismo nativo subyacente (persistencia del servicio tras reinicio) ya se verificó en vivo en las Fases 0, 7 y 9 sobre el mismo `BootReceiver`, sin cambios en esta fase |
+| Ajustes siempre editable (RF-70, sin `isEditingLocked`) | ✅ | Confirmado en una verificación previa de esta misma tarea |
+
+**Hallazgo de proceso:** la pantalla del flujo de acceso (`challenge.tsx`) no tiene salida propia
+(por diseño, RF-62/66) y su stack de navegación no se limpia al pasar a otra app — reabrir
+`blockproc` con `am start` después de "Continuar a la app" vuelve a mostrar la última pantalla
+del flujo (p. ej. "¡Correcto!") en vez de la pestaña Bloqueos. La forma confiable de navegar a
+una pestaña concreta durante las pruebas fue un deep link explícito
+(`adb shell am start -a android.intent.action.VIEW -d "blockproc://blocks"`), no el ícono del
+lanzador ni `KEYCODE_BACK` (que, en el wizard de creación, retrocede un paso completo del
+asistente en vez de solo cerrar el teclado — hay que distinguir "tocar fuera del campo para
+cerrar el teclado" de "`BACK` para salir del paso", y repetir el tap sobre el elemento real una
+vez cerrado el teclado).
+
+**Sin regresiones.** `tsc --noEmit`, `expo lint` y los 188 tests de Jest (23 suites) quedaron en
+verde. El dispositivo terminó la sesión con un único bloqueo real de Chrome activo hasta las
+17:33 (creado para estas pruebas) que se extingue solo, sin intervención — por diseño (RF-62) no
+hay forma de cancelarlo antes de tiempo.
+
+**Veredicto: Fase 10 completa.** El sistema de bloqueos múltiples (RF-55 a RF-72, C15-C33,
+D25-D36) está implementado con SDD completo y verificado en el dispositivo real, incluyendo los
+tres mecanismos más sensibles al tiempo (fallo, acierto con ventana, y vencimiento de ventana con
+bloqueo aún activo) y el rechazo por solapamiento. El único punto no observado en vivo (aviso de
+2 min antes de un "programado") queda cubierto por tests unitarios ya existentes y un mecanismo
+gemelo verificado en vivo en la Fase 9.
+
 ## 8. Cambios a la spec (aplicados)
 
 Con tu aprobación se aplicaron:
 - **S1.** El requisito de consumo dice ahora que la app en primer plano solo se consulta con la pantalla encendida y nunca con la pantalla apagada.
 - **S2.** RF-1: la lista muestra las apps con icono en el lanzador.
 - **S3.** RF-28: la cámara es la aplicación predeterminada del sistema, con identificación de mejor esfuerzo.
+- **S4 (rediseño, 2026-10-01).** Se retiró RF-36 (contaba tiempo de uso real para el límite diario): descubierto al diseñar el modelo de datos del rediseño que ningún mecanismo nuevo (reto, ventana de 2 min) necesita acumulación de uso, solo cronómetros fijos desde que se conceden — ver C33 de `spec.md` y D34 de este plan.
 
 ## 9. Después del plan
 
 - Rellenar los `<comando>` y `<proyecto>` de AGENTS.md cuando exista el proyecto: ejecutar (`npx expo run:android`), tests (`npm test`), lint (`npm run lint` y `npm run typecheck`).
-- Fase 5: dividir en tareas de menos de 30 minutos, con RF y "Hecho cuando", empezando por el prototipo de R1 a R4.
+- Siguiente paso: Fase 5, `tasks.md` — dividir el rediseño en tareas de menos de 30 minutos, con RF y "Hecho cuando", núcleo primero (tests), después integración nativa y pantallas, cerrando con la verificación RF por RF en el dispositivo real.

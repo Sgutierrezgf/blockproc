@@ -2,7 +2,7 @@
 
 1. Stack: React Native + TypeScript con `strict: true`; código nativo (Kotlin) solo para permisos, Foreground Service y funciones puntuales de integración con el sistema operativo (listar apps instaladas con su ícono y categoría, navegación del sistema: ir al inicio, enviar la app a segundo plano); nunca para lógica de negocio (principio 6) ni Servicio de Accesibilidad (principio 3).
 2. Plataforma: solo Android 8.0+ (`minSdkVersion 26`) en el MVP.
-3. Permisos: como permisos especiales, solo `PACKAGE_USAGE_STATS` y `SYSTEM_ALERT_WINDOW`, más los permisos normales imprescindibles para el servicio en primer plano y las notificaciones; nunca Servicio de Accesibilidad. La fricción es la norma; el bloqueo horario es la única excepción firme y solo por elección explícita del usuario.
+3. Permisos: como permisos especiales, solo `PACKAGE_USAGE_STATS` y `SYSTEM_ALERT_WINDOW`, más los permisos normales imprescindibles para el servicio en primer plano y las notificaciones; nunca Servicio de Accesibilidad. La fricción es la norma: todo bloqueo que crea el usuario, sin excepción, ofrece una salida mediante el reto de preguntas — no existe ningún bloqueo sin posibilidad de responder para acceder.
 4. Spec primero: no se escribe código sin RF en la spec activa; un cambio de requisito actualiza la spec antes.
 5. Tests primero para la lógica de negocio (preguntas, penalización, límites, ventana concedida).
 6. La lógica de negocio es TypeScript puro, separada de UI y de código nativo, y testeable sin dispositivo.

@@ -4,7 +4,7 @@ import { normalizeConfig, parseStoredConfig } from "../../blockproc/src/core/nor
 
 const defaults = createDefaultConfig();
 
-// RF-41: configuración corrupta o primera ejecución → valores por defecto.
+// RF-41: configuración corrupta, del modelo anterior, o primera ejecución → valores por defecto.
 describe("normalizeConfig", () => {
   it("undefined (primera ejecución) devuelve la configuración por defecto", () => {
     expect(normalizeConfig(undefined)).toEqual(defaults);
@@ -24,49 +24,26 @@ describe("normalizeConfig", () => {
     expect(normalizeConfig([])).toEqual(defaults);
   });
 
-  it("conserva los campos válidos y repara solo los dañados", () => {
-    const result = normalizeConfig({ dailyLimitMin: 60, questionCount: 999 });
-    expect(result.dailyLimitMin).toBe(60);
-    expect(result.questionCount).toBe(defaults.questionCount);
+  it("datos con la forma del modelo anterior (dailyLimitMin, restrictedPackages) se tratan como corruptos", () => {
+    const result = normalizeConfig({ dailyLimitMin: 60, restrictedPackages: ["com.example.app"] });
+    expect(result).toEqual(defaults);
   });
 
-  it("repara un límite diario fuera de rango", () => {
-    expect(normalizeConfig({ dailyLimitMin: 9999 }).dailyLimitMin).toBe(defaults.dailyLimitMin);
-  });
-
-  it("repara áreas vacías o con un valor desconocido", () => {
-    expect(normalizeConfig({ areas: [] }).areas).toEqual(defaults.areas);
-    expect(normalizeConfig({ areas: ["deportes"] }).areas).toEqual(defaults.areas);
-  });
-
-  it("conserva varias áreas válidas", () => {
-    expect(normalizeConfig({ areas: ["technology", "science"] }).areas).toEqual([
-      "technology",
-      "science",
-    ]);
+  it("conserva un mensaje válido y repara solo el dañado", () => {
+    const result = normalizeConfig({ defaultFocusMessage: "Mi mensaje", defaultBlockMessage: "a".repeat(121) });
+    expect(result.defaultFocusMessage).toBe("Mi mensaje");
+    expect(result.defaultBlockMessage).toBe(defaults.defaultBlockMessage);
   });
 
   it("repara un mensaje demasiado largo", () => {
-    const result = normalizeConfig({ focusMessage: "a".repeat(121) });
-    expect(result.focusMessage).toBe(defaults.focusMessage);
-  });
-
-  it("repara restrictedPackages si no es una lista de textos", () => {
-    expect(normalizeConfig({ restrictedPackages: "com.example" }).restrictedPackages).toEqual([]);
-    expect(normalizeConfig({ restrictedPackages: ["com.example.app"] }).restrictedPackages).toEqual([
-      "com.example.app",
-    ]);
+    const result = normalizeConfig({ defaultFocusMessage: "a".repeat(121) });
+    expect(result.defaultFocusMessage).toBe(defaults.defaultFocusMessage);
   });
 
   it("una configuración completa y válida se conserva tal cual", () => {
     const valid: Config = {
-      restrictedPackages: ["com.example.app"],
-      dailyLimitMin: 45,
-      questionCount: 3,
-      accessWindowMin: 10,
-      areas: ["health"],
-      focusMessage: "Mensaje propio",
-      restBlockMessage: "Otro mensaje",
+      defaultFocusMessage: "Mensaje propio",
+      defaultBlockMessage: "Otro mensaje",
     };
     expect(normalizeConfig(valid)).toEqual(valid);
   });
@@ -87,20 +64,14 @@ describe("parseStoredConfig", () => {
 
   it("un JSON válido con todos los campos se conserva", () => {
     const valid: Config = {
-      restrictedPackages: [],
-      dailyLimitMin: 60,
-      questionCount: 1,
-      accessWindowMin: 7,
-      areas: ["math"],
-      focusMessage: "Mensaje propio",
-      restBlockMessage: "Otro mensaje",
+      defaultFocusMessage: "Mensaje propio",
+      defaultBlockMessage: "Otro mensaje",
     };
     expect(parseStoredConfig(JSON.stringify(valid))).toEqual(valid);
   });
 
-  it("un JSON válido pero con un campo dañado repara solo ese campo", () => {
+  it("un JSON del modelo anterior se descarta y arranca con los valores de fábrica", () => {
     const result = parseStoredConfig(JSON.stringify({ dailyLimitMin: 60, questionCount: -1 }));
-    expect(result.dailyLimitMin).toBe(60);
-    expect(result.questionCount).toBe(defaults.questionCount);
+    expect(result).toEqual(defaults);
   });
 });

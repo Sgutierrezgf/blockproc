@@ -57,6 +57,17 @@ export function findActiveBlockForPackage(blocks: Block[], packageName: string, 
   );
 }
 
+/**
+ * RF-61, RF-62: solo un bloqueo que sigue programado (todavía guardado y sin
+ * empezar) se puede editar o borrar. Se comprueba de nuevo al confirmar,
+ * contra lo guardado y la hora de ese momento: el bloqueo puede empezar
+ * mientras el formulario o el diálogo de confirmación siguen abiertos.
+ */
+export function isBlockModifiable(blocks: Block[], blockId: string, now: Timestamp): boolean {
+  const block = blocks.find((candidate) => candidate.id === blockId);
+  return block !== undefined && getBlockStatus(block, now) === "scheduled";
+}
+
 export interface TimeOfDay {
   hour: number; // 0-23
   minute: number; // 0-59

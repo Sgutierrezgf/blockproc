@@ -1,6 +1,7 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
+import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
 import type { Language } from "../core/config";
 import { loadConfig, saveConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
@@ -28,6 +29,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const config = loadConfig(defaultStore);
     saveConfig(defaultStore, { ...config, language: next });
   };
+
+  // RF-76, RF-77: Android no ve este Context — la notificación fija del
+  // servicio y los nombres de canal se traducen guardando sus textos del
+  // lado nativo, al montar y en cada cambio de idioma.
+  useEffect(() => {
+    const texts = STRINGS[language].notifications;
+    BlockprocNative.setNotificationTexts(
+      texts.alertsChannelName,
+      texts.monitorChannelName,
+      texts.monitorTitle,
+      texts.monitorText
+    );
+  }, [language]);
 
   const value = useMemo(() => ({ language, setLanguage }), [language]);
 

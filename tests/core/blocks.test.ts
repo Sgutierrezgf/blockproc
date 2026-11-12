@@ -5,6 +5,7 @@ import {
   findOverlap,
   getBlockStatus,
   isBlockActive,
+  isBlockModifiable,
   isValidBlockDuration,
   removeEndedBlocks,
 } from "../../blockproc/src/core/blocks";
@@ -170,5 +171,27 @@ describe("findOverlap", () => {
     const ended = makeBlock({ id: "ended", packages: ["com.whatsapp"], startAt: 0, endAt: 5000 });
     const result = findOverlap([ended], ["com.whatsapp"], 1000, 6000, 10_000);
     expect(result).toBeNull();
+  });
+});
+
+// RF-61, RF-62: solo un bloqueo todavía programado se puede editar o borrar.
+// La comprobación se repite al confirmar (contra lo guardado y la hora de
+// ese momento), porque el bloqueo puede empezar mientras el formulario o el
+// diálogo de confirmación siguen abiertos.
+describe("isBlockModifiable", () => {
+  const block = makeBlock({ id: "b1", startAt: 1000, endAt: 2000 });
+
+  it("un bloqueo programado se puede modificar", () => {
+    expect(isBlockModifiable([block], "b1", 999)).toBe(true);
+  });
+
+  it("un bloqueo que ya empezó no se puede modificar", () => {
+    expect(isBlockModifiable([block], "b1", 1000)).toBe(false);
+    expect(isBlockModifiable([block], "b1", 1500)).toBe(false);
+  });
+
+  it("un bloqueo terminado o que ya no existe no se puede modificar", () => {
+    expect(isBlockModifiable([block], "b1", 2000)).toBe(false);
+    expect(isBlockModifiable([], "b1", 500)).toBe(false);
   });
 });

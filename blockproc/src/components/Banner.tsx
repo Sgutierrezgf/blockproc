@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 
 // T67 (Fase 7, sistema "Mindful Calm"): unifica los avisos de bloqueo
 // horario activo (rojo), cambios pendientes (azul) y la nota de batería
-// (ámbar) que antes eran cajas de color sueltas en settings.tsx/apps.tsx.
+// (ámbar) que antes eran cajas de color sueltas en personalization.tsx/apps.tsx.
 // Los tonos "pending" y "battery" usan roles "-fixed" de Material You
 // (iguales en claro y oscuro por diseño, ver tailwind.config.js); "locked"
 // sí varía entre temas, así que lleva `dark:`.

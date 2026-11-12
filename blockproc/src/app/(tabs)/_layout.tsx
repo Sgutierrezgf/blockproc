@@ -40,7 +40,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="settings"
+        name="personalization"
         options={{
           title: strings.personalization.title,
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>✎</Text>,
@@ -54,7 +54,7 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="ajustes"
+        name="settings"
         options={{
           title: strings.appSettings.title,
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>⚙</Text>,

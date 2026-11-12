@@ -1,13 +1,12 @@
 import type { Clock } from "../core/clock";
+import { getMonitorMode } from "../core/monitorMode";
 import { handleForegroundChanged, handleScreenOff, handleScreenOn, handleTick } from "../core/policy";
 import type { PolicyAction, PolicyResult } from "../core/policy";
+import { STRINGS } from "../i18n/strings";
+import { loadConfig } from "../storage/appRepository";
 import type { KeyValueStore } from "../storage/keyValueStore";
 import type { NativeAdapter } from "./nativeAdapter";
 import { loadPolicyState, savePolicyState } from "./policyRepository";
-
-// RF-68: texto fijo del aviso de bloqueo programado. A diferencia de
-// focusMessage/blockMessage (RF-58), no es configurable.
-const BLOCK_STARTING_NOTIFICATION_TEXT = "El bloqueo horario empieza en 2 minutos.";
 
 export interface SupervisorDeps {
   native: NativeAdapter;
@@ -23,8 +22,10 @@ export interface Supervisor {
 }
 
 // RF-63, RF-66, RF-68: cada acción del reductor se traduce en una sola
-// llamada a lo nativo.
-function runActions(native: NativeAdapter, actions: PolicyAction[]): void {
+// llamada a lo nativo. RF-76/77: el texto del aviso (fijo, no configurable
+// como focusMessage/blockMessage, RF-58) sale en el idioma guardado en la
+// configuración — la tarea Headless no tiene LanguageProvider.
+function runActions(native: NativeAdapter, store: KeyValueStore, actions: PolicyAction[]): void {
   for (const action of actions) {
     switch (action.type) {
       case "ShowAccess":
@@ -34,7 +35,10 @@ function runActions(native: NativeAdapter, actions: PolicyAction[]): void {
         native.showWait(action.packageName);
         break;
       case "NotifyBlockStarting":
-        native.showNotification("blockStarting", BLOCK_STARTING_NOTIFICATION_TEXT);
+        {
+          const strings = STRINGS[loadConfig(store).language].notifications;
+          native.showNotification("blockStarting", strings.blockStartingTitle, strings.blockStartingText);
+        }
         break;
     }
   }
@@ -51,7 +55,9 @@ export function createSupervisor(deps: SupervisorDeps): Supervisor {
   function apply(result: PolicyResult): void {
     state = result.state;
     savePolicyState(deps.store, state);
-    runActions(deps.native, result.actions);
+    runActions(deps.native, deps.store, result.actions);
+    // D4: con el estado ya actualizado, lo nativo ajusta su sondeo.
+    deps.native.setMonitorMode(getMonitorMode(state, deps.clock.now()));
   }
 
   return {

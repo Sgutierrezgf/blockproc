@@ -33,9 +33,21 @@ declare class BlockprocNativeModule extends NativeModule<BlockprocNativeEvents> 
   // RF-28 (T46): paquetes esenciales identificados de mejor esfuerzo
   // (marcador, Ajustes, lanzador, cámara y la propia app).
   getEssentialPackages(): string[];
-  // RF-15, RF-30, RF-33 (T47): notificación de aviso. "type" es "limit",
-  // "window" o "restBlock" (decide el título y evita que se acumulen).
-  showNotification(type: string, text: string): void;
+  // RF-68 (T47): notificación de aviso. "type" (hoy solo "blockStarting")
+  // decide el id, para que un aviso nuevo reemplace al anterior; título y
+  // texto llegan ya traducidos (RF-76/77).
+  showNotification(type: string, title: string, text: string): void;
+  // D4 (batería): "watch" sondea cada 500 ms con Tick cada 10 s; "idle",
+  // cada 5 s con Tick cada 60 s. El servicio arranca en "watch".
+  setMonitorMode(mode: "watch" | "idle"): void;
+  // RF-76, RF-77: textos de Android en el idioma elegido (nombres de canal y
+  // notificación fija del servicio); se guardan del lado nativo.
+  setNotificationTexts(
+    alertsChannelName: string,
+    monitorChannelName: string,
+    monitorTitle: string,
+    monitorText: string
+  ): void;
   // RF-9, RF-13, RF-18, RF-38, RF-39 (T48): acciones por enlace profundo,
   // cada una abre su ruta encima de la app restringida (o, en el caso de
   // goHome, envía al usuario al inicio de Android).

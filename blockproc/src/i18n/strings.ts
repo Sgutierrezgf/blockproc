@@ -47,6 +47,8 @@ export interface Strings {
     deleteConfirmMessage: string;
     deleteConfirmCancel: string;
     deleteConfirmConfirm: string;
+    alreadyStartedTitle: string;
+    alreadyStartedMessage: string;
     appsCount: (count: number) => string;
   };
   createBlock: {
@@ -86,6 +88,8 @@ export interface Strings {
     irreversibleExtremeDescription: string;
     cannotCreateTitle: string;
     overlapError: (packageName: string, from: string, to: string) => string;
+    cannotSaveTitle: string;
+    alreadyStartedError: string;
     saveChanges: string;
     createBlockButton: string;
   };
@@ -124,6 +128,16 @@ export interface Strings {
     languageEnglish: string;
     aboutSectionTitle: string;
     versionLabel: (version: string) => string;
+  };
+  // Textos que no muestra ninguna pantalla de React sino Android: el aviso
+  // del supervisor (tarea Headless) y la notificación fija del servicio.
+  notifications: {
+    blockStartingTitle: string;
+    blockStartingText: string;
+    alertsChannelName: string;
+    monitorChannelName: string;
+    monitorTitle: string;
+    monitorText: string;
   };
 }
 
@@ -171,6 +185,8 @@ export const STRINGS: Record<Language, Strings> = {
       deleteConfirmMessage: "¿Seguro que querés borrar este bloqueo programado?",
       deleteConfirmCancel: "Cancelar",
       deleteConfirmConfirm: "Borrar",
+      alreadyStartedTitle: "El bloqueo ya empezó",
+      alreadyStartedMessage: "Mientras esté activo no se puede borrar.",
       appsCount: (count) => `${count} app${count === 1 ? "" : "s"}`,
     },
     createBlock: {
@@ -221,6 +237,8 @@ export const STRINGS: Record<Language, Strings> = {
       cannotCreateTitle: "No se puede crear",
       overlapError: (packageName, from, to) =>
         `Ya hay un bloqueo en esa franja para "${packageName}" (de ${from} a ${to}).`,
+      cannotSaveTitle: "No se puede guardar",
+      alreadyStartedError: "Este bloqueo ya empezó: mientras esté activo no se puede editar.",
       saveChanges: "Guardar cambios",
       createBlockButton: "Crear bloqueo",
     },
@@ -271,6 +289,14 @@ export const STRINGS: Record<Language, Strings> = {
       aboutSectionTitle: "Acerca de",
       versionLabel: (version) => `Versión ${version}`,
     },
+    notifications: {
+      blockStartingTitle: "Bloqueo programado",
+      blockStartingText: "El bloqueo programado empieza en 2 minutos.",
+      alertsChannelName: "Avisos",
+      monitorChannelName: "Vigilancia de bloqueos",
+      monitorTitle: "blockproc",
+      monitorText: "Vigilando tus bloqueos",
+    },
   },
   en: {
     permissions: {
@@ -315,6 +341,8 @@ export const STRINGS: Record<Language, Strings> = {
       deleteConfirmMessage: "Are you sure you want to delete this scheduled block?",
       deleteConfirmCancel: "Cancel",
       deleteConfirmConfirm: "Delete",
+      alreadyStartedTitle: "The block has already started",
+      alreadyStartedMessage: "It can't be deleted while it's active.",
       appsCount: (count) => `${count} app${count === 1 ? "" : "s"}`,
     },
     createBlock: {
@@ -362,6 +390,8 @@ export const STRINGS: Record<Language, Strings> = {
         "While the block is active you will NOT be able to get into these apps in any way: not with questions, not by confirming anything. This is stronger than a normal block — make sure it's what you want before confirming.",
       cannotCreateTitle: "Can't be created",
       overlapError: (packageName, from, to) => `There's already a block in that time range for "${packageName}" (from ${from} to ${to}).`,
+      cannotSaveTitle: "Can't be saved",
+      alreadyStartedError: "This block has already started: it can't be edited while it's active.",
       saveChanges: "Save changes",
       createBlockButton: "Create block",
     },
@@ -411,6 +441,14 @@ export const STRINGS: Record<Language, Strings> = {
       languageEnglish: "English",
       aboutSectionTitle: "About",
       versionLabel: (version) => `Version ${version}`,
+    },
+    notifications: {
+      blockStartingTitle: "Scheduled block",
+      blockStartingText: "Your scheduled block starts in 2 minutes.",
+      alertsChannelName: "Alerts",
+      monitorChannelName: "Block monitoring",
+      monitorTitle: "blockproc",
+      monitorText: "Watching over your blocks",
     },
   },
 };

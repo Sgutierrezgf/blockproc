@@ -1,12 +1,12 @@
 import { Image, Pressable, Text, View } from "react-native";
 
 // T67 (Fase 7, sistema "Mindful Calm"): reemplaza los `AreaRow`/`AppRow`
-// casi idénticos que había en settings.tsx y apps.tsx. Sin lógica de
+// casi idénticos que había en personalization.tsx y apps.tsx. Sin lógica de
 // negocio: solo recibe el estado y avisa del toque.
 // T85 (Fase 8): `iconUri` es opcional a propósito — `apps.tsx` siempre lo
 // pasa (string o null, RF-48), así que todas sus filas reservan el mismo
 // espacio para el ícono (o su reemplazo) y quedan alineadas entre sí;
-// `settings.tsx` (áreas de preguntas) nunca lo pasa, y sigue exactamente
+// `personalization.tsx` (áreas de preguntas) nunca lo pasa, y sigue exactamente
 // igual que antes, sin espacio de ícono.
 export interface SelectableRowProps {
   label: string;

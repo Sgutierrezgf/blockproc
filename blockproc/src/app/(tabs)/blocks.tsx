@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getBlockStatus, removeEndedBlocks } from "../../core/blocks";
 import type { Block } from "../../core/blocks";
 import { createSystemClock } from "../../core/clock";
+import { useStrings } from "../../i18n/LanguageProvider";
 import { defaultStore } from "../../storage/defaultStore";
 import { loadPolicyState, savePolicyState } from "../../supervisor/policyRepository";
 
@@ -21,6 +22,7 @@ function formatTime(ts: number): string {
 // creación (create-block.tsx). Un bloqueo programado se puede editar o
 // borrar (RF-61); uno activo no ofrece ninguna de las dos (RF-62).
 export default function Blocks() {
+  const strings = useStrings().blocks;
   const [blocks, setBlocks] = useState<Block[]>(() => loadPolicyState(defaultStore).blocks);
 
   const refresh = useCallback(() => {
@@ -36,10 +38,10 @@ export default function Blocks() {
   useFocusEffect(refresh);
 
   const deleteBlock = (block: Block) => {
-    Alert.alert("Borrar bloqueo", "¿Seguro que querés borrar este bloqueo programado?", [
-      { text: "Cancelar", style: "cancel" },
+    Alert.alert(strings.deleteConfirmTitle, strings.deleteConfirmMessage, [
+      { text: strings.deleteConfirmCancel, style: "cancel" },
       {
-        text: "Borrar",
+        text: strings.deleteConfirmConfirm,
         style: "destructive",
         onPress: () => {
           const policyState = loadPolicyState(defaultStore);
@@ -63,16 +65,16 @@ export default function Blocks() {
         ListHeaderComponent={
           <View className="mb-2 gap-2">
             <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-              Bloqueos
+              {strings.title}
             </Text>
             <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-              Creá un bloqueo para las apps que querés limitar, por un tiempo o en una franja horaria.
+              {strings.subtitle}
             </Text>
           </View>
         }
         ListEmptyComponent={
           <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-            No tenés ningún bloqueo programado ni activo todavía.
+            {strings.emptyState}
           </Text>
         }
         renderItem={({ item }) => {
@@ -82,20 +84,30 @@ export default function Blocks() {
             <View className="gap-2 rounded-3xl bg-surface-container p-4 shadow-sm dark:bg-surface-container-dark">
               <View className="flex-row items-center justify-between">
                 <Text className="font-headline-sm text-headline-sm font-semibold text-on-surface dark:text-on-surface-dark">
-                  {item.packages.length} app{item.packages.length === 1 ? "" : "s"}
+                  {strings.appsCount(item.packages.length)}
                 </Text>
-                <View
-                  className={`rounded-full px-3 py-1 ${isActive ? "bg-error-container dark:bg-error-container-dark" : "bg-primary-fixed"}`}
-                >
-                  <Text
-                    className={`font-label-sm text-label-sm font-semibold ${isActive ? "text-on-error-container dark:text-on-error-container-dark" : "text-on-primary-fixed"}`}
+                <View className="flex-row gap-2">
+                  {item.extreme && (
+                    <View className="rounded-full bg-error px-3 py-1 dark:bg-error-dark">
+                      <Text className="font-label-sm text-label-sm font-semibold text-on-error dark:text-on-error-dark">
+                        {strings.extremeBadge}
+                      </Text>
+                    </View>
+                  )}
+                  <View
+                    className={`rounded-full px-3 py-1 ${isActive ? "bg-error-container dark:bg-error-container-dark" : "bg-primary-fixed"}`}
                   >
-                    {isActive ? "Activo" : "Programado"}
-                  </Text>
+                    <Text
+                      className={`font-label-sm text-label-sm font-semibold ${isActive ? "text-on-error-container dark:text-on-error-container-dark" : "text-on-primary-fixed"}`}
+                    >
+                      {isActive ? strings.activeBadge : strings.scheduledBadge}
+                    </Text>
+                  </View>
                 </View>
               </View>
               <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-                {isActive ? "Hasta las" : "Empieza a las"} {isActive ? formatTime(item.endAt) : formatTime(item.startAt)}
+                {isActive ? strings.untilLabel : strings.startsAtLabel}{" "}
+                {isActive ? formatTime(item.endAt) : formatTime(item.startAt)}
               </Text>
               {!isActive && (
                 <View className="flex-row gap-3">
@@ -103,13 +115,17 @@ export default function Blocks() {
                     onPress={() => router.push({ pathname: "/create-block", params: { editingId: item.id } })}
                     className="flex-1 items-center rounded-2xl bg-surface-container-high p-3 dark:bg-surface-container-high-dark"
                   >
-                    <Text className="font-label-md text-label-md text-on-surface dark:text-on-surface-dark">Editar</Text>
+                    <Text className="font-label-md text-label-md text-on-surface dark:text-on-surface-dark">
+                      {strings.editButton}
+                    </Text>
                   </Pressable>
                   <Pressable
                     onPress={() => deleteBlock(item)}
                     className="flex-1 items-center rounded-2xl bg-surface-container-high p-3 dark:bg-surface-container-high-dark"
                   >
-                    <Text className="font-label-md text-label-md text-error dark:text-error-dark">Borrar</Text>
+                    <Text className="font-label-md text-label-md text-error dark:text-error-dark">
+                      {strings.deleteButton}
+                    </Text>
                   </Pressable>
                 </View>
               )}

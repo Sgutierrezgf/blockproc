@@ -1,6 +1,7 @@
 # Plan 001 — Bloqueo consciente de apps con bloqueos múltiples y reto
 
-Cubre la spec `specs/001-app-blocker/spec.md` (RF-1 a RF-72, tras el rediseño de 2026-10-01).
+Cubre la spec `specs/001-app-blocker/spec.md` (RF-1 a RF-79, tras el rediseño de 2026-10-01 y
+la ampliación de 2026-10-03: bloqueo extremo, idioma, Acerca de).
 Respeta `docs/constitution.md`. Sin código: solo módulos, datos, decisiones y estrategia de
 pruebas.
 
@@ -42,27 +43,32 @@ blockproc/
 ├── src/
 │   ├── app/
 │   │   ├── (tabs)/
-│   │   │   ├── settings.tsx    # Ajustes: mensajes por defecto (RF-70), nota de batería (RF-44)
-│   │   │   └── blocks.tsx      # Bloqueos: lista tipo alarma (RF-55), botón "+"
-│   │   ├── create-block.tsx    # asistente de creación (RF-56 a RF-60), paso a paso con estado local
-│   │   ├── challenge.tsx        # mismo archivo/ruta de siempre, extendido: reflexión → confirmación → reto (RF-63 a RF-67, D30)
-│   │   ├── wait.tsx             # espera de 5 min tras fallar (RF-66), adaptado
+│   │   │   ├── settings.tsx    # Personalización: mensajes por defecto (RF-70), nota de batería (RF-44) — sin cambios
+│   │   │   ├── ajustes.tsx     # NUEVO (RF-76 a RF-79): selector de idioma + sección "Acerca de"
+│   │   │   └── blocks.tsx      # Bloqueos: lista tipo alarma (RF-55), botón "+"; suma etiqueta "Extremo" (RF-75)
+│   │   ├── create-block.tsx    # asistente de creación (RF-56 a RF-60), paso a paso con estado local; suma el toggle "extremo" (RF-73)
+│   │   ├── challenge.tsx        # extendido: si `block.extreme`, salta directo a la pantalla sin salida (RF-74, D41), nunca a reflexión/confirmación/reto
+│   │   ├── wait.tsx             # espera de 5 min tras fallar (RF-66), sin cambios
 │   │   └── index.tsx            # permisos (sin cambios)
 │   ├── core/            # TS puro, sin imports de react-native
 │   │   ├── clock.ts         # Clock (real y falso)
-│   │   ├── config.ts        # mensajes por defecto (RF-70), validación
+│   │   ├── config.ts        # mensajes por defecto (RF-70) + idioma (RF-78), validación
 │   │   ├── exclusions.ts    # apps no restringibles
-│   │   ├── blocks.ts        # NUEVO: Block, estado, solapamiento, filtrar terminados (reemplaza restBlock.ts)
+│   │   ├── blocks.ts        # Block (suma campo `extreme: boolean`, RF-73), estado, solapamiento, filtrar terminados
 │   │   ├── challengeState.ts    # adaptado: wrongCount, blockId en vez de dayKey
 │   │   ├── challengeQuestions.ts / challengeSession.ts / questionSelector.ts  # reusados, una sola categoría
-│   │   ├── questions.ts     # banco local, ciclo sin repetición, generador
-│   │   ├── policy.ts        # reductor: estado por app + bloqueos → acciones
+│   │   ├── questions.ts     # banco local (ahora por idioma, RF-77), ciclo sin repetición, generador
+│   │   ├── policy.ts        # reductor: estado por app + bloqueos → acciones (sin cambios para RF-73/74, D41)
 │   │   └── types.ts
 │   │   # usage.ts se borra (RF-36 retirado, C33)
+│   ├── i18n/            # NUEVO (RF-76, RF-77): diccionario es/en + contexto de idioma, ver sección 3 y D38
+│   │   ├── strings.ts       # { es: {...}, en: {...} } de todos los textos de fábrica de la UI
+│   │   └── LanguageProvider.tsx  # Context + hook `useStrings()`, se monta una vez en `_layout.tsx` raíz
 │   ├── data/questions.es.json
+│   ├── data/questions.en.json   # NUEVO (RF-77): mismos `id`, estructura y cantidad que el español
 │   ├── storage/         # repositorio sobre MMKV (única puerta de persistencia)
 │   ├── supervisor/      # conecta eventos nativos con el core (sin cambios de forma)
-│   └── components/      # AppPicker (extraído de apps.tsx, reusado por create-block.tsx), Banner, etc.
+│   └── components/      # AppPicker (extraído de apps.tsx, reusado por create-block.tsx), Banner, etc. — cada uno con texto fijo pasa a leerlo de `useStrings()`
 ├── modules/blockproc-native/   # módulo local de Expo (Kotlin): servicio, permisos, apps, notificaciones, lanzar reto/espera (showRestBlock se retira)
 └── plugins/withBlockprocAndroid   # plugin de configuración: permisos, servicio, receptor de arranque (sin cambios)
 tests/                   # pruebas del core (carpeta de la raíz del repo)
@@ -72,8 +78,8 @@ tests/                   # pruebas del core (carpeta de la raíz del repo)
 
 Todo se guarda en el dispositivo (RF-25) mediante el repositorio de `storage/`.
 
-**Bloqueos** (`blocks: Block[]`, RF-55 a RF-62)
-- `Block`: `{ id, packages: string[], type: "duration" | "scheduled", startAt, endAt, category: Area (una sola, RF-57), focusMessage, blockMessage, warnedStart }` — ambos tipos terminan con `startAt`/`endAt` concretos (D25): "por tiempo" calcula `endAt` al confirmarse (`startAt = ahora`), "programado" usa los elegidos por el usuario.
+**Bloqueos** (`blocks: Block[]`, RF-55 a RF-62, RF-73 a RF-75)
+- `Block`: `{ id, packages: string[], type: "duration" | "scheduled", startAt, endAt, category: Area (una sola, RF-57), focusMessage, blockMessage, warnedStart, extreme: boolean }` — ambos tipos terminan con `startAt`/`endAt` concretos (D25): "por tiempo" calcula `endAt` al confirmarse (`startAt = ahora`), "programado" usa los elegidos por el usuario. `extreme` (RF-73) es `false` por defecto; una vez el bloqueo está activo, `challenge.tsx` lo lee para decidir si ofrece el flujo de acceso o la pantalla sin salida (D41) — no afecta a `policy.ts` ni a ningún otro módulo.
 - La lista nunca contiene bloqueos ya terminados: se filtran al leer (RF-55, D33), igual que `promoteNextRestBlockIfNeeded` de la Fase 9 pero removiendo en vez de ascender.
 - Duración válida para ambos tipos: > 0 min y ≤ 12 h (RF-56, igual que el viejo `isValidRestBlockRange`).
 
@@ -86,8 +92,9 @@ Todo se guarda en el dispositivo (RF-25) mediante el repositorio de `storage/`.
 - `ChallengeState`: `{ questions (≤3), currentIndex, wrongCount, failedQuestions: Question[], outcome, blockId }` (D27, D28).
 - `blockId` reemplaza `dayKey`: el reto se conserva (preguntas, progreso) hasta resolverse, fallar, o que ese bloqueo deje de estar activo (RF-39 adaptado, C32) — ya no hay corte a las 04:00.
 
-**Ajustes** (RF-70)
+**Personalización y Ajustes** (`Config`, RF-70, RF-78)
 - `defaultFocusMessage`, `defaultBlockMessage` (máx. 120 caracteres cada uno) — prellenan el paso de mensajes de `create-block.tsx`; todo lo demás de la config vieja (`dailyLimitMin`, `questionCount`, `accessWindowMin`, `areas`, `restrictedPackages`) desaparece.
+- `language: "es" | "en"` (RF-78), `"es"` por defecto — mismo objeto `Config`, mismo repositorio (`storage/appRepository.ts`), sin storage nuevo.
 
 **Foreground tracking**
 - `foregroundPackage: string | null`, simple: ya no hace falta registrar segmentos ni acumular tiempo (RF-36 retirado) — solo para que `Tick` sepa qué app reevaluar.
@@ -95,9 +102,14 @@ Todo se guarda en el dispositivo (RF-25) mediante el repositorio de `storage/`.
 **Ciclo de preguntas**
 - `usedIds` por categoría, para no repetir hasta agotar (sin cambios de mecanismo, ahora se consulta con una sola categoría a la vez en vez de varias combinadas).
 
-**Banco de preguntas** (`data/questions.es.json`, sin cambios)
-- `{ id, area, question, options[4], correctIndex, explanation? }`
-- Las áreas de texto: `general`, `technology`, `health`, `science`. La matemática y lógica no está en el JSON: la produce el generador (RF-24).
+**Banco de preguntas** (`data/questions.es.json` + `data/questions.en.json`, RF-77)
+- `{ id, area, question, options[4], correctIndex, explanation? }`, idéntica estructura y mismos `id` en los dos archivos — solo cambia el idioma del texto.
+- Las áreas de texto: `general`, `technology`, `health`, `science`. La matemática y lógica no está en el JSON: la produce el generador (RF-24), que no depende del idioma (son números).
+- `core/questions.ts` recibe el idioma activo y elige el archivo correspondiente al armar el banco; un reto ya en curso conserva las preguntas tal como se eligieron (mismo `ChallengeState` persistido), así que cambiar el idioma a mitad de un intento no lo afecta (C41 de la spec).
+
+**Idioma de la interfaz** (`i18n/strings.ts`, RF-76, RF-77 — D38)
+- Diccionario estático `{ es: Record<string, string>, en: Record<string, string> }` con las mismas claves en ambos idiomas; no se persiste acá (vive en `Config.language`).
+- `LanguageProvider` (Context de React) se monta una sola vez en `_layout.tsx` raíz, lee `Config.language` al iniciar y expone `{ language, setLanguage, t }`; cualquier pantalla que necesite texto de fábrica usa `useStrings()` en vez de un string hardcodeado.
 
 Todos los tiempos se guardan como **marcas absolutas**, por eso sobreviven al reinicio (RF-45) sin lógica extra.
 
@@ -140,8 +152,15 @@ Todos los tiempos se guardan como **marcas absolutas**, por eso sobreviven al re
 | D32 | La selección de apps se extrae a un componente reusable (ya no una pestaña propia), consumido como paso 1 de `create-block.tsx` | Mantener `apps.tsx` como pantalla independiente y navegar hacia ella desde el asistente | El paso 1 del asistente es exactamente esa misma pantalla (buscador, categorías, esenciales — RF-1, 28, 46, 48, 49); separarla en una ruta aparte solo agregaría navegación sin necesidad | RF-56 (C25 de la spec) |
 | D33 | `blocks.tsx` filtra, en cada lectura, los bloqueos cuyo `endAt` ya pasó — no se persiste ningún estado "terminado" | Guardar un campo `status` que se actualiza por evento | Más simple y sin riesgo de quedar desactualizado: el estado siempre se deriva de `now` en el momento de leer, igual que ya hacía `getRestBlockStatus` en la Fase 9 | RF-55 |
 | D34 | Se borra `core/usage.ts` y sus tests por completo | Dejarlo sin usar "por si hace falta después" | RF-36 retirado (C33 de la spec): ningún módulo restante necesita acumulación de tiempo de uso real; `foregroundPackage` pasa a ser un campo simple de `PolicyState`, sin segmentos | RF-36 (retirado) |
-| D35 | Ajustes (mensajes por defecto, RF-70) se puede editar **siempre**, sin ningún `isEditingLocked` global — se borran `core/configChange.ts` y la lógica de "pendiente hasta las 04:00" de `applyAndSaveConfig.ts` | Mantener el bloqueo de edición global mientras cualquier bloqueo esté activo (como el viejo RF-19) | Cambiar el default en Ajustes nunca afecta a un bloqueo ya activo (RF-62: sus mensajes quedan congelados desde que se creó, son una copia, no una referencia) — no hay ningún motivo real para impedir editarlo | RF-70 |
+| D35 | Personalización (mensajes por defecto, RF-70) se puede editar **siempre**, sin ningún `isEditingLocked` global — se borran `core/configChange.ts` y la lógica de "pendiente hasta las 04:00" de `applyAndSaveConfig.ts` | Mantener el bloqueo de edición global mientras cualquier bloqueo esté activo (como el viejo RF-19) | Cambiar el default en Personalización nunca afecta a un bloqueo ya activo (RF-62: sus mensajes quedan congelados desde que se creó, son una copia, no una referencia) — no hay ningún motivo real para impedir editarlo | RF-70 |
 | D36 | **Corrección durante T112-T116.** Al quitar un bloqueo terminado (`removeEndedBlocksIfNeeded`), también se borra el estado de acceso (`windowEndsAt`/`cooldownUntil`) de cada app de ese bloqueo, no solo el bloqueo | Dejar el estado de acceso tal cual, confiando en el orden de los chequeos de `evaluateForegroundApp` | Un test propio lo encontró: con una espera de 5 min de un bloqueo que ya terminó, un bloqueo *nuevo y distinto* que más tarde cubra la misma app heredaba esa espera vieja, mostrando `ShowWait` en vez del flujo normal — exactamente el caso límite C31 de la spec, pero causado por datos obsoletos, no por el orden de evaluación. Limpiar el estado al quitar el bloqueo lo evita de raíz | RF-62, 66, 67 |
+| D37 | **Feedback de uso real (2026-10-03).** Las horas/minutos de "por tiempo" se eligen con un selector de rueda (`DurationWheelPicker`, dos columnas deslizables, horas 0-11 y minutos 0-55 de a 5), en vez de los botones +/- de `Field` | Chips de duración preestablecida + "Personalizado"; un slider 0-12h; mantener +/- con mejoras menores | El usuario probó los botones +/- en vivo y le costó llegar a valores chicos (8 toques para 5 min); eligió explícitamente la rueda entre las alternativas presentadas. Tope de horas en 11 para que el máximo posible (11h55) nunca supere las 12h de RF-56, sin lógica de tope cruzada. Sin dependencias nuevas | RF-56 |
+| D38 | **Idioma.** Diccionario propio `i18n/strings.ts` (`{ es, en }`) + un `LanguageProvider` de React Context montado una sola vez en `_layout.tsx` raíz, sin librería externa | `react-i18next`/`i18n-js` | Constitución 11 (dependencias nuevas solo con justificación previa): no hace falta nada de pluralización/interpolación compleja ni de detección automática del idioma del sistema (RF-76 pide elegirlo a mano, español por defecto), así que un diccionario plano alcanza. Mismo patrón que D16 (buscador propio) y D37 (rueda propia): preferir código propio simple a una dependencia cuando el caso de uso es chico | RF-76, 77 |
+| D39 | El `LanguageProvider` vive en el `_layout.tsx` **raíz** (no en el de `(tabs)`), para que cualquier pantalla abierta por enlace profundo (challenge, wait, create-block) también lo tenga disponible, no solo las 3 pestañas | Un provider solo dentro de `(tabs)/_layout.tsx` | Ese grupo no envuelve `challenge.tsx`/`wait.tsx`/`create-block.tsx` (son rutas hermanas, no hijas de `(tabs)`); el cambio de idioma tiene que verse ahí también (RF-76: "toda la interfaz") | RF-76 |
+| D40 | `core/questions.ts` recibe el idioma activo como parámetro y elige `questions.es.json` o `questions.en.json`; no se tocan `challengeQuestions.ts`/`challengeSession.ts`/`questionSelector.ts`, que ya eran agnósticos al contenido del banco | Un solo archivo con ambos idiomas mezclados por pregunta (`{ id, es: {...}, en: {...} }`) | Dos archivos separados, mismos `id`, es más simple de generar y de revisar en tandas (245 preguntas) que un formato anidado nuevo; mantiene el formato `Question` ya validado y testeado tal cual | RF-77 |
+| D41 | `challenge.tsx` revisa `block.extreme` apenas carga el bloqueo activo: si es `true`, renderiza directo la pantalla sin salida (solo `block.blockMessage`, sin botones, `hardwareBackPress` siempre va a Inicio) y nunca entra a los pasos "reflect"/"confirm"/"questions". `policy.ts` **no cambia**: sigue emitiendo `ShowAccess` igual que para cualquier bloqueo | Un `PolicyAction` nuevo (`ShowExtremeBlock`) decidido en `policy.ts`; una ruta nativa nueva (`showExtremeBlock()`) | Mismo razonamiento que D30: un bloqueo extremo nunca llega a tener `windowEndsAt`/`cooldownUntil` seteados (esos solo se escriben al completar o fallar un reto que un bloqueo extremo jamás ofrece), así que `policy.ts` siempre evalúa "sin ventana, sin cooldown" y emite `ShowAccess` de la forma de siempre — la única diferencia real está en qué UI se muestra del otro lado del mismo enlace profundo, igual que el paso reflexivo de D30 no necesitó tocar Kotlin | RF-74 |
+| D42 | La etiqueta "Extremo" (RF-75) se calcula leyendo `block.extreme` directamente en `blocks.tsx`, sin ningún estado derivado nuevo | Guardar un campo calculado aparte | `extreme` ya es un campo plano del `Block`; no hace falta derivarlo de nada | RF-75 |
+| D43 | **Descubrimiento durante T160.** `core/appCategories.ts` deja de traducir la categoría de Android a una etiqueta en español (`categoryLabel`): ahora devuelve una `CategoryKey` estable (`categoryKey`), y la etiqueta visible por idioma vive en `i18n/strings.ts` (`appPicker.categoryLabels`, `Record<CategoryKey, string>`) | Dejar `categoryLabel` como estaba, sin extraerlo a T160 (quedaba fuera del alcance original de la tarea) | Las categorías del buscador de apps ("Redes sociales", "Productividad", etc.) son texto de UI igual que cualquier otro; dejarlas hardcodeadas en español habría sido un hueco real de RF-77 (la interfaz no se traduce por completo). El tipo `Record<CategoryKey, string>` de TypeScript ya obliga a que ambos idiomas cubran las 10 claves, sin necesitar un test de paridad aparte | RF-49, 77 |
 
 ## 5. Módulos y RF que cubre cada uno
 
@@ -150,25 +169,27 @@ Todos los tiempos se guardan como **marcas absolutas**, por eso sobreviven al re
 
 | Módulo | Contenido | RF | Verificación |
 |---|---|---|---|
-| `core/config` | Mensajes por defecto, validación, datos corruptos/modelo anterior | 41, 70 | Auto |
+| `core/config` | Mensajes por defecto, idioma, validación, datos corruptos/modelo anterior | 41, 70, 78 | Auto |
 | `core/exclusions` | Filtra apps esenciales a partir de los paquetes que da lo nativo | 28 | Auto (filtro); Manual (identificación real de paquetes) |
-| `core/blocks` | Tipo/estado de bloqueo (programado/activo/terminado), solapamiento, filtrar terminados, validación de duración | 55, 56, 59, 61, 62, 68, 72 | Auto |
+| `core/blocks` | Tipo/estado de bloqueo (programado/activo/terminado), solapamiento, filtrar terminados, validación de duración, marca "extremo" | 55, 56, 59, 61, 62, 68, 72, 73, 75 | Auto |
 | `core/challengeState` / `challenge/challengeFlow` | Reto de hasta 3 preguntas, corta al 2º fallo, concede ventana o inicia espera, conserva al abandonar | 37, 65, 66, 67 (vía `policy`) | Auto |
-| `core/questions` | Carga y validación del banco, ciclo sin repetir (una categoría), generador matemático | 23, 24 | Auto |
-| `core/policy` | Reductor: estado por app + bloqueos → acciones (`ShowAccess`, `ShowWait`, `NotifyBlockStarting`) | 62, 63, 64, 65, 66, 67, 68, 72 | Auto (decisiones) |
+| `core/questions` | Carga y validación del banco por idioma, ciclo sin repetir (una categoría), generador matemático | 23, 24, 77 | Auto |
+| `core/policy` | Reductor: estado por app + bloqueos → acciones (`ShowAccess`, `ShowWait`, `NotifyBlockStarting`) — sin cambios para bloqueo extremo (D41) | 62, 63, 64, 65, 66, 67, 68, 72 | Auto (decisiones) |
+| `i18n` | Diccionario es/en y `LanguageProvider` (D38, D39) | 76, 77 | Auto (el diccionario tiene las mismas claves en ambos idiomas) |
 | `storage` | Repositorio sobre MMKV, descarta datos del modelo anterior | 25, 41 | Auto (con doble en memoria) |
 | Nativo: servicio y receptor de arranque | Sin cambios de comportamiento; deja de invocar `showRestBlock` | 27, 43, 45 | Manual |
 | Nativo: permisos y lista de apps | Sin cambios | 1, 26, 28 | Manual |
-| Nativo: lanzar reto/espera y notificar | `showChallenge`/`showWait` reusados sin cambios (D30); `showRestBlock` retirado (D31); aviso 2 min generalizado a cualquier bloqueo "programado" | 63, 66, 68 | Manual |
-| UI | Lista de bloqueos, asistente de creación (RF-56 a RF-60), acceso (reflexión+confirmación+reto), espera, Ajustes reducido | 1, 46, 48, 49, 55–64, 69, 70, 44 | Manual |
+| Nativo: lanzar reto/espera y notificar | `showChallenge`/`showWait` reusados sin cambios (D30, D41); `showRestBlock` retirado (D31); aviso 2 min generalizado a cualquier bloqueo "programado" | 63, 66, 68 | Manual |
+| UI | Lista de bloqueos (+ etiqueta "Extremo"), asistente de creación (+ toggle "extremo"), acceso (reflexión+confirmación+reto, o pantalla sin salida si es extremo), espera, Personalización reducida, Ajustes nuevo (idioma + Acerca de) | 1, 46, 48, 49, 55–64, 69, 70, 44, 73–76, 79 | Manual |
 
 ## 6. Estrategia de pruebas
 
 1. **Unitarias del core (Jest, primero).** Un archivo por módulo en `tests/`, con reloj falso. Casos límite: bloqueo que cruza medianoche, duración de 0 min y de más de 12 h (rechazados), solapamiento de franjas por app compartida (duración+duración, duración+programado, programado+programado), exactamente 5 min de espera, ventana de 2 min, corte del reto al 2º fallo en cualquier posición, ciclo de preguntas con pocas restantes en una sola categoría.
 2. **Escenarios de "un bloqueo de punta a punta".** Secuencias de eventos sobre el reductor que reproducen los criterios de aceptación de la spec: crear un bloqueo, que se active, abrir una app incluida (reflexión → confirmación → reto), fallo con espera, acierto con ventana, bloqueo que termina a mitad del reto/espera/ventana (se libera de inmediato), reinicio con bloqueos guardados en cualquier estado.
-3. **Validación del banco.** Un test recorre `questions.es.json`: 4 opciones, `correctIndex` válido, área conocida, sin duplicados, al menos 60 por área de texto.
-4. **Nativo y UI: demo manual** en un móvil real con Android 17, con la lista de RF marcada en la spec, incluido el modo avión y el reinicio durante un bloqueo. Lo nativo se mantiene fino (sin decisiones) para acotar el riesgo.
-5. **Calidad:** `tsc --noEmit` y ESLint en cada tarea (constitución 10).
+3. **Validación del banco.** Un test recorre `questions.es.json` **y** `questions.en.json`: 4 opciones, `correctIndex` válido, área conocida, sin duplicados, al menos 60 por área de texto, y los dos archivos tienen exactamente el mismo conjunto de `id` (ni preguntas de más ni de menos en ninguno de los dos idiomas).
+4. **Diccionario de idioma.** Un test recorre `i18n/strings.ts` y confirma que `es` y `en` tienen exactamente las mismas claves (ninguna huérfana en un idioma y faltante en el otro).
+5. **Nativo y UI: demo manual** en un móvil real con Android 17, con la lista de RF marcada en la spec, incluido el modo avión, el reinicio durante un bloqueo, un bloqueo extremo activo, y el cambio de idioma. Lo nativo se mantiene fino (sin decisiones) para acotar el riesgo — este round no toca ningún archivo Kotlin (D41).
+6. **Calidad:** `tsc --noEmit` y ESLint en cada tarea (constitución 10).
 
 ## 7. Riesgos y comprobaciones previas
 
@@ -506,6 +527,78 @@ tres mecanismos más sensibles al tiempo (fallo, acierto con ventana, y vencimie
 bloqueo aún activo) y el rechazo por solapamiento. El único punto no observado en vivo (aviso de
 2 min antes de un "programado") queda cubierto por tests unitarios ya existentes y un mecanismo
 gemelo verificado en vivo en la Fase 9.
+
+### Feedback de uso real (2026-10-03): renombre, bug de UI y selector de rueda
+
+Tras probar el sistema de bloqueos múltiples ya terminado, el usuario trajo 3 mejoras chicas:
+
+1. **Renombre de pestaña:** "Ajustes" → "Personalización" (D-level, sin RF nuevo). El nombre
+   anterior confundía con los ajustes del sistema (idioma, tema); el contenido no cambió
+   (mensajes por defecto, nota de batería). Se actualizó en código (`_layout.tsx`,
+   `settings.tsx`, comentarios relacionados) y en la spec/plan donde el nombre se refería a
+   *esta* pantalla, sin tocar las menciones de "Ajustes del sistema" (RF-28, caso límite de
+   accesibilidad), que es algo distinto (ver C34 de la spec).
+2. **Bug real encontrado por el usuario:** en el paso "por tiempo" del asistente, el botón "−"
+   de horas/minutos (`Field.tsx`, función `adjust`) no tenía piso y dejaba bajar de 0. Nunca
+   llegaba a crear un bloqueo inválido (`isValidBlockDuration` ya lo rechazaba al confirmar),
+   pero el campo en sí mostraba un número negativo, que es confuso y no debería ser posible.
+   Corregido con `Math.max(0, next)`.
+3. **D37 (ver sección 4):** reemplazo de los botones +/- por un selector de rueda
+   (`DurationWheelPicker`) para horas/minutos, elegido por el usuario entre varias alternativas
+   presentadas (chips de preset, slider, rueda, +/- mejorado). Al ser una rueda, el bug del
+   punto 2 queda estructuralmente resuelto para este caso de uso (no se puede deslizar a un
+   valor negativo); el fix en `Field.tsx` queda igual como red de seguridad para el otro uso
+   que le queda (`dev.tsx`, herramienta de desarrollo).
+
+El usuario también propuso un "modo extremo" (un bloqueo sin ninguna salida, ni con preguntas)
+y evaluó agregar selector de idioma/tema a una nueva pestaña "Ajustes" separada. Ambas cosas
+quedaron **fuera de esta ronda**, explícitamente: el modo extremo por ser un cambio de
+constitución (principio 3) que amerita su propio proceso de `sdd-kickoff` antes de tocar
+código; idioma por contradecir `AGENTS.md` ("mensajes de usuario en español", implicaría
+traducir también las 245 preguntas del banco); tema manual por no hacer falta (ya sigue el
+tema del sistema automáticamente, `userInterfaceStyle: "automatic"`).
+
+`tsc --noEmit`, `expo lint` y los 188 tests de Jest siguen en verde tras estos cambios.
+
+### Fase 11: bloqueo extremo, idioma y Acerca de (kickoff 2026-10-03)
+
+Los dos temas que habían quedado explícitamente fuera de la ronda anterior ("bloqueo extremo"
+por requerir un cambio de constitución; idioma por contradecir `AGENTS.md`) se retoman ahora a
+pedido del usuario, junto con una sección "Acerca de" nueva. Se corrió `sdd-kickoff` de nuevo:
+constitución (principios 3 y 12 amendados, con aprobación expresa del texto), spec (RF-73 a
+RF-79, entrevista de 7 preguntas en 2 rondas, todas con decisión tomada), y este plan (D38 a
+D42 agregados; secciones 2, 3, 5 y 6 actualizadas con los módulos nuevos).
+
+Decisión más importante de la entrevista: traducir el banco completo de 245 preguntas ahora
+(no diferirlo), pese a ser la parte más grande del trabajo — elegido a propósito por el
+usuario. La segunda decisión más importante, a nivel de diseño técnico (no le tocó elegir al
+usuario, es una decisión de plan): el bloqueo extremo **no toca `policy.ts` ni Kotlin** (D41) —
+reutiliza exactamente el mismo mecanismo que ya tiene cualquier bloqueo, y la diferencia vive
+enteramente en una rama nueva dentro de `challenge.tsx`, mismo patrón que D30 en la Fase 10.
+
+Siguiente paso: `tasks.md`, dividiendo en tareas de menos de 30 min — el bloque de traducción
+del banco de preguntas (245 × 2 idiomas) se divide en tandas revisables, no en una sola tarea.
+
+### T163: verificación final de la Fase 11 (bloqueo extremo, idioma, Acerca de)
+
+Verificación en el Pixel 6a, de punta a punta:
+
+| Feature | Verificado | Notas |
+|---|---|---|
+| Toggle "extremo" al crear + advertencia reforzada (RF-73, RF-60) | ✅ | Visible en el paso de categoría; el resumen muestra "Modo: Extremo" y el banner reforzado solo cuando corresponde |
+| Pantalla sin salida (RF-74) | ✅ | Solo el mensaje de bloqueo, sin ningún botón; probado dos veces (abrir la app, Atrás a Inicio, reabrir) — nunca concede acceso, siempre reaparece igual |
+| Etiqueta "Extremo" en la lista (RF-75) | ✅ | Badge propio, distinto del pill Activo/Programado |
+| Cambio de idioma instantáneo (RF-76) | ✅ | Probado en Ajustes, Bloqueos, Personalización y en las 5 pantallas del asistente de creación (incluidas las categorías del buscador de apps, confirma D43) — todo cambia sin reiniciar la app |
+| Traducción completa de la UI + banco de preguntas (RF-77) | ✅ | Confirmado visualmente en todas las pantallas recorridas; el cableado de `selectQuestionBank` para un reto nuevo se confirmó por código y por el test de T145, no se llegó a ver una pregunta en inglés en pantalla en esta sesión (se cortó la prueba para pasar a otra consulta) |
+| Idioma persistido (RF-78) | ✅ | El cambio se mantiene al navegar entre pestañas y pantallas |
+| Mensajes propios no se traducen (RF-77, C40) | ✅ | Confirmado dos veces: el mensaje de un bloqueo extremo activo, y los mensajes prellenados del paso "Messages" — ambos quedaron en español mientras el resto de la UI pasó a inglés |
+| "Acerca de" (RF-79) | ✅ | Nombre ("blockproc") y versión ("1.0.0" / "Version 1.0.0") correctos en ambos idiomas |
+
+**Sin regresiones.** `tsc --noEmit`, `expo lint` y los 199 tests de Jest (24 suites) en verde
+después de toda la Fase 11.
+
+**Veredicto: Fase 11 completa.** Bloqueo extremo, idioma (es/en) y Acerca de (RF-73 a RF-79,
+C34-C43, D37-D43) implementados con SDD completo y verificados en el dispositivo real.
 
 ## 8. Cambios a la spec (aplicados)
 

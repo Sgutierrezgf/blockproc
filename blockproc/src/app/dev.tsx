@@ -108,7 +108,7 @@ export default function Dev() {
 
   // Defensa en profundidad: en una build release, __DEV__ es false y esta
   // pantalla no debe quedar alcanzable ni por enlace profundo directo
-  // (blockproc://dev), aunque el enlace de Ajustes ya esté oculto.
+  // (blockproc://dev), aunque el enlace de Personalización ya esté oculto.
   if (!__DEV__) {
     return <Redirect href="/settings" />;
   }

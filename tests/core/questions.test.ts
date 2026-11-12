@@ -5,6 +5,7 @@ import {
   isValidQuestionBank,
   MIN_QUESTIONS_PER_TEXT_AREA,
   OPTIONS_COUNT,
+  selectQuestionBank,
   type Question,
 } from "../../blockproc/src/core/questions";
 
@@ -181,5 +182,20 @@ describe("hasMinimumQuestionsPerArea", () => {
       ...preguntasDelArea("science", 60),
     ];
     expect(hasMinimumQuestionsPerArea(banco)).toBe(true); // sin ninguna "math" y aun así pasa
+  });
+});
+
+// RF-77: elige el banco del idioma activo entre los ya cargados.
+describe("selectQuestionBank", () => {
+  const bankEs: Question[] = [{ ...preguntaValida, id: "es-001" }];
+  const bankEn: Question[] = [{ ...preguntaValida, id: "en-001", question: "What is the capital of France?" }];
+  const banks = { es: bankEs, en: bankEn };
+
+  it("devuelve el banco en español cuando el idioma es 'es'", () => {
+    expect(selectQuestionBank("es", banks)).toBe(bankEs);
+  });
+
+  it("devuelve un banco distinto cuando el idioma es 'en'", () => {
+    expect(selectQuestionBank("en", banks)).toBe(bankEn);
   });
 });

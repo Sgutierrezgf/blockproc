@@ -9,16 +9,22 @@ import { findActiveBlockForPackage } from "../core/blocks";
 import type { Block } from "../core/blocks";
 import { getCurrentQuestion } from "../core/challengeState";
 import { createSystemClock } from "../core/clock";
+import { selectQuestionBank } from "../core/questions";
 import { createSystemRandom } from "../core/random";
 import type { ChallengeState } from "../core/challengeState";
 import type { Question } from "../core/questions";
-import questionBankData from "../data/questions.es.json";
+import questionBankEs from "../data/questions.es.json";
+import questionBankEn from "../data/questions.en.json";
+import { useLanguage, useStrings } from "../i18n/LanguageProvider";
 import { defaultStore } from "../storage/defaultStore";
 import { loadPolicyState } from "../supervisor/policyRepository";
 import { Banner } from "../components/Banner";
 import { PrimaryButton } from "../components/PrimaryButton";
 
-const questionBank = questionBankData as Question[];
+// RF-77, T150: dos bancos cargados, uno por idioma; `selectQuestionBank`
+// (T145) elige el que corresponda al armar un reto nuevo. Un reto ya en
+// curso conserva las preguntas tal como se eligieron (C41 de la spec).
+const QUESTION_BANKS = { es: questionBankEs as Question[], en: questionBankEn as Question[] };
 
 // Principio 7 de la constitución: nunca Date.now()/Math.random() directo,
 // siempre un Clock/Random inyectable (aquí, los reales).
@@ -36,6 +42,8 @@ type Step = "reflect" | "confirm" | "questions";
 // siempre — mismo archivo y ruta que ya abre lo nativo, sin tocar Kotlin.
 // Sin BackButton a propósito (RF-62: sin ninguna salida salvo el reto).
 export default function Challenge() {
+  const strings = useStrings().challenge;
+  const { language } = useLanguage();
   const { pkg, t } = useLocalSearchParams<{ pkg?: string; t?: string }>();
   const packageName = pkg ?? "";
 
@@ -78,6 +86,27 @@ export default function Challenge() {
     return null;
   }
 
+  // RF-74, D41, C36: un bloqueo "extremo" nunca pasa por reflexión/
+  // confirmación/preguntas — solo el mensaje de bloqueo, sin ningún botón.
+  // El listener de hardwareBackPress de arriba ya manda a Inicio en
+  // cualquier caso que no sea el éxito del reto (acá nunca lo hay, `step`
+  // se queda en "reflect" todo el tiempo), así que no hace falta nada más.
+  if (block.extreme) {
+    return (
+      <SafeAreaView
+        edges={["top", "bottom"]}
+        className="flex-1 items-center justify-center gap-6 bg-surface p-6 dark:bg-surface-dark"
+      >
+        <Text className="text-center font-headline-lg text-headline-lg font-bold text-error dark:text-error-dark">
+          {strings.extremeTitle}
+        </Text>
+        <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+          {block.blockMessage}
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
   if (step === "reflect") {
     return (
       <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
@@ -86,13 +115,13 @@ export default function Challenge() {
           className="bg-surface dark:bg-surface-dark"
         >
           <Text className="text-center font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            ¿Para qué querés usar esta app?
+            {strings.reflectTitle}
           </Text>
           <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
             {block.focusMessage}
           </Text>
           <View className="w-full">
-            <PrimaryButton title="Continuar" onPress={() => setStep("confirm")} />
+            <PrimaryButton title={strings.continueButton} onPress={() => setStep("confirm")} />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -107,27 +136,28 @@ export default function Challenge() {
           className="bg-surface dark:bg-surface-dark"
         >
           <Text className="text-center font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            ¿Estás seguro?
+            {strings.confirmTitle}
           </Text>
           <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
-            Te voy a hacer 3 preguntas para darte acceso.
+            {strings.confirmSubtitle}
           </Text>
           <View className="w-full flex-row gap-3">
             <Pressable
               onPress={() => setStep("reflect")}
               className="flex-1 items-center justify-center rounded-2xl bg-surface-container-high p-4 dark:bg-surface-container-high-dark"
             >
-              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">No</Text>
+              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">{strings.no}</Text>
             </Pressable>
             <Pressable
               onPress={() => {
+                const questionBank = selectQuestionBank(language, QUESTION_BANKS);
                 const result = loadOrStartChallenge(defaultStore, packageName, block.id, block.category, questionBank, clock.now(), random);
                 setChallenge(result.challenge);
                 setStep("questions");
               }}
               className="flex-1 items-center justify-center rounded-2xl bg-primary p-4 dark:bg-primary-dark"
             >
-              <Text className="font-label-lg text-label-lg text-on-primary dark:text-on-primary-dark">Sí</Text>
+              <Text className="font-label-lg text-label-lg text-on-primary dark:text-on-primary-dark">{strings.yes}</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -153,13 +183,13 @@ export default function Challenge() {
           className="bg-surface dark:bg-surface-dark"
         >
           <Text className="font-headline-lg text-headline-lg font-bold text-secondary dark:text-secondary-dark">
-            ¡Correcto!
+            {strings.successTitle}
           </Text>
           <Text className="text-center font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
-            Ya podés usar la app durante 2 min.
+            {strings.successSubtitle}
           </Text>
           <View className="mt-4 w-full">
-            <PrimaryButton title="Continuar a la app" onPress={() => BlockprocNative.moveToBackground()} />
+            <PrimaryButton title={strings.continueToApp} onPress={() => BlockprocNative.moveToBackground()} />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -174,7 +204,7 @@ export default function Challenge() {
           className="bg-surface dark:bg-surface-dark"
         >
           <Text className="font-headline-lg text-headline-lg font-bold text-error dark:text-error-dark">
-            Respuestas incorrectas
+            {strings.failureTitle}
           </Text>
           {challenge.failedQuestions.map((failed, index) => (
             <View key={index} className="gap-2 rounded-3xl bg-surface-container p-4 shadow-sm dark:bg-surface-container-dark">
@@ -182,7 +212,7 @@ export default function Challenge() {
                 {failed.question}
               </Text>
               <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
-                Respuesta correcta: {failed.options[failed.correctIndex]}
+                {strings.correctAnswerLabel(failed.options[failed.correctIndex])}
               </Text>
               {failed.explanation && (
                 <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
@@ -191,7 +221,7 @@ export default function Challenge() {
               )}
             </View>
           ))}
-          <Banner tone="locked" title="Espacio de descanso activado" description="Esta app queda bloqueada durante 5 minutos." />
+          <Banner tone="locked" title={strings.restTitle} description={strings.restDescription} />
         </ScrollView>
       </SafeAreaView>
     );
@@ -217,7 +247,7 @@ export default function Challenge() {
             ))}
           </View>
           <Text className="font-label-md text-label-md font-semibold text-on-surface-variant dark:text-on-surface-variant-dark">
-            Pregunta {challenge.currentIndex + 1} de {challenge.questions.length}
+            {strings.questionProgress(challenge.currentIndex + 1, challenge.questions.length)}
           </Text>
         </View>
         <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">

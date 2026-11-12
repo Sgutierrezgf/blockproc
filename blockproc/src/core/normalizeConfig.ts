@@ -1,5 +1,9 @@
 import { createDefaultConfig, isValidMessage } from "./config";
-import type { Config } from "./config";
+import type { Config, Language } from "./config";
+
+function isLanguage(value: unknown): value is Language {
+  return value === "es" || value === "en";
+}
 
 // RF-41: configuración corrupta, del modelo anterior, o primera ejecución →
 // valores por defecto. Repara campo por campo en vez de descartar toda la
@@ -22,7 +26,9 @@ export function normalizeConfig(raw: unknown): Config {
       ? candidate.defaultBlockMessage
       : defaults.defaultBlockMessage;
 
-  return { defaultFocusMessage, defaultBlockMessage };
+  const language = isLanguage(candidate.language) ? candidate.language : defaults.language;
+
+  return { defaultFocusMessage, defaultBlockMessage, language };
 }
 
 /**

@@ -1,0 +1,2942 @@
+[
+  {
+    "id": "general-001",
+    "area": "general",
+    "question": "What is the capital of France?",
+    "options": [
+      "Madrid",
+      "Paris",
+      "Rome",
+      "Berlin"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "general-002",
+    "area": "general",
+    "question": "On which continent is Egypt located?",
+    "options": [
+      "Asia",
+      "Europe",
+      "Africa",
+      "Oceania"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "technology-001",
+    "area": "technology",
+    "question": "What does the acronym \"HTML\" stand for?",
+    "options": [
+      "HyperText Markup Language",
+      "High Tech Modern Language",
+      "Home Tool Markup Language",
+      "Hyperlink Text Management Language"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-001",
+    "area": "health",
+    "question": "How many hours of sleep are recommended per night for an adult?",
+    "options": [
+      "3 to 4",
+      "5 to 6",
+      "7 to 9",
+      "11 to 12"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "science-001",
+    "area": "science",
+    "question": "What is the closest planet to the Sun?",
+    "options": [
+      "Venus",
+      "Mercury",
+      "Mars",
+      "Earth"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "general-003",
+    "area": "general",
+    "question": "What is the largest ocean in the world?",
+    "options": [
+      "Pacific",
+      "Atlantic",
+      "Indian",
+      "Arctic"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-004",
+    "area": "general",
+    "question": "What is the most populous country in the world?",
+    "options": [
+      "India",
+      "China",
+      "United States",
+      "Indonesia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-005",
+    "area": "general",
+    "question": "What is the capital of Japan?",
+    "options": [
+      "Tokyo",
+      "Kyoto",
+      "Osaka",
+      "Yokohama"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-006",
+    "area": "general",
+    "question": "What is the capital of Australia?",
+    "options": [
+      "Canberra",
+      "Sydney",
+      "Melbourne",
+      "Perth"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-007",
+    "area": "general",
+    "question": "What is the most spoken native language in the world?",
+    "options": [
+      "Mandarin",
+      "English",
+      "Spanish",
+      "Hindi"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-008",
+    "area": "general",
+    "question": "What is the official currency of Japan?",
+    "options": [
+      "Yen",
+      "Won",
+      "Yuan",
+      "Ringgit"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-009",
+    "area": "general",
+    "question": "Who wrote \"Don Quixote\"?",
+    "options": [
+      "Miguel de Cervantes",
+      "Lope de Vega",
+      "Federico García Lorca",
+      "Pablo Neruda"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-010",
+    "area": "general",
+    "question": "Who painted the \"Mona Lisa\"?",
+    "options": [
+      "Leonardo da Vinci",
+      "Michelangelo",
+      "Raphael",
+      "Botticelli"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-011",
+    "area": "general",
+    "question": "In which country is the Eiffel Tower located?",
+    "options": [
+      "France",
+      "Italy",
+      "Spain",
+      "Belgium"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-012",
+    "area": "general",
+    "question": "What is the most abundant metal in the Earth's crust?",
+    "options": [
+      "Aluminum",
+      "Iron",
+      "Copper",
+      "Gold"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-013",
+    "area": "general",
+    "question": "How many sides does a hexagon have?",
+    "options": [
+      "6",
+      "5",
+      "7",
+      "8"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-014",
+    "area": "general",
+    "question": "In what year did humans first land on the Moon?",
+    "options": [
+      "1969",
+      "1959",
+      "1975",
+      "1965"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-015",
+    "area": "general",
+    "question": "What is the largest land animal in the world?",
+    "options": [
+      "African elephant",
+      "Giraffe",
+      "White rhinoceros",
+      "Hippopotamus"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-016",
+    "area": "general",
+    "question": "What is the largest hot desert in the world?",
+    "options": [
+      "Sahara",
+      "Gobi",
+      "Kalahari",
+      "Atacama"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-017",
+    "area": "general",
+    "question": "What is the official language of Brazil?",
+    "options": [
+      "Portuguese",
+      "Spanish",
+      "English",
+      "French"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-018",
+    "area": "general",
+    "question": "Who painted \"The Starry Night\"?",
+    "options": [
+      "Vincent van Gogh",
+      "Claude Monet",
+      "Pablo Picasso",
+      "Salvador Dalí"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-019",
+    "area": "general",
+    "question": "What is the highest mountain in the world?",
+    "options": [
+      "Everest",
+      "K2",
+      "Kilimanjaro",
+      "Aconcagua"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-020",
+    "area": "general",
+    "question": "What is the largest country in the world by area?",
+    "options": [
+      "Russia",
+      "Canada",
+      "China",
+      "United States"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-021",
+    "area": "general",
+    "question": "What instrument is used to measure temperature?",
+    "options": [
+      "Thermometer",
+      "Barometer",
+      "Thermostat",
+      "Hygrometer"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-022",
+    "area": "general",
+    "question": "What is the capital of Canada?",
+    "options": [
+      "Ottawa",
+      "Toronto",
+      "Vancouver",
+      "Montreal"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-023",
+    "area": "general",
+    "question": "In which country did sushi originate?",
+    "options": [
+      "Japan",
+      "China",
+      "South Korea",
+      "Thailand"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-024",
+    "area": "general",
+    "question": "What is the largest marine mammal in the world?",
+    "options": [
+      "Blue whale",
+      "Sperm whale",
+      "Orca",
+      "Whale shark"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-025",
+    "area": "general",
+    "question": "How many colors does a rainbow traditionally have?",
+    "options": [
+      "7",
+      "5",
+      "6",
+      "8"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-026",
+    "area": "general",
+    "question": "What is the official currency of the United States?",
+    "options": [
+      "Dollar",
+      "Pound",
+      "Euro",
+      "Peso"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-027",
+    "area": "general",
+    "question": "In what year did the Berlin Wall fall?",
+    "options": [
+      "1989",
+      "1991",
+      "1985",
+      "1993"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-028",
+    "area": "general",
+    "question": "What is the chemical symbol for gold?",
+    "options": [
+      "Au",
+      "Ag",
+      "Or",
+      "Go"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-029",
+    "area": "general",
+    "question": "Which country has the most time zones, thanks to its overseas territories?",
+    "options": [
+      "France",
+      "Russia",
+      "United States",
+      "United Kingdom"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-030",
+    "area": "general",
+    "question": "What is the capital of Egypt?",
+    "options": [
+      "Cairo",
+      "Alexandria",
+      "Luxor",
+      "Giza"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-031",
+    "area": "general",
+    "question": "Who wrote \"One Hundred Years of Solitude\"?",
+    "options": [
+      "Gabriel García Márquez",
+      "Mario Vargas Llosa",
+      "Julio Cortázar",
+      "Isabel Allende"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-032",
+    "area": "general",
+    "question": "What is the lowest point on Earth's land surface?",
+    "options": [
+      "Dead Sea",
+      "Death Valley",
+      "Caspian Sea",
+      "Danakil Depression"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-033",
+    "area": "general",
+    "question": "What is the capital of Spain?",
+    "options": [
+      "Madrid",
+      "Barcelona",
+      "Seville",
+      "Valencia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-034",
+    "area": "general",
+    "question": "What is the capital of Germany?",
+    "options": [
+      "Berlin",
+      "Munich",
+      "Frankfurt",
+      "Hamburg"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-035",
+    "area": "general",
+    "question": "What is the capital of Russia?",
+    "options": [
+      "Moscow",
+      "Saint Petersburg",
+      "Kazan",
+      "Yekaterinburg"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-036",
+    "area": "general",
+    "question": "What is the capital of Argentina?",
+    "options": [
+      "Buenos Aires",
+      "Córdoba",
+      "Rosario",
+      "Mendoza"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-037",
+    "area": "general",
+    "question": "What is the capital of Mexico?",
+    "options": [
+      "Mexico City",
+      "Guadalajara",
+      "Monterrey",
+      "Puebla"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-038",
+    "area": "general",
+    "question": "In which country is the Roman Colosseum located?",
+    "options": [
+      "Italy",
+      "Greece",
+      "Spain",
+      "France"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-039",
+    "area": "general",
+    "question": "What is the longest river in South America?",
+    "options": [
+      "Amazon",
+      "Orinoco",
+      "Paraná",
+      "Magdalena"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-040",
+    "area": "general",
+    "question": "What is the largest continent in the world?",
+    "options": [
+      "Asia",
+      "Africa",
+      "America",
+      "Europe"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-041",
+    "area": "general",
+    "question": "Who wrote \"Romeo and Juliet\"?",
+    "options": [
+      "William Shakespeare",
+      "Charles Dickens",
+      "Jane Austen",
+      "Oscar Wilde"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-042",
+    "area": "general",
+    "question": "Who painted \"The Scream\"?",
+    "options": [
+      "Edvard Munch",
+      "Gustav Klimt",
+      "Wassily Kandinsky",
+      "Henri Matisse"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-043",
+    "area": "general",
+    "question": "Who composed the \"Ninth Symphony\"?",
+    "options": [
+      "Ludwig van Beethoven",
+      "Wolfgang Amadeus Mozart",
+      "Johann Sebastian Bach",
+      "Franz Schubert"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-044",
+    "area": "general",
+    "question": "In which sport is a \"birdie\" (shuttlecock) used?",
+    "options": [
+      "Badminton",
+      "Tennis",
+      "Squash",
+      "Table tennis"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-045",
+    "area": "general",
+    "question": "In which country did Margherita pizza originate?",
+    "options": [
+      "Italy",
+      "Spain",
+      "Greece",
+      "France"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-046",
+    "area": "general",
+    "question": "How many players does a football (soccer) team have on the field, including the goalkeeper?",
+    "options": [
+      "11",
+      "9",
+      "10",
+      "12"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-047",
+    "area": "general",
+    "question": "What is the official currency of the European Union?",
+    "options": [
+      "Euro",
+      "Franc",
+      "Mark",
+      "Pound"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-048",
+    "area": "general",
+    "question": "What is the smallest country in the world by area?",
+    "options": [
+      "Vatican City",
+      "Monaco",
+      "San Marino",
+      "Liechtenstein"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-049",
+    "area": "general",
+    "question": "In what year did World War II begin?",
+    "options": [
+      "1939",
+      "1914",
+      "1945",
+      "1929"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-050",
+    "area": "general",
+    "question": "Which country gave the Statue of Liberty to the United States?",
+    "options": [
+      "France",
+      "United Kingdom",
+      "Spain",
+      "Netherlands"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-051",
+    "area": "general",
+    "question": "Which chemical element has the symbol \"O\"?",
+    "options": [
+      "Oxygen",
+      "Gold",
+      "Osmium",
+      "Oxide"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-052",
+    "area": "general",
+    "question": "How many legs does a spider have?",
+    "options": [
+      "8",
+      "6",
+      "10",
+      "4"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-053",
+    "area": "general",
+    "question": "Which musical instrument has black and white keys?",
+    "options": [
+      "Piano",
+      "Accordion",
+      "Harmonica",
+      "Harp"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-054",
+    "area": "general",
+    "question": "In which country did yoga originate?",
+    "options": [
+      "India",
+      "China",
+      "Nepal",
+      "Thailand"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-055",
+    "area": "general",
+    "question": "What is the largest lake in the world (called a \"sea\" due to its size)?",
+    "options": [
+      "Caspian Sea",
+      "Lake Superior",
+      "Lake Victoria",
+      "Lake Baikal"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-056",
+    "area": "general",
+    "question": "What is the capital of Portugal?",
+    "options": [
+      "Lisbon",
+      "Porto",
+      "Faro",
+      "Braga"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-057",
+    "area": "general",
+    "question": "Who formulated the theory of relativity?",
+    "options": [
+      "Albert Einstein",
+      "Isaac Newton",
+      "Niels Bohr",
+      "Stephen Hawking"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-058",
+    "area": "general",
+    "question": "How many stars does the flag of the United States have?",
+    "options": [
+      "50",
+      "48",
+      "13",
+      "52"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-059",
+    "area": "general",
+    "question": "What is the largest island in the world?",
+    "options": [
+      "Greenland",
+      "Madagascar",
+      "Borneo",
+      "New Guinea"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-060",
+    "area": "general",
+    "question": "What is the sport with the most fans in the world?",
+    "options": [
+      "Football (soccer)",
+      "Basketball",
+      "Cricket",
+      "Tennis"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-061",
+    "area": "general",
+    "question": "What instrument do astronomers use to observe the sky?",
+    "options": [
+      "Telescope",
+      "Microscope",
+      "Periscope",
+      "Sextant"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "general-062",
+    "area": "general",
+    "question": "What is the capital of Greece?",
+    "options": [
+      "Athens",
+      "Thessaloniki",
+      "Sparta",
+      "Corinth"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-002",
+    "area": "technology",
+    "question": "What does the acronym \"CPU\" stand for?",
+    "options": [
+      "Central Processing Unit",
+      "Central Print Unit",
+      "Computer Processing Utility",
+      "Core Program Unit"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-003",
+    "area": "technology",
+    "question": "What does the acronym \"URL\" stand for?",
+    "options": [
+      "Uniform Resource Locator",
+      "Universal Reference Link",
+      "Unified Resource Locator",
+      "User Resource Location"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-004",
+    "area": "technology",
+    "question": "What does the acronym \"USB\" stand for?",
+    "options": [
+      "Universal Serial Bus",
+      "United System Bus",
+      "Universal System Backup",
+      "Unified Serial Board"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-005",
+    "area": "technology",
+    "question": "Who is credited with creating the World Wide Web?",
+    "options": [
+      "Tim Berners-Lee",
+      "Bill Gates",
+      "Steve Jobs",
+      "Mark Zuckerberg"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-006",
+    "area": "technology",
+    "question": "In what year was Apple founded?",
+    "options": [
+      "1976",
+      "1980",
+      "1971",
+      "1984"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-007",
+    "area": "technology",
+    "question": "What does the acronym \"RAM\" stand for?",
+    "options": [
+      "Random Access Memory",
+      "Read Access Memory",
+      "Rapid Access Module",
+      "Remote Access Memory"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-008",
+    "area": "technology",
+    "question": "Which language is mainly used to add interactivity to web pages in the browser?",
+    "options": [
+      "JavaScript",
+      "Python",
+      "C++",
+      "Java"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-009",
+    "area": "technology",
+    "question": "What does the acronym \"GPU\" stand for?",
+    "options": [
+      "Graphics Processing Unit",
+      "General Processing Unit",
+      "Graphic Program Utility",
+      "Global Processing Unit"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-010",
+    "area": "technology",
+    "question": "Which open-source operating system did Linus Torvalds create?",
+    "options": [
+      "Linux",
+      "Unix",
+      "Windows",
+      "macOS"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-011",
+    "area": "technology",
+    "question": "What does the acronym \"PDF\" stand for?",
+    "options": [
+      "Portable Document Format",
+      "Personal Data File",
+      "Printed Document Format",
+      "Public Document Format"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-012",
+    "area": "technology",
+    "question": "Which company created the Windows operating system?",
+    "options": [
+      "Microsoft",
+      "Apple",
+      "IBM",
+      "Google"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-013",
+    "area": "technology",
+    "question": "What does the acronym \"HTTP\" stand for?",
+    "options": [
+      "HyperText Transfer Protocol",
+      "High Transfer Text Protocol",
+      "HyperLink Text Protocol",
+      "Home Text Transfer Protocol"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-014",
+    "area": "technology",
+    "question": "In what year was Google founded?",
+    "options": [
+      "1998",
+      "1995",
+      "2001",
+      "2004"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-015",
+    "area": "technology",
+    "question": "What colors make up the \"RGB\" model used in screens?",
+    "options": [
+      "Red, green, and blue",
+      "Red, gray, and blue",
+      "Pink, green, and yellow",
+      "Red, green, and yellow"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-016",
+    "area": "technology",
+    "question": "What device is used to point and click on a desktop computer?",
+    "options": [
+      "Mouse",
+      "Keyboard",
+      "Monitor",
+      "Scanner"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-017",
+    "area": "technology",
+    "question": "What does the acronym \"AI\" stand for in technology?",
+    "options": [
+      "Artificial Intelligence",
+      "Automatic Interface",
+      "Analytical Information",
+      "Advanced Integration"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-018",
+    "area": "technology",
+    "question": "What type of computer memory loses its content when the device is turned off?",
+    "options": [
+      "RAM",
+      "ROM",
+      "Hard drive",
+      "Flash memory"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-019",
+    "area": "technology",
+    "question": "What has been the most used internet search engine in the world over the last two decades?",
+    "options": [
+      "Google",
+      "Bing",
+      "Yahoo",
+      "DuckDuckGo"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-020",
+    "area": "technology",
+    "question": "What storage unit does the acronym \"GB\" represent?",
+    "options": [
+      "Gigabyte",
+      "Gigabit",
+      "Global Byte",
+      "Ground Base"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-021",
+    "area": "technology",
+    "question": "Which company created the iPhone?",
+    "options": [
+      "Apple",
+      "Samsung",
+      "Google",
+      "Nokia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-022",
+    "area": "technology",
+    "question": "Which programming language is named after a snake?",
+    "options": [
+      "Python",
+      "Java",
+      "Ruby",
+      "Perl"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-023",
+    "area": "technology",
+    "question": "What does the acronym \"SSD\" stand for?",
+    "options": [
+      "Solid State Drive",
+      "Standard Storage Device",
+      "System Save Disk",
+      "Secure Storage Drive"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-024",
+    "area": "technology",
+    "question": "What does the acronym \"VPN\" stand for?",
+    "options": [
+      "Virtual Private Network",
+      "Verified Public Network",
+      "Virtual Public Node",
+      "Very Private Network"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-025",
+    "area": "technology",
+    "question": "Who co-founded Microsoft together with Paul Allen?",
+    "options": [
+      "Bill Gates",
+      "Steve Jobs",
+      "Larry Page",
+      "Jeff Bezos"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-026",
+    "area": "technology",
+    "question": "What does \"QR\" stand for in \"QR code\"?",
+    "options": [
+      "Quick Response",
+      "Quality Recognition",
+      "Query Read",
+      "Quick Registry"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-027",
+    "area": "technology",
+    "question": "What unit measures a processor's speed?",
+    "options": [
+      "Hertz (Hz)",
+      "Volts",
+      "Amperes",
+      "Bytes"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-028",
+    "area": "technology",
+    "question": "Which company develops the Android operating system?",
+    "options": [
+      "Google",
+      "Apple",
+      "Samsung",
+      "Microsoft"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-029",
+    "area": "technology",
+    "question": "What does the acronym \"LAN\" stand for?",
+    "options": [
+      "Local Area Network",
+      "Long Access Network",
+      "Limited Area Node",
+      "Line Area Network"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-030",
+    "area": "technology",
+    "question": "Which optical disc became popular in the 90s for music and data?",
+    "options": [
+      "CD (compact disc)",
+      "DVD",
+      "Blu-ray",
+      "Floppy disk"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-031",
+    "area": "technology",
+    "question": "What does the acronym \"IoT\" stand for?",
+    "options": [
+      "Internet of Things",
+      "Internet of Technical Operations",
+      "Touch Object Interface",
+      "Technological Operations Integration"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-032",
+    "area": "technology",
+    "question": "In \"HTTPS\", what does the \"S\" add compared to \"HTTP\"?",
+    "options": [
+      "Secure",
+      "Server",
+      "System",
+      "Standard"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-033",
+    "area": "technology",
+    "question": "Who founded Facebook?",
+    "options": [
+      "Mark Zuckerberg",
+      "Jack Dorsey",
+      "Elon Musk",
+      "Larry Page"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-034",
+    "area": "technology",
+    "question": "Which company manufactures the \"Core i7\" and \"i9\" processors?",
+    "options": [
+      "Intel",
+      "AMD",
+      "Qualcomm",
+      "Nvidia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-035",
+    "area": "technology",
+    "question": "Which company develops the Chrome browser?",
+    "options": [
+      "Google",
+      "Microsoft",
+      "Apple",
+      "Mozilla"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-036",
+    "area": "technology",
+    "question": "Which social network, known for its short posts, is now called \"X\"?",
+    "options": [
+      "Twitter",
+      "Facebook",
+      "LinkedIn",
+      "Instagram"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-037",
+    "area": "technology",
+    "question": "Which company manufactures the \"Snapdragon\" chips used in many phones?",
+    "options": [
+      "Qualcomm",
+      "Intel",
+      "AMD",
+      "MediaTek"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-038",
+    "area": "technology",
+    "question": "What does \"app\" stand for?",
+    "options": [
+      "Application",
+      "Base program",
+      "Graphical interface",
+      "Operating system"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-039",
+    "area": "technology",
+    "question": "Which protocol is used to send emails?",
+    "options": [
+      "SMTP",
+      "POP3",
+      "IMAP",
+      "FTP"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-040",
+    "area": "technology",
+    "question": "What does \"OS\" stand for in computing?",
+    "options": [
+      "Operating System",
+      "Output System",
+      "Online Server",
+      "Open Source"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-041",
+    "area": "technology",
+    "question": "Which company created the Edge browser?",
+    "options": [
+      "Microsoft",
+      "Google",
+      "Apple",
+      "Mozilla"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-042",
+    "area": "technology",
+    "question": "Which technology is used to connect wireless headphones over short distances?",
+    "options": [
+      "Bluetooth",
+      "Wi-Fi",
+      "NFC",
+      "Infrared"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-043",
+    "area": "technology",
+    "question": "What is Amazon's voice assistant called?",
+    "options": [
+      "Alexa",
+      "Siri",
+      "Cortana",
+      "Google Assistant"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-044",
+    "area": "technology",
+    "question": "What is Apple's voice assistant called?",
+    "options": [
+      "Siri",
+      "Alexa",
+      "Cortana",
+      "Bixby"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-045",
+    "area": "technology",
+    "question": "Which company owns YouTube?",
+    "options": [
+      "Google",
+      "Microsoft",
+      "Amazon",
+      "Meta"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-046",
+    "area": "technology",
+    "question": "What does \"www\" at the start of a web address stand for?",
+    "options": [
+      "World Wide Web",
+      "Web World Wide",
+      "Wide World Web",
+      "World Wide Wire"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-047",
+    "area": "technology",
+    "question": "What device converts signals to connect a computer to the internet over a phone line?",
+    "options": [
+      "Modem",
+      "Router",
+      "Switch",
+      "Hub"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-048",
+    "area": "technology",
+    "question": "What does \"e-mail\" stand for?",
+    "options": [
+      "Electronic mail",
+      "Sent message",
+      "Message link",
+      "Business mail"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-049",
+    "area": "technology",
+    "question": "Which company created the PlayStation console?",
+    "options": [
+      "Sony",
+      "Microsoft",
+      "Nintendo",
+      "Sega"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-050",
+    "area": "technology",
+    "question": "Which company created the Xbox console?",
+    "options": [
+      "Microsoft",
+      "Sony",
+      "Nintendo",
+      "Atari"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-051",
+    "area": "technology",
+    "question": "Which company created the Nintendo Switch?",
+    "options": [
+      "Nintendo",
+      "Sony",
+      "Microsoft",
+      "Sega"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-052",
+    "area": "technology",
+    "question": "What does \"CSS\", the language that styles web pages, stand for?",
+    "options": [
+      "Cascading Style Sheets",
+      "Computer Style System",
+      "Creative Style Sheets",
+      "Coded Style Structure"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-053",
+    "area": "technology",
+    "question": "Which social network, focused on photos and short videos, is owned by Meta?",
+    "options": [
+      "Instagram",
+      "LinkedIn",
+      "Twitter/X",
+      "Pinterest"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-054",
+    "area": "technology",
+    "question": "Which company owns Instagram and WhatsApp?",
+    "options": [
+      "Meta",
+      "Google",
+      "Microsoft",
+      "Amazon"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-055",
+    "area": "technology",
+    "question": "What does the \"Ctrl+Z\" shortcut do in most programs?",
+    "options": [
+      "Undo",
+      "Redo",
+      "Save",
+      "Copy"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-056",
+    "area": "technology",
+    "question": "What do the \"Ctrl+C\" and \"Ctrl+V\" shortcuts do?",
+    "options": [
+      "Copy and paste",
+      "Cut and paste",
+      "Save and open",
+      "Undo and redo"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-057",
+    "area": "technology",
+    "question": "What is malicious software that disguises itself as a legitimate program called?",
+    "options": [
+      "Trojan",
+      "Antivirus",
+      "Firewall",
+      "Worm"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-058",
+    "area": "technology",
+    "question": "What does the term \"spam\" refer to?",
+    "options": [
+      "Unwanted email or messages",
+      "A type of computer virus",
+      "A social network",
+      "A programming language"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-059",
+    "area": "technology",
+    "question": "Which open-source browser is developed by Mozilla?",
+    "options": [
+      "Firefox",
+      "Chrome",
+      "Opera",
+      "Brave"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-060",
+    "area": "technology",
+    "question": "Who founded Twitter in 2006?",
+    "options": [
+      "Jack Dorsey",
+      "Mark Zuckerberg",
+      "Elon Musk",
+      "Evan Spiegel"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "technology-061",
+    "area": "technology",
+    "question": "Which company manufactures the \"Ryzen\" processors?",
+    "options": [
+      "AMD",
+      "Intel",
+      "Qualcomm",
+      "Nvidia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-002",
+    "area": "health",
+    "question": "How many bones does an adult human body have?",
+    "options": [
+      "206",
+      "186",
+      "226",
+      "246"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-003",
+    "area": "health",
+    "question": "What is the largest organ in the human body?",
+    "options": [
+      "The skin",
+      "The liver",
+      "The lungs",
+      "The heart"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-004",
+    "area": "health",
+    "question": "Approximately how many liters of blood does an adult have?",
+    "options": [
+      "5 liters",
+      "2 liters",
+      "8 liters",
+      "10 liters"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-005",
+    "area": "health",
+    "question": "What is the strongest muscle in the human body relative to its size?",
+    "options": [
+      "The masseter (jaw)",
+      "The biceps",
+      "The quadriceps",
+      "The heart"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-006",
+    "area": "health",
+    "question": "How many liters of water is it recommended to drink per day, as a general guideline?",
+    "options": [
+      "About 2 liters",
+      "About 0.5 liters",
+      "About 5 liters",
+      "About 1 liter"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-007",
+    "area": "health",
+    "question": "Which organ pumps blood through the body?",
+    "options": [
+      "The heart",
+      "The liver",
+      "The kidney",
+      "The lung"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-008",
+    "area": "health",
+    "question": "What is the normal resting heart rate range per minute?",
+    "options": [
+      "60 to 100",
+      "100 to 140",
+      "30 to 50",
+      "150 to 180"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-009",
+    "area": "health",
+    "question": "Which vitamin is mainly obtained through sun exposure?",
+    "options": [
+      "Vitamin D",
+      "Vitamin C",
+      "Vitamin A",
+      "Vitamin B12"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-010",
+    "area": "health",
+    "question": "What is the basic unit of every living being?",
+    "options": [
+      "The cell",
+      "The atom",
+      "The tissue",
+      "The organ"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-011",
+    "area": "health",
+    "question": "How many basic senses are traditionally taught?",
+    "options": [
+      "5",
+      "4",
+      "6",
+      "3"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-012",
+    "area": "health",
+    "question": "Which organs filter the blood and produce urine?",
+    "options": [
+      "The kidneys",
+      "The lungs",
+      "The liver",
+      "The intestines"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-013",
+    "area": "health",
+    "question": "According to the WHO, how many minutes of moderate physical activity per week are recommended for an adult, as a general guideline?",
+    "options": [
+      "150 minutes",
+      "30 minutes",
+      "500 minutes",
+      "60 minutes"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-014",
+    "area": "health",
+    "question": "What is the longest bone in the human body?",
+    "options": [
+      "The femur",
+      "The humerus",
+      "The tibia",
+      "The radius"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-015",
+    "area": "health",
+    "question": "Which gas does the human body need to breathe and live?",
+    "options": [
+      "Oxygen",
+      "Carbon dioxide",
+      "Nitrogen",
+      "Hydrogen"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-016",
+    "area": "health",
+    "question": "What is the main organ of the nervous system?",
+    "options": [
+      "The brain",
+      "The heart",
+      "The bone marrow",
+      "The liver"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-017",
+    "area": "health",
+    "question": "How many teeth does an adult have, counting wisdom teeth?",
+    "options": [
+      "32",
+      "28",
+      "30",
+      "36"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-018",
+    "area": "health",
+    "question": "Which mineral is essential for strong bones?",
+    "options": [
+      "Calcium",
+      "Iron",
+      "Potassium",
+      "Zinc"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-019",
+    "area": "health",
+    "question": "What is the average body temperature of a healthy person?",
+    "options": [
+      "About 37 °C",
+      "About 39 °C",
+      "About 34 °C",
+      "About 41 °C"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-020",
+    "area": "health",
+    "question": "Which simple habit helps prevent the spread of many diseases?",
+    "options": [
+      "Washing your hands frequently",
+      "Sleeping with the light on",
+      "Avoiding drinking water",
+      "Eating more sugar"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-021",
+    "area": "health",
+    "question": "Which food group mainly provides protein?",
+    "options": [
+      "Meat, eggs, and legumes",
+      "Fruits",
+      "Oils",
+      "Sugars"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-022",
+    "area": "health",
+    "question": "Which part of the body is responsible for breathing?",
+    "options": [
+      "The lungs",
+      "The stomach",
+      "The liver",
+      "The pancreas"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-023",
+    "area": "health",
+    "question": "Which body system defends us against disease?",
+    "options": [
+      "The immune system",
+      "The digestive system",
+      "The skeletal system",
+      "The circulatory system"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-024",
+    "area": "health",
+    "question": "Which type of food is rich in fiber and aids digestion?",
+    "options": [
+      "Fruits and vegetables",
+      "Fried foods",
+      "Soft drinks",
+      "Cold cuts"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-025",
+    "area": "health",
+    "question": "Which habit is key to good oral health?",
+    "options": [
+      "Brushing your teeth",
+      "Eating only sweets",
+      "Avoiding drinking water",
+      "Not sleeping"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-026",
+    "area": "health",
+    "question": "Which liquid makes up most of the human body?",
+    "options": [
+      "Water",
+      "Fat",
+      "Blood",
+      "Air"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-027",
+    "area": "health",
+    "question": "Which activity helps reduce stress and improve mood?",
+    "options": [
+      "Physical exercise",
+      "A sedentary lifestyle",
+      "Prolonged fasting",
+      "Staying up all night"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-028",
+    "area": "health",
+    "question": "How many pairs of ribs does a human have?",
+    "options": [
+      "12",
+      "10",
+      "14",
+      "8"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-029",
+    "area": "health",
+    "question": "Which part of the eye controls the amount of light that enters?",
+    "options": [
+      "The iris",
+      "The retina",
+      "The cornea",
+      "The lens"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-030",
+    "area": "health",
+    "question": "Which sense is associated with the ears?",
+    "options": [
+      "Hearing",
+      "Smell",
+      "Taste",
+      "Touch"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-031",
+    "area": "health",
+    "question": "What does the body do while we sleep that is key for memory and recovery?",
+    "options": [
+      "Consolidate memory and recover",
+      "Lose memory",
+      "Increase stress",
+      "Stop breathing"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-032",
+    "area": "health",
+    "question": "What is the smallest bone in the human body?",
+    "options": [
+      "The stirrup (in the ear)",
+      "The little finger",
+      "A vertebra",
+      "A rib"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-033",
+    "area": "health",
+    "question": "Which organ produces insulin?",
+    "options": [
+      "The pancreas",
+      "The liver",
+      "The kidney",
+      "The spleen"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-034",
+    "area": "health",
+    "question": "What is the outer layer of the skin called?",
+    "options": [
+      "Epidermis",
+      "Dermis",
+      "Hypodermis",
+      "Membrane"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-035",
+    "area": "health",
+    "question": "Which vitamin helps blood clotting?",
+    "options": [
+      "Vitamin K",
+      "Vitamin A",
+      "Vitamin D",
+      "Vitamin E"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-036",
+    "area": "health",
+    "question": "How many chambers does the human heart have?",
+    "options": [
+      "4",
+      "2",
+      "3",
+      "6"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-037",
+    "area": "health",
+    "question": "Which type of blood cells carry oxygen in the blood?",
+    "options": [
+      "Red blood cells",
+      "White blood cells",
+      "Platelets",
+      "Lymphocytes"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-038",
+    "area": "health",
+    "question": "Which organ stores bile?",
+    "options": [
+      "The gallbladder",
+      "The pancreas",
+      "The spleen",
+      "The stomach"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-039",
+    "area": "health",
+    "question": "What is the largest muscle in the human body by size?",
+    "options": [
+      "The gluteus maximus",
+      "The biceps",
+      "The trapezius",
+      "The quadriceps"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-040",
+    "area": "health",
+    "question": "Which process do the lungs perform to exchange gases with the blood?",
+    "options": [
+      "Breathing",
+      "Digestion",
+      "Circulation",
+      "Filtration"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-041",
+    "area": "health",
+    "question": "Which substance does the body release during exercise that helps improve mood?",
+    "options": [
+      "Endorphins",
+      "Insulin",
+      "Bile",
+      "Melanin"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-042",
+    "area": "health",
+    "question": "Which part of the ear is responsible for balance?",
+    "options": [
+      "The inner ear",
+      "The eardrum",
+      "The outer ear",
+      "The auricle"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-043",
+    "area": "health",
+    "question": "Which food group mainly provides quick energy?",
+    "options": [
+      "Carbohydrates",
+      "Proteins",
+      "Saturated fats",
+      "Fiber"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-044",
+    "area": "health",
+    "question": "What is the main function of platelets in the blood?",
+    "options": [
+      "Helping blood clot",
+      "Transporting oxygen",
+      "Fighting infections",
+      "Producing hormones"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-045",
+    "area": "health",
+    "question": "Which part of the body produces red blood cells?",
+    "options": [
+      "The bone marrow",
+      "The liver",
+      "The spleen",
+      "The lungs"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-046",
+    "area": "health",
+    "question": "Which habit helps protect skin from sun damage?",
+    "options": [
+      "Using sunscreen",
+      "Avoiding water",
+      "Sleeping during the day",
+      "Eating more salt"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-047",
+    "area": "health",
+    "question": "What is the process by which the body converts food into energy called?",
+    "options": [
+      "Metabolism",
+      "Digestion",
+      "Breathing",
+      "Circulation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-048",
+    "area": "health",
+    "question": "Which mineral is essential for carrying oxygen in the blood?",
+    "options": [
+      "Iron",
+      "Calcium",
+      "Potassium",
+      "Zinc"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-049",
+    "area": "health",
+    "question": "How many hours of sleep are recommended on average for a teenager?",
+    "options": [
+      "8 to 10",
+      "4 to 5",
+      "12 to 14",
+      "2 to 3"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-050",
+    "area": "health",
+    "question": "What is the main muscle used for breathing?",
+    "options": [
+      "The diaphragm",
+      "The biceps",
+      "The trapezius",
+      "The deltoid"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-051",
+    "area": "health",
+    "question": "Which part of the brain mainly controls balance and coordination?",
+    "options": [
+      "The cerebellum",
+      "The medulla oblongata",
+      "The frontal lobe",
+      "The hypothalamus"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-052",
+    "area": "health",
+    "question": "Which vitamin is abundant in citrus fruits, like oranges?",
+    "options": [
+      "Vitamin C",
+      "Vitamin D",
+      "Vitamin K",
+      "Vitamin B12"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-053",
+    "area": "health",
+    "question": "Besides covering the body, what is another important function of the skin?",
+    "options": [
+      "Protecting against infections and regulating temperature",
+      "Producing blood",
+      "Digesting food",
+      "Filtering air"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-054",
+    "area": "health",
+    "question": "Which organ digests food using acids?",
+    "options": [
+      "The stomach",
+      "The liver",
+      "The pancreas",
+      "The large intestine"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-055",
+    "area": "health",
+    "question": "Which type of exercise mainly strengthens the heart and lungs?",
+    "options": [
+      "Aerobic exercise (cardio)",
+      "Stretching",
+      "A sedentary lifestyle",
+      "Fasting"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-056",
+    "area": "health",
+    "question": "What are the structures that connect muscles to bones called?",
+    "options": [
+      "Tendons",
+      "Ligaments",
+      "Cartilage",
+      "Nerves"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-057",
+    "area": "health",
+    "question": "What are the structures that connect one bone to another called?",
+    "options": [
+      "Ligaments",
+      "Tendons",
+      "Cartilage",
+      "Nerves"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-058",
+    "area": "health",
+    "question": "Which part of the body produces sweat to regulate temperature?",
+    "options": [
+      "The sweat glands",
+      "The kidneys",
+      "The liver",
+      "The lungs"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-059",
+    "area": "health",
+    "question": "Which unit is used to measure the energy that food provides?",
+    "options": [
+      "Calories",
+      "Grams",
+      "Liters",
+      "Milligrams"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-060",
+    "area": "health",
+    "question": "Which habit helps maintain healthy posture if you spend a lot of time sitting?",
+    "options": [
+      "Taking active breaks and stretching",
+      "Not moving all day",
+      "Hunching your back",
+      "Avoiding walking"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "health-061",
+    "area": "health",
+    "question": "What is the name of the hip bone?",
+    "options": [
+      "The pelvis",
+      "The sacrum",
+      "The femur",
+      "The coccyx"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-002",
+    "area": "science",
+    "question": "What is the largest planet in the solar system?",
+    "options": [
+      "Jupiter",
+      "Saturn",
+      "Neptune",
+      "Uranus"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-003",
+    "area": "science",
+    "question": "How many planets are there in the solar system according to the current classification?",
+    "options": [
+      "8",
+      "9",
+      "7",
+      "10"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-004",
+    "area": "science",
+    "question": "What is the closest star to Earth?",
+    "options": [
+      "The Sun",
+      "Proxima Centauri",
+      "Sirius",
+      "Alpha Centauri"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-005",
+    "area": "science",
+    "question": "Which gas makes up most of Earth's atmosphere?",
+    "options": [
+      "Nitrogen",
+      "Oxygen",
+      "Carbon dioxide",
+      "Argon"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-006",
+    "area": "science",
+    "question": "What is the process by which plants produce their food using sunlight called?",
+    "options": [
+      "Photosynthesis",
+      "Respiration",
+      "Fermentation",
+      "Pollination"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-007",
+    "area": "science",
+    "question": "Which force keeps the planets in orbit around the Sun?",
+    "options": [
+      "Gravity",
+      "Magnetism",
+      "Inertia",
+      "Friction"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-008",
+    "area": "science",
+    "question": "What is the speed of light, approximately?",
+    "options": [
+      "300,000 km/s",
+      "150,000 km/s",
+      "1,000,000 km/s",
+      "30,000 km/s"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-009",
+    "area": "science",
+    "question": "Which instrument is used to measure earthquakes?",
+    "options": [
+      "Seismograph",
+      "Barometer",
+      "Anemometer",
+      "Thermometer"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-010",
+    "area": "science",
+    "question": "What is the fastest land animal in the world?",
+    "options": [
+      "The cheetah",
+      "The lion",
+      "The horse",
+      "The eagle"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-011",
+    "area": "science",
+    "question": "What is the lightest chemical element in the universe?",
+    "options": [
+      "Hydrogen",
+      "Helium",
+      "Oxygen",
+      "Carbon"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-012",
+    "area": "science",
+    "question": "Which subatomic particle has a negative charge?",
+    "options": [
+      "The electron",
+      "The proton",
+      "The neutron",
+      "The photon"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-013",
+    "area": "science",
+    "question": "Which layer of the atmosphere protects us from ultraviolet radiation?",
+    "options": [
+      "The ozone layer",
+      "The troposphere",
+      "The ionosphere",
+      "The mesosphere"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-014",
+    "area": "science",
+    "question": "What is the cell division that gives rise to reproductive cells called?",
+    "options": [
+      "Meiosis",
+      "Mitosis",
+      "Fission",
+      "Budding"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-015",
+    "area": "science",
+    "question": "Which type of rock forms from the cooling of magma?",
+    "options": [
+      "Igneous rock",
+      "Sedimentary rock",
+      "Metamorphic rock",
+      "Limestone"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-016",
+    "area": "science",
+    "question": "Which metal is liquid at room temperature?",
+    "options": [
+      "Mercury",
+      "Lead",
+      "Tin",
+      "Zinc"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-017",
+    "area": "science",
+    "question": "Which scientist proposed the theory of evolution by natural selection?",
+    "options": [
+      "Charles Darwin",
+      "Gregor Mendel",
+      "Isaac Newton",
+      "Louis Pasteur"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-018",
+    "area": "science",
+    "question": "What is the basic unit of genetic inheritance?",
+    "options": [
+      "The gene",
+      "The chromosome",
+      "The protein",
+      "The nucleus"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-019",
+    "area": "science",
+    "question": "Which optical phenomenon produces the rainbow?",
+    "options": [
+      "The refraction and dispersion of light",
+      "Total reflection",
+      "Sound diffraction",
+      "Magnetic polarization"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-020",
+    "area": "science",
+    "question": "What is Earth's natural satellite?",
+    "options": [
+      "The Moon",
+      "Phobos",
+      "Titan",
+      "Europa"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-021",
+    "area": "science",
+    "question": "Which process releases energy by splitting an atom's nucleus?",
+    "options": [
+      "Nuclear fission",
+      "Nuclear fusion",
+      "Ionization",
+      "Natural radioactivity"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-022",
+    "area": "science",
+    "question": "What is the largest bird in the world, even though it cannot fly?",
+    "options": [
+      "The ostrich",
+      "The emperor penguin",
+      "The condor",
+      "The eagle"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-023",
+    "area": "science",
+    "question": "On which scale is the magnitude of earthquakes traditionally measured?",
+    "options": [
+      "Richter scale",
+      "Kelvin scale",
+      "Beaufort scale",
+      "Mohs scale"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-024",
+    "area": "science",
+    "question": "What state is water in at 0 °C?",
+    "options": [
+      "Solid (ice)",
+      "Liquid",
+      "Gas",
+      "Plasma"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-025",
+    "area": "science",
+    "question": "At what temperature does water boil at sea level?",
+    "options": [
+      "100 °C",
+      "90 °C",
+      "120 °C",
+      "80 °C"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-026",
+    "area": "science",
+    "question": "Which part of the cell contains the genetic material?",
+    "options": [
+      "The nucleus",
+      "The mitochondria",
+      "The cytoplasm",
+      "The membrane"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-027",
+    "area": "science",
+    "question": "What is the process by which a caterpillar becomes a butterfly called?",
+    "options": [
+      "Metamorphosis",
+      "Mutation",
+      "Pollination",
+      "Photosynthesis"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-028",
+    "area": "science",
+    "question": "Which type of energy is obtained directly from the Sun?",
+    "options": [
+      "Solar energy",
+      "Wind energy",
+      "Hydropower",
+      "Geothermal energy"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-029",
+    "area": "science",
+    "question": "Which planet is known as the \"red planet\"?",
+    "options": [
+      "Mars",
+      "Venus",
+      "Jupiter",
+      "Mercury"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-030",
+    "area": "science",
+    "question": "Which gas do plants release during photosynthesis?",
+    "options": [
+      "Oxygen",
+      "Carbon dioxide",
+      "Nitrogen",
+      "Hydrogen"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-031",
+    "area": "science",
+    "question": "What is the solid, outer layer of the Earth, made up of plates, called?",
+    "options": [
+      "The Earth's crust",
+      "The mantle",
+      "The outer core",
+      "The inner core"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-032",
+    "area": "science",
+    "question": "What is the reverse process of photosynthesis, by which living things obtain energy, called?",
+    "options": [
+      "Cellular respiration",
+      "Fermentation",
+      "Digestion",
+      "Excretion"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-033",
+    "area": "science",
+    "question": "Which layer of the Earth lies between the crust and the core?",
+    "options": [
+      "The mantle",
+      "The lithosphere",
+      "The atmosphere",
+      "The hydrosphere"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-034",
+    "area": "science",
+    "question": "What is the hardest known natural material?",
+    "options": [
+      "Diamond",
+      "Quartz",
+      "Granite",
+      "Steel"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-035",
+    "area": "science",
+    "question": "What type of animal is a snake?",
+    "options": [
+      "Reptile",
+      "Amphibian",
+      "Mammal",
+      "Bird"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-036",
+    "area": "science",
+    "question": "How many hearts does an octopus have?",
+    "options": [
+      "3",
+      "1",
+      "2",
+      "4"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-037",
+    "area": "science",
+    "question": "What is the process by which water vapor turns into liquid called?",
+    "options": [
+      "Condensation",
+      "Evaporation",
+      "Sublimation",
+      "Solidification"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-038",
+    "area": "science",
+    "question": "What is the main greenhouse gas produced by human activity?",
+    "options": [
+      "Carbon dioxide",
+      "Oxygen",
+      "Nitrogen",
+      "Hydrogen"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-039",
+    "area": "science",
+    "question": "What is the tallest tree in the world?",
+    "options": [
+      "The redwood",
+      "The oak",
+      "The baobab",
+      "The eucalyptus"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-040",
+    "area": "science",
+    "question": "What type of star is the Sun?",
+    "options": [
+      "A yellow dwarf",
+      "A red giant",
+      "A white dwarf",
+      "A blue supergiant"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-041",
+    "area": "science",
+    "question": "Which animal is able to regenerate its tail if it loses it?",
+    "options": [
+      "The lizard",
+      "The dog",
+      "The cat",
+      "The dolphin"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-042",
+    "area": "science",
+    "question": "What is the process by which a liquid turns into a solid called?",
+    "options": [
+      "Solidification",
+      "Melting",
+      "Sublimation",
+      "Condensation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-043",
+    "area": "science",
+    "question": "What is the gaseous layer surrounding the Earth called?",
+    "options": [
+      "The atmosphere",
+      "The lithosphere",
+      "The hydrosphere",
+      "The biosphere"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-044",
+    "area": "science",
+    "question": "Which insect produces honey?",
+    "options": [
+      "The bee",
+      "The ant",
+      "The wasp",
+      "The butterfly"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-045",
+    "area": "science",
+    "question": "What is the process by which bees help plants reproduce called?",
+    "options": [
+      "Pollination",
+      "Photosynthesis",
+      "Germination",
+      "Fermentation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-046",
+    "area": "science",
+    "question": "Which animal changes color to camouflage itself in its environment?",
+    "options": [
+      "The chameleon",
+      "The elephant",
+      "The tiger",
+      "The bear"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-047",
+    "area": "science",
+    "question": "Which part of the plant mainly performs photosynthesis?",
+    "options": [
+      "The leaves",
+      "The roots",
+      "The stem",
+      "The flowers"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-048",
+    "area": "science",
+    "question": "What mainly causes tides in the oceans?",
+    "options": [
+      "The Moon's gravitational pull",
+      "The wind",
+      "Ocean currents",
+      "Earth's rotation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-049",
+    "area": "science",
+    "question": "Which gas do plants use during photosynthesis?",
+    "options": [
+      "Carbon dioxide",
+      "Oxygen",
+      "Nitrogen",
+      "Hydrogen"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-050",
+    "area": "science",
+    "question": "What is the Earth's spin on its own axis, which causes day and night, called?",
+    "options": [
+      "Rotation",
+      "Revolution",
+      "Precession",
+      "Nutation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-051",
+    "area": "science",
+    "question": "What is the Earth's movement around the Sun, which causes the seasons, called?",
+    "options": [
+      "Revolution",
+      "Rotation",
+      "Precession",
+      "Nutation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-052",
+    "area": "science",
+    "question": "Which scientist formulated the laws of motion and universal gravitation?",
+    "options": [
+      "Isaac Newton",
+      "Albert Einstein",
+      "Galileo Galilei",
+      "Nikola Tesla"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-053",
+    "area": "science",
+    "question": "Which unit measures the distance between celestial bodies and equals the distance from Earth to the Sun?",
+    "options": [
+      "Astronomical unit",
+      "Light-year",
+      "Parsec",
+      "Nautical mile"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-054",
+    "area": "science",
+    "question": "Which type of cell has no defined nucleus?",
+    "options": [
+      "Prokaryotic cell",
+      "Eukaryotic cell",
+      "Stem cell",
+      "Nerve cell"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-055",
+    "area": "science",
+    "question": "How do clouds form?",
+    "options": [
+      "Through the condensation of water vapor",
+      "Through the evaporation of ice",
+      "Through the solidification of air",
+      "Through the sublimation of soil"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-056",
+    "area": "science",
+    "question": "Which animal hibernates during winter?",
+    "options": [
+      "The bear",
+      "The lion",
+      "The tiger",
+      "The elephant"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-057",
+    "area": "science",
+    "question": "Which renewable energy harnesses the power of wind?",
+    "options": [
+      "Wind energy",
+      "Solar energy",
+      "Nuclear energy",
+      "Fossil energy"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-058",
+    "area": "science",
+    "question": "Which layer of the Earth is mainly made up of molten iron and nickel?",
+    "options": [
+      "The outer core",
+      "The crust",
+      "The mantle",
+      "The lithosphere"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-059",
+    "area": "science",
+    "question": "What is the process by which a cell divides into two identical cells called?",
+    "options": [
+      "Mitosis",
+      "Meiosis",
+      "Fertilization",
+      "Budding"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-060",
+    "area": "science",
+    "question": "What is the luminous phenomenon observed near the poles, caused by particles from the Sun, called?",
+    "options": [
+      "Aurora borealis",
+      "Eclipse",
+      "Comet",
+      "Meteorite"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "science-061",
+    "area": "science",
+    "question": "Which biological kingdom do fungi belong to?",
+    "options": [
+      "Kingdom Fungi",
+      "Kingdom Animalia",
+      "Kingdom Plantae",
+      "Kingdom Monera"
+    ],
+    "correctIndex": 0
+  }
+]

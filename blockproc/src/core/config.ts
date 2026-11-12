@@ -2,11 +2,15 @@ import type { Area } from "./types";
 
 // Fase 10 (rediseño): ya no hay configuración global de límite/preguntas/
 // ventana/áreas/apps restringidas — todo eso ahora vive por bloqueo
-// (core/blocks.ts). Lo único que queda en Ajustes son los mensajes por
-// defecto que prellenan el paso de mensajes al crear un bloqueo (RF-70).
+// (core/blocks.ts). Lo único que queda en Personalización son los mensajes
+// por defecto que prellenan el paso de mensajes al crear un bloqueo (RF-70).
+// Fase 11: se suma el idioma de la app (RF-78), español por defecto.
+export type Language = "es" | "en";
+
 export interface Config {
   defaultFocusMessage: string;
   defaultBlockMessage: string;
+  language: Language;
 }
 
 export const AREAS: readonly Area[] = ["general", "technology", "health", "science", "math"];
@@ -23,6 +27,7 @@ export function createDefaultConfig(): Config {
   return {
     defaultFocusMessage: DEFAULT_FOCUS_MESSAGE,
     defaultBlockMessage: DEFAULT_BLOCK_MESSAGE,
+    language: "es",
   };
 }
 

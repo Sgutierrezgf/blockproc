@@ -6,7 +6,7 @@ import {
   isValidMessage,
 } from "../../blockproc/src/core/config";
 
-// RF-70: Ajustes queda reducido a los mensajes por defecto.
+// RF-70: Personalización queda reducida a los mensajes por defecto.
 describe("createDefaultConfig", () => {
   it("usa los mensajes de fábrica", () => {
     const config = createDefaultConfig();
@@ -18,6 +18,10 @@ describe("createDefaultConfig", () => {
     const config = createDefaultConfig();
     expect(isValidMessage(config.defaultFocusMessage)).toBe(true);
     expect(isValidMessage(config.defaultBlockMessage)).toBe(true);
+  });
+
+  it("el idioma por defecto es español (RF-78)", () => {
+    expect(createDefaultConfig().language).toBe("es");
   });
 });
 

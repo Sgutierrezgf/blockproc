@@ -9,6 +9,8 @@ import {
   PlusJakartaSans_700Bold,
 } from "@expo-google-fonts/plus-jakarta-sans";
 
+import { LanguageProvider } from "../i18n/LanguageProvider";
+
 // T66 (Fase 7): mantiene visible el splash nativo hasta que la fuente del
 // sistema de diseño ("Mindful Calm") esté lista, para no mostrar un parpadeo
 // con la tipografía del sistema y después cambiar a Plus Jakarta Sans.
@@ -39,5 +41,13 @@ export default function RootLayout() {
   // navigation.goBack() sin pasar por el listener de hardwareBackPress que
   // esas pantallas usan para forzar goHome() (RF-62/66). Cada pantalla ya
   // trae su propio título y, donde hace falta, su propio BackButton.
-  return <Stack screenOptions={{ headerShown: false }} />;
+  //
+  // T151 (Fase 11): LanguageProvider envuelve todo el Stack, no solo el
+  // grupo (tabs), para que challenge/wait/create-block (fuera de ese grupo,
+  // abiertas por enlace profundo) también reaccionen al idioma elegido.
+  return (
+    <LanguageProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </LanguageProvider>
+  );
 }

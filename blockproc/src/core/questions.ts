@@ -1,4 +1,5 @@
 import { AREAS } from "./config";
+import type { Language } from "./config";
 import type { Area } from "./types";
 
 // RF-24: "math" no vive en el banco de texto: la genera mathQuestions.ts al
@@ -78,4 +79,9 @@ export function hasMinimumQuestionsPerArea(
     counts.set(question.area, (counts.get(question.area) ?? 0) + 1);
   }
   return TEXT_AREAS.every((area) => (counts.get(area) ?? 0) >= min);
+}
+
+/** RF-77: elige el banco del idioma activo; quien llama trae los bancos ya cargados (JSON estático). */
+export function selectQuestionBank(language: Language, banks: Record<Language, Question[]>): Question[] {
+  return banks[language];
 }

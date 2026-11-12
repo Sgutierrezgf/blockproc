@@ -4,6 +4,7 @@ import { AppState, PermissionsAndroid, Platform, ScrollView, Text, View } from "
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
+import { useStrings } from "../i18n/LanguageProvider";
 import { PrimaryButton } from "../components/PrimaryButton";
 
 // RF-26: mientras falte el permiso de estadísticas de uso, el de
@@ -32,6 +33,7 @@ async function hasNotificationPermission(): Promise<boolean> {
 // solo cambia la presentación (tarjetas y colores del sistema de diseño en
 // vez de colores sueltos de Tailwind).
 export default function Permissions() {
+  const strings = useStrings().permissions;
   const [permissions, setPermissions] = useState(() => ({ ...readSyncPermissions(), notifications: false }));
 
   // Los dos primeros se leen de forma síncrona (ya en el estado inicial);
@@ -88,38 +90,47 @@ export default function Permissions() {
       >
         <View className="gap-2">
           <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            Permisos necesarios
+            {strings.title}
           </Text>
           <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-            blockproc necesita estos permisos para poder aplicar los límites que configures.
+            {strings.subtitle}
           </Text>
         </View>
 
         <PermissionCard
-          title="Estadísticas de uso"
-          description="Para saber qué app está abierta y aplicar tus bloqueos."
+          title={strings.usageAccessTitle}
+          description={strings.usageAccessDescription}
           granted={permissions.usageAccess}
+          grantedLabel={strings.granted}
+          pendingLabel={strings.pending}
+          grantButtonLabel={strings.grantButton}
           onPress={() => BlockprocNative.openUsageAccessSettings()}
         />
         <PermissionCard
-          title="Mostrar sobre otras apps"
-          description="Para mostrar el reto encima de la app bloqueada cuando toca."
+          title={strings.overlayTitle}
+          description={strings.overlayDescription}
           granted={permissions.overlay}
+          grantedLabel={strings.granted}
+          pendingLabel={strings.pending}
+          grantButtonLabel={strings.grantButton}
           onPress={() => BlockprocNative.openOverlaySettings()}
         />
         <PermissionCard
-          title="Notificaciones"
-          description="Para avisar antes de que empiece un bloqueo programado."
+          title={strings.notificationsTitle}
+          description={strings.notificationsDescription}
           granted={permissions.notifications}
+          grantedLabel={strings.granted}
+          pendingLabel={strings.pending}
+          grantButtonLabel={strings.grantButton}
           onPress={requestNotifications}
         />
 
         <View className="gap-1 rounded-2xl bg-surface-container-low p-4 dark:bg-surface-container-low-dark">
           <Text className="font-label-md text-label-md font-semibold text-on-surface dark:text-on-surface-dark">
-            Compromiso de privacidad
+            {strings.privacyTitle}
           </Text>
           <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
-            Tus datos se procesan siempre en tu dispositivo: nada se envía a ningún servidor.
+            {strings.privacyDescription}
           </Text>
         </View>
       </ScrollView>
@@ -131,11 +142,17 @@ function PermissionCard({
   title,
   description,
   granted,
+  grantedLabel,
+  pendingLabel,
+  grantButtonLabel,
   onPress,
 }: {
   title: string;
   description: string;
   granted: boolean;
+  grantedLabel: string;
+  pendingLabel: string;
+  grantButtonLabel: string;
   onPress: () => void;
 }) {
   return (
@@ -164,14 +181,14 @@ function PermissionCard({
                 : "text-on-surface-variant dark:text-on-surface-variant-dark"
             }`}
           >
-            {granted ? "Concedido" : "Pendiente"}
+            {granted ? grantedLabel : pendingLabel}
           </Text>
         </View>
       </View>
       <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
         {description}
       </Text>
-      {!granted && <PrimaryButton title="Conceder permiso" onPress={onPress} />}
+      {!granted && <PrimaryButton title={grantButtonLabel} onPress={onPress} />}
     </View>
   );
 }

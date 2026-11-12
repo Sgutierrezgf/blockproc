@@ -618,6 +618,21 @@ discutieron opción por opción y aprobó las propuestas tal cual:
 
 Ningún cambio toca `policy.ts`, Kotlin ni el formato del JSON guardado.
 
+### T169: verificación final de la Fase 12 (mejoras de uso real)
+
+Verificación en el dispositivo real, hecha por el usuario (2026-11-12):
+
+| Feature | Verificado | Notas |
+|---|---|---|
+| Categoría y idioma como radio (C44) | ✅ | Opción única en el asistente y en Ajustes; la selección de apps sigue con casilla |
+| Extremo en su propia sección (RF-80, C45) | ✅ | El interruptor deshabilita las categorías; al apagarlo vuelve la elegida; el resumen omite la categoría |
+| Nombres de apps en el resumen (RF-81, C46) | ✅ | Hasta 5 nombres, "+N más" y "Ver todas" |
+| Detalle de solo lectura (RF-82, C47) | ✅ | Activo y programado; sin acciones sobre el bloqueo |
+
+`tsc --noEmit`, `expo lint` y los 215 tests de Jest (26 suites) en verde.
+
+**Veredicto: Fase 12 completa.**
+
 ## 8. Cambios a la spec (aplicados)
 
 Con tu aprobación se aplicaron:

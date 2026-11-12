@@ -1,4 +1,5 @@
 import type { Clock } from "../core/clock";
+import { getMonitorMode } from "../core/monitorMode";
 import { handleForegroundChanged, handleScreenOff, handleScreenOn, handleTick } from "../core/policy";
 import type { PolicyAction, PolicyResult } from "../core/policy";
 import { STRINGS } from "../i18n/strings";
@@ -55,6 +56,8 @@ export function createSupervisor(deps: SupervisorDeps): Supervisor {
     state = result.state;
     savePolicyState(deps.store, state);
     runActions(deps.native, deps.store, result.actions);
+    // D4: con el estado ya actualizado, lo nativo ajusta su sondeo.
+    deps.native.setMonitorMode(getMonitorMode(state, deps.clock.now()));
   }
 
   return {

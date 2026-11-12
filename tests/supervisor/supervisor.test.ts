@@ -15,14 +15,19 @@ type Call =
   | { type: "goHome" }
   | { type: "showNotification"; notifyType: string; title: string; text: string };
 
-function createFakeNativeAdapter(): NativeAdapter & { calls: Call[] } {
+function createFakeNativeAdapter(): NativeAdapter & { calls: Call[]; modes: string[] } {
   const calls: Call[] = [];
+  // Aparte de calls: el modo se informa en cada evento (D4) y ensuciaría las
+  // aserciones sobre las acciones de la política.
+  const modes: string[] = [];
   return {
     calls,
+    modes,
     showChallenge: (packageName) => calls.push({ type: "showChallenge", packageName }),
     showWait: (packageName) => calls.push({ type: "showWait", packageName }),
     goHome: () => calls.push({ type: "goHome" }),
     showNotification: (notifyType, title, text) => calls.push({ type: "showNotification", notifyType, title, text }),
+    setMonitorMode: (mode) => modes.push(mode),
   };
 }
 
@@ -148,5 +153,24 @@ describe("createSupervisor", () => {
     supervisor.onScreenOn();
 
     expect(native.calls).toEqual([]);
+  });
+
+  // D4 (batería): tras cada evento el supervisor le dice a lo nativo si
+  // sondear rápido (watch) o espaciado (idle), según el estado ya guardado.
+  it("informa el modo de sondeo tras cada evento", () => {
+    const clock = createFakeClock(0);
+    const store = createInMemoryStore();
+    seedBlocks(store, [makeBlock({ startAt: 10_000_000, endAt: 20_000_000 })]);
+    const native = createFakeNativeAdapter();
+    const supervisor = createSupervisor({ native, store, clock });
+
+    supervisor.onTick();
+    clock.advance(10_000_000 - 60_000);
+    supervisor.onScreenOn();
+    clock.advance(20_000_000);
+    supervisor.onForegroundChanged(PKG);
+    supervisor.onScreenOff();
+
+    expect(native.modes).toEqual(["idle", "watch", "idle", "idle"]);
   });
 });

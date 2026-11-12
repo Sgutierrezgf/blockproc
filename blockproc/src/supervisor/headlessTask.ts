@@ -17,6 +17,7 @@ const realNativeAdapter: NativeAdapter = {
   showWait: (packageName) => BlockprocNative.showWait(packageName),
   goHome: () => BlockprocNative.goHome(),
   showNotification: (type, title, text) => BlockprocNative.showNotification(type, title, text),
+  setMonitorMode: (mode) => BlockprocNative.setMonitorMode(mode),
 };
 
 // Una instancia nueva por invocación: cuando la app estaba cerrada de

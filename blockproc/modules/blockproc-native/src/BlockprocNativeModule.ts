@@ -37,6 +37,9 @@ declare class BlockprocNativeModule extends NativeModule<BlockprocNativeEvents> 
   // decide el id, para que un aviso nuevo reemplace al anterior; título y
   // texto llegan ya traducidos (RF-76/77).
   showNotification(type: string, title: string, text: string): void;
+  // D4 (batería): "watch" sondea cada 500 ms con Tick cada 10 s; "idle",
+  // cada 5 s con Tick cada 60 s. El servicio arranca en "watch".
+  setMonitorMode(mode: "watch" | "idle"): void;
   // RF-76, RF-77: textos de Android en el idioma elegido (nombres de canal y
   // notificación fija del servicio); se guardan del lado nativo.
   setNotificationTexts(

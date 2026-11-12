@@ -122,6 +122,11 @@ class BlockprocNativeModule : Module() {
       showNotification(type, title, text)
     }
 
+    // D4 (batería): "watch" o "idle", según monitorMode.ts.
+    Function("setMonitorMode") { mode: String ->
+      MonitorService.setMonitorMode(mode)
+    }
+
     // RF-76, RF-77: JS manda los textos de Android en el idioma elegido cada
     // vez que cambia; se guardan para el servicio y se aplican ya mismo a la
     // notificación fija y a los nombres de canal existentes.

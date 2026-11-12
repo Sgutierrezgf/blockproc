@@ -4,6 +4,8 @@ import { BackHandler, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
+import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
+
 import {
   computeDurationRange,
   computeScheduledRange,
@@ -14,6 +16,7 @@ import {
 import type { Block, BlockType, TimeOfDay } from "../core/blocks";
 import { createDefaultConfig, isValidMessage } from "../core/config";
 import { createSystemClock } from "../core/clock";
+import { getMonitorMode } from "../core/monitorMode";
 import type { Area } from "../core/types";
 import { useStrings } from "../i18n/LanguageProvider";
 import { loadConfig } from "../storage/appRepository";
@@ -179,7 +182,11 @@ export default function CreateBlock() {
       extreme,
     };
     const otherBlocks = policyState.blocks.filter((b) => b.id !== block.id);
-    savePolicyState(defaultStore, { ...policyState, blocks: [...otherBlocks, block] });
+    const nextState = { ...policyState, blocks: [...otherBlocks, block] };
+    savePolicyState(defaultStore, nextState);
+    // D4: un bloqueo por tiempo empieza ya; el servicio no puede esperar al
+    // próximo Tick de "idle" (hasta 60 s) para volver a sondear rápido.
+    BlockprocNative.setMonitorMode(getMonitorMode(nextState, clock.now()));
     router.replace("/blocks");
   };
 

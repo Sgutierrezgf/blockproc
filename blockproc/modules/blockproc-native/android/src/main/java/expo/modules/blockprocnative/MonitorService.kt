@@ -67,7 +67,7 @@ class MonitorService : Service() {
   private val pollRunnable = object : Runnable {
     override fun run() {
       poll()
-      handler.postDelayed(this, POLL_INTERVAL_MS)
+      handler.postDelayed(this, if (idle) IDLE_POLL_INTERVAL_MS else POLL_INTERVAL_MS)
     }
   }
 
@@ -78,6 +78,7 @@ class MonitorService : Service() {
     Log.d(TAG, "onCreate")
     startForegroundWithNotification()
     isRunning = true
+    instance = this
     // ACTION_SCREEN_ON/OFF son difusiones protegidas del sistema: solo
     // Android puede emitirlas, así que no hace falta (ni corresponde) pedir
     // RECEIVER_EXPORTED/RECEIVER_NOT_EXPORTED al registrar este receptor.
@@ -99,6 +100,7 @@ class MonitorService : Service() {
   override fun onDestroy() {
     Log.d(TAG, "onDestroy")
     isRunning = false
+    instance = null
     stopPolling()
     unregisterReceiver(screenReceiver)
     super.onDestroy()
@@ -152,7 +154,7 @@ class MonitorService : Service() {
       triggerSupervisorEvent("ForegroundChanged", newest) // RF-9, RF-27 (T51): la lógica real, corra o no la UI
     }
 
-    if (now - lastTickDispatchedAt >= TICK_INTERVAL_MS) {
+    if (now - lastTickDispatchedAt >= (if (idle) IDLE_TICK_INTERVAL_MS else TICK_INTERVAL_MS)) {
       lastTickDispatchedAt = now
       triggerSupervisorEvent("Tick")
     }
@@ -188,6 +190,30 @@ class MonitorService : Service() {
     // el servicio no está corriendo.
     @Volatile
     private var isRunning = false
+
+    // D4 (batería): "idle" espacia sondeo y Tick cuando no hay nada que
+    // vigilar. Lo decide el supervisor de JS (monitorMode.ts) tras cada
+    // evento; al arrancar se parte de "watch", el modo seguro. Lo lee solo
+    // el hilo principal (pollRunnable), y setMonitorMode se publica ahí.
+    private var idle = false
+    private var instance: MonitorService? = null
+
+    fun setMonitorMode(mode: String) {
+      Handler(Looper.getMainLooper()).post {
+        val nextIdle = mode == "idle"
+        if (nextIdle == idle) return@post
+        idle = nextIdle
+        Log.d(TAG, "setMonitorMode: $mode")
+        // Al pasar a "watch" no se espera el resto del intervalo de "idle":
+        // se sondea ya y el próximo Tick sale en el primer sondeo.
+        val service = instance
+        if (!nextIdle && service != null && service.isPolling) {
+          service.lastTickDispatchedAt = 0L
+          service.handler.removeCallbacks(service.pollRunnable)
+          service.handler.post(service.pollRunnable)
+        }
+      }
+    }
 
     // RF-76, RF-77: textos en el idioma elegido (ver NotificationTexts).
     // El ícono es uno del sistema, marcador temporal hasta tener uno propio.
@@ -230,6 +256,10 @@ class MonitorService : Service() {
     // de primer plano (más frecuente, arriba). Los plazos que revisa (aviso
     // de 2 min, ventana de 2 min, espera de 5 min) no necesitan más precisión.
     private const val TICK_INTERVAL_MS = 10_000L
+    // "idle": nada activo ni por empezar en 3 min (WATCH_LEAD_MS). El Tick
+    // de 60 s alcanza para pasar a "watch" antes del aviso de 2 min (RF-68).
+    private const val IDLE_POLL_INTERVAL_MS = 5_000L
+    private const val IDLE_TICK_INTERVAL_MS = 60_000L
   }
 
   // Puente hacia el módulo de Expo: el servicio y el módulo corren en el

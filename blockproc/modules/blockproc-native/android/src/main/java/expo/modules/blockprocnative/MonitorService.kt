@@ -46,13 +46,19 @@ class MonitorService : Service() {
     override fun onReceive(receivedContext: Context, intent: Intent) {
       Log.d(TAG, "screenReceiver.onReceive: ${intent.action}")
       when (intent.action) {
+        // RF-43: el supervisor recibe ScreenOn/ScreenOff (antes solo
+        // llegaban a los callbacks de depuración). ScreenOn re-evalúa de
+        // inmediato, así que cuenta como Tick y reinicia su intervalo.
         Intent.ACTION_SCREEN_ON -> {
           Callbacks.onScreenOn?.invoke()
+          lastTickDispatchedAt = System.currentTimeMillis()
+          triggerSupervisorEvent("ScreenOn")
           startPolling()
         }
         Intent.ACTION_SCREEN_OFF -> {
           stopPolling()
           Callbacks.onScreenOff?.invoke()
+          triggerSupervisorEvent("ScreenOff")
         }
       }
     }
@@ -143,33 +149,25 @@ class MonitorService : Service() {
     if (newest != null && newest != lastForegroundPackage) {
       lastForegroundPackage = newest
       Callbacks.onForegroundChanged?.invoke(newest) // T09: solo para el registro visual de depuración
-      triggerSupervisorTask(newest) // RF-9, RF-27 (T51): la lógica real, corra o no la UI
+      triggerSupervisorEvent("ForegroundChanged", newest) // RF-9, RF-27 (T51): la lógica real, corra o no la UI
     }
 
     if (now - lastTickDispatchedAt >= TICK_INTERVAL_MS) {
       lastTickDispatchedAt = now
-      triggerSupervisorTick()
+      triggerSupervisorEvent("Tick")
     }
   }
 
-  // RF-9, RF-27 (T51): arranca la tarea Headless JS con el evento
-  // ForegroundChanged. Un startService normal (no startForegroundService)
-  // basta: MonitorService, que ya corre en primer plano, exime a la app de
-  // las restricciones de arranque en segundo plano para esta llamada.
-  private fun triggerSupervisorTask(packageName: String) {
-    Log.d(TAG, "triggerSupervisorTask: $packageName")
+  // RF-9, RF-27 (T51): arranca la tarea Headless JS con un evento del
+  // supervisor (ForegroundChanged, Tick, ScreenOn o ScreenOff). Un
+  // startService normal (no startForegroundService) basta: MonitorService,
+  // que ya corre en primer plano, exime a la app de las restricciones de
+  // arranque en segundo plano para esta llamada.
+  private fun triggerSupervisorEvent(event: String, packageName: String? = null) {
+    Log.d(TAG, "triggerSupervisorEvent: $event $packageName")
     val intent = Intent(this, SupervisorTaskService::class.java).apply {
-      putExtra("event", "ForegroundChanged")
-      putExtra("packageName", packageName)
-    }
-    startService(intent)
-  }
-
-  // Igual que triggerSupervisorTask, pero para el evento periódico (ver el
-  // comentario junto a lastTickDispatchedAt).
-  private fun triggerSupervisorTick() {
-    val intent = Intent(this, SupervisorTaskService::class.java).apply {
-      putExtra("event", "Tick")
+      putExtra("event", event)
+      if (packageName != null) putExtra("packageName", packageName)
     }
     startService(intent)
   }

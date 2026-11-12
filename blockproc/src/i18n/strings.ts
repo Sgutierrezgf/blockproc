@@ -123,6 +123,18 @@ export interface Strings {
     noMatchForCategory: string;
     categoryLabels: Record<CategoryKey, string>;
   };
+  // RF-82: detalle de solo lectura de un bloqueo.
+  blockDetail: {
+    title: string;
+    startLabel: (time: string) => string;
+    endLabel: (time: string) => string;
+    remaining: (duration: string) => string;
+    focusMessageTitle: string;
+    blockMessageTitle: string;
+    activeReadOnlyNote: string;
+    notFound: string;
+    back: string;
+  };
   // RF-81: lista de nombres de apps de un bloqueo (resumen y detalle).
   appNameList: {
     moreApps: (count: number) => string;
@@ -291,6 +303,17 @@ export const STRINGS: Record<Language, Strings> = {
         other: "Otras",
       },
     },
+    blockDetail: {
+      title: "Detalle del bloqueo",
+      startLabel: (time) => `Inicio: ${time}`,
+      endLabel: (time) => `Fin: ${time}`,
+      remaining: (duration) => `Quedan ${duration}`,
+      focusMessageTitle: "Mensaje de enfoque",
+      blockMessageTitle: "Mensaje del bloqueo",
+      activeReadOnlyNote: "Mientras esté activo no se puede editar ni cancelar.",
+      notFound: "Este bloqueo ya terminó.",
+      back: "Volver",
+    },
     appNameList: {
       moreApps: (count) => `+${count} más`,
       showAll: "Ver todas",
@@ -450,6 +473,17 @@ export const STRINGS: Record<Language, Strings> = {
         accessibility: "Accessibility",
         other: "Other",
       },
+    },
+    blockDetail: {
+      title: "Block details",
+      startLabel: (time) => `Start: ${time}`,
+      endLabel: (time) => `End: ${time}`,
+      remaining: (duration) => `${duration} left`,
+      focusMessageTitle: "Focus message",
+      blockMessageTitle: "Block message",
+      activeReadOnlyNote: "While it's active it can't be edited or cancelled.",
+      notFound: "This block has already ended.",
+      back: "Back",
     },
     appNameList: {
       moreApps: (count) => `+${count} more`,

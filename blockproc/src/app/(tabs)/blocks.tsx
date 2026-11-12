@@ -21,6 +21,7 @@ function formatTime(ts: number): string {
 // quitan solos, sin dejar constancia (D33). Botón "+" abre el asistente de
 // creación (create-block.tsx). Un bloqueo programado se puede editar o
 // borrar (RF-61); uno activo no ofrece ninguna de las dos (RF-62).
+// RF-82: tocar la tarjeta abre su detalle de solo lectura (block-detail.tsx).
 export default function Blocks() {
   const strings = useStrings().blocks;
   const [blocks, setBlocks] = useState<Block[]>(() => loadPolicyState(defaultStore).blocks);
@@ -87,7 +88,11 @@ export default function Blocks() {
           const status = getBlockStatus(item, clock.now());
           const isActive = status === "active";
           return (
-            <View className="gap-2 rounded-3xl bg-surface-container p-4 shadow-sm dark:bg-surface-container-dark">
+            <Pressable
+              onPress={() => router.push({ pathname: "/block-detail", params: { id: item.id } })}
+              accessibilityRole="button"
+              className="gap-2 rounded-3xl bg-surface-container p-4 shadow-sm active:opacity-80 dark:bg-surface-container-dark"
+            >
               <View className="flex-row items-center justify-between">
                 <Text className="font-headline-sm text-headline-sm font-semibold text-on-surface dark:text-on-surface-dark">
                   {strings.appsCount(item.packages.length)}
@@ -135,7 +140,7 @@ export default function Blocks() {
                   </Pressable>
                 </View>
               )}
-            </View>
+            </Pressable>
           );
         }}
       />

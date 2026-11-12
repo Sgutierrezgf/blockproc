@@ -31,11 +31,13 @@ export default function AppSettings() {
           </Text>
           <SelectableRow
             label={strings.languageSpanish}
+            variant="radio"
             checked={language === "es"}
             onPress={() => setLanguage("es")}
           />
           <SelectableRow
             label={strings.languageEnglish}
+            variant="radio"
             checked={language === "en"}
             onPress={() => setLanguage("en")}
           />

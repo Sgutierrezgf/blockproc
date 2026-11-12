@@ -71,6 +71,8 @@ export interface Strings {
     invalidDurationMessage: string;
     categoryStepTitle: string;
     categoryStepDescription: string;
+    categoryDisabledNote: string;
+    extremeSectionTitle: string;
     extremeToggleLabel: string;
     extremeWarningTitle: string;
     extremeWarningDescription: string;
@@ -216,6 +218,8 @@ export const STRINGS: Record<Language, Strings> = {
       categoryStepTitle: "Categoría de preguntas",
       categoryStepDescription:
         "Elegí de qué tema van a ser las preguntas para poder entrar a estas apps durante el bloqueo.",
+      categoryDisabledNote: "Un bloqueo extremo no tiene preguntas: la categoría no se usa.",
+      extremeSectionTitle: "Modo extremo",
       extremeToggleLabel: "Bloqueo extremo: sin ninguna salida mientras esté activo",
       extremeWarningTitle: "Sin reto, sin confirmación",
       extremeWarningDescription:
@@ -371,6 +375,8 @@ export const STRINGS: Record<Language, Strings> = {
       invalidDurationMessage: "The block must last more than 0 minutes and no more than 12 hours.",
       categoryStepTitle: "Question category",
       categoryStepDescription: "Choose what topic the questions will be about to get into these apps during the block.",
+      categoryDisabledNote: "An extreme block has no questions: the category isn't used.",
+      extremeSectionTitle: "Extreme mode",
       extremeToggleLabel: "Extreme block: no way out while it's active",
       extremeWarningTitle: "No challenge, no confirmation",
       extremeWarningDescription:

@@ -9,6 +9,7 @@ import {
   computeScheduledRange,
   findOverlap,
   isValidBlockDuration,
+  isBlockModifiable,
 } from "../core/blocks";
 import type { Block, BlockType, TimeOfDay } from "../core/blocks";
 import { createDefaultConfig, isValidMessage } from "../core/config";
@@ -91,7 +92,7 @@ export default function CreateBlock() {
   const [focusMessage, setFocusMessage] = useState(existing?.focusMessage ?? defaultConfig.defaultFocusMessage);
   const [blockMessage, setBlockMessage] = useState(existing?.blockMessage ?? defaultConfig.defaultBlockMessage);
   const [durationError, setDurationError] = useState<string | null>(null);
-  const [overlapError, setOverlapError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<{ title: string; description: string } | null>(null);
 
   const togglePackage = (packageName: string) => {
     setSelectedPackages((prev) =>
@@ -140,6 +141,11 @@ export default function CreateBlock() {
 
   const confirmCreate = () => {
     const policyState = loadPolicyState(defaultStore);
+    // RF-62: el bloqueo pudo empezar mientras se editaba.
+    if (existing && !isBlockModifiable(policyState.blocks, existing.id, clock.now())) {
+      setSaveError({ title: strings.cannotSaveTitle, description: strings.alreadyStartedError });
+      return;
+    }
     const conflict = findOverlap(
       policyState.blocks,
       selectedPackages,
@@ -149,13 +155,14 @@ export default function CreateBlock() {
       existing?.id
     );
     if (conflict !== null) {
-      setOverlapError(
-        strings.overlapError(
+      setSaveError({
+        title: strings.cannotCreateTitle,
+        description: strings.overlapError(
           conflict.packageName,
           formatTimestamp(conflict.block.startAt),
           formatTimestamp(conflict.block.endAt)
-        )
-      );
+        ),
+      });
       return;
     }
 
@@ -343,7 +350,7 @@ export default function CreateBlock() {
             description={extreme ? strings.irreversibleExtremeDescription : strings.irreversibleNormalDescription}
           />
 
-          {overlapError && <Banner tone="locked" title={strings.cannotCreateTitle} description={overlapError} />}
+          {saveError && <Banner tone="locked" title={saveError.title} description={saveError.description} />}
 
           <PrimaryButton title={existing ? strings.saveChanges : strings.createBlockButton} onPress={confirmCreate} />
           <Pressable onPress={() => goToStep("messages")} className="items-center p-3">

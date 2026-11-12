@@ -3,7 +3,7 @@ import { Link, router, useFocusEffect } from "expo-router";
 import { Alert, FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getBlockStatus, removeEndedBlocks } from "../../core/blocks";
+import { getBlockStatus, isBlockModifiable, removeEndedBlocks } from "../../core/blocks";
 import type { Block } from "../../core/blocks";
 import { createSystemClock } from "../../core/clock";
 import { useStrings } from "../../i18n/LanguageProvider";
@@ -45,6 +45,12 @@ export default function Blocks() {
         style: "destructive",
         onPress: () => {
           const policyState = loadPolicyState(defaultStore);
+          // RF-62: el bloqueo pudo empezar con este diálogo abierto.
+          if (!isBlockModifiable(policyState.blocks, block.id, clock.now())) {
+            Alert.alert(strings.alreadyStartedTitle, strings.alreadyStartedMessage);
+            refresh();
+            return;
+          }
           savePolicyState(defaultStore, {
             ...policyState,
             blocks: policyState.blocks.filter((b) => b.id !== block.id),

@@ -31,6 +31,7 @@ function seedActiveBlock(store: KeyValueStore, overrides: Partial<Block> = {}): 
     focusMessage: "foco",
     blockMessage: "bloqueado",
     warnedStart: false,
+    extreme: false,
     ...overrides,
   };
   savePolicyState(store, { ...createPolicyState(), blocks: [block] });

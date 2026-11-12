@@ -31,7 +31,7 @@ export function Field({
   step,
 }: FieldProps) {
   const adjust = (delta: number) => {
-    const next = (Number(value) || 0) + delta;
+    const next = Math.max(0, (Number(value) || 0) + delta);
     onChangeText(String(next));
   };
 

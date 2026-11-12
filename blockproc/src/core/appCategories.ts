@@ -1,56 +1,69 @@
 import type { InstalledApp } from "./exclusions";
 
 // RF-49: valores de `ApplicationInfo.category` (Android API 26+) traducidos
-// a una etiqueta en español. `CATEGORY_UNDEFINED` (-1) ya llega como `null`
-// desde lo nativo (T82); cualquier valor fuera de esta lista también cae en
-// "Otras", nunca se excluye una app por tener una categoría desconocida.
-const CATEGORY_LABELS: Record<number, string> = {
-  0: "Juegos",
-  1: "Audio",
-  2: "Video",
-  3: "Imágenes",
-  4: "Redes sociales",
-  5: "Noticias",
-  6: "Mapas",
-  7: "Productividad",
-  8: "Accesibilidad",
+// a una clave estable (no a un texto ya en un idioma — eso lo resuelve la UI
+// con `useStrings().appPicker.categoryLabels`, RF-76/77). `CATEGORY_UNDEFINED`
+// (-1) ya llega como `null` desde lo nativo (T82); cualquier valor fuera de
+// esta lista también cae en "other", nunca se excluye una app por tener una
+// categoría desconocida.
+export type CategoryKey =
+  | "games"
+  | "audio"
+  | "video"
+  | "images"
+  | "social"
+  | "news"
+  | "maps"
+  | "productivity"
+  | "accessibility"
+  | "other";
+
+const CATEGORY_KEYS: Record<number, CategoryKey> = {
+  0: "games",
+  1: "audio",
+  2: "video",
+  3: "images",
+  4: "social",
+  5: "news",
+  6: "maps",
+  7: "productivity",
+  8: "accessibility",
 };
 
-const OTHER_LABEL = "Otras";
+const OTHER_KEY: CategoryKey = "other";
 
-const CATEGORY_ORDER = [...Object.values(CATEGORY_LABELS), OTHER_LABEL];
+const CATEGORY_ORDER: CategoryKey[] = [...Object.values(CATEGORY_KEYS), OTHER_KEY];
 
-export function categoryLabel(category: number | null | undefined): string {
+export function categoryKey(category: number | null | undefined): CategoryKey {
   if (category == null) {
-    return OTHER_LABEL;
+    return OTHER_KEY;
   }
-  return CATEGORY_LABELS[category] ?? OTHER_LABEL;
+  return CATEGORY_KEYS[category] ?? OTHER_KEY;
 }
 
 export interface AppCategoryGroup {
-  label: string;
+  key: CategoryKey;
   apps: InstalledApp[];
 }
 
 /**
- * RF-49: agrupa las apps por categoría traducida, en un orden fijo y
- * legible (las categorías conocidas primero, "Otras" al final), sin incluir
- * categorías que no tengan ninguna app en esta lista.
+ * RF-49: agrupa las apps por clave de categoría, en un orden fijo (las
+ * categorías conocidas primero, "other" al final), sin incluir categorías
+ * que no tengan ninguna app en esta lista.
  */
 export function groupAppsByCategory(apps: InstalledApp[]): AppCategoryGroup[] {
-  const buckets = new Map<string, InstalledApp[]>();
+  const buckets = new Map<CategoryKey, InstalledApp[]>();
   for (const app of apps) {
-    const label = categoryLabel(app.category);
-    const bucket = buckets.get(label);
+    const key = categoryKey(app.category);
+    const bucket = buckets.get(key);
     if (bucket) {
       bucket.push(app);
     } else {
-      buckets.set(label, [app]);
+      buckets.set(key, [app]);
     }
   }
-  return CATEGORY_ORDER.filter((label) => buckets.has(label)).map((label) => ({
-    label,
-    apps: buckets.get(label) as InstalledApp[],
+  return CATEGORY_ORDER.filter((key) => buckets.has(key)).map((key) => ({
+    key,
+    apps: buckets.get(key) as InstalledApp[],
   }));
 }
-

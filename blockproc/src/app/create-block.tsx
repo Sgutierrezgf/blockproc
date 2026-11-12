@@ -14,24 +14,19 @@ import type { Block, BlockType, TimeOfDay } from "../core/blocks";
 import { createDefaultConfig, isValidMessage } from "../core/config";
 import { createSystemClock } from "../core/clock";
 import type { Area } from "../core/types";
+import { useStrings } from "../i18n/LanguageProvider";
 import { loadConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
 import { loadPolicyState, savePolicyState } from "../supervisor/policyRepository";
 import { AppPicker } from "../components/AppPicker";
 import { Banner } from "../components/Banner";
+import { DurationWheelPicker } from "../components/DurationWheelPicker";
 import { Field } from "../components/Field";
 import { PrimaryButton } from "../components/PrimaryButton";
 import { SelectableRow } from "../components/SelectableRow";
 
 const clock = createSystemClock();
 
-const AREA_LABELS: Record<Area, string> = {
-  general: "Conocimiento general",
-  technology: "Tecnología",
-  health: "Salud y bienestar",
-  science: "Ciencia y naturaleza",
-  math: "Matemática y lógica",
-};
 const AREAS: Area[] = ["general", "technology", "health", "science", "math"];
 
 type Step = "apps" | "type" | "category" | "messages" | "summary";
@@ -78,6 +73,7 @@ function makeBlockId(): string {
 // programado (RF-61): se precarga con sus valores y, al confirmar, reemplaza
 // en vez de agregar.
 export default function CreateBlock() {
+  const strings = useStrings().createBlock;
   const { editingId } = useLocalSearchParams<{ editingId?: string }>();
   const existing = editingId ? loadPolicyState(defaultStore).blocks.find((b) => b.id === editingId) : undefined;
 
@@ -91,6 +87,7 @@ export default function CreateBlock() {
   const [scheduledStart, setScheduledStart] = useState<TimeOfDay>({ hour: 21, minute: 0 });
   const [scheduledEnd, setScheduledEnd] = useState<TimeOfDay>({ hour: 6, minute: 0 });
   const [category, setCategory] = useState<Area>(existing?.category ?? "general");
+  const [extreme, setExtreme] = useState(existing?.extreme ?? false);
   const [focusMessage, setFocusMessage] = useState(existing?.focusMessage ?? defaultConfig.defaultFocusMessage);
   const [blockMessage, setBlockMessage] = useState(existing?.blockMessage ?? defaultConfig.defaultBlockMessage);
   const [durationError, setDurationError] = useState<string | null>(null);
@@ -134,7 +131,7 @@ export default function CreateBlock() {
 
   const confirmType = () => {
     if (!isValidBlockDuration(range.startAt, range.endAt)) {
-      setDurationError("El bloqueo debe durar más de 0 minutos y no más de 12 horas.");
+      setDurationError(strings.invalidDurationMessage);
       return;
     }
     setDurationError(null);
@@ -153,7 +150,11 @@ export default function CreateBlock() {
     );
     if (conflict !== null) {
       setOverlapError(
-        `Ya hay un bloqueo en esa franja para "${conflict.packageName}" (de ${formatTimestamp(conflict.block.startAt)} a ${formatTimestamp(conflict.block.endAt)}).`
+        strings.overlapError(
+          conflict.packageName,
+          formatTimestamp(conflict.block.startAt),
+          formatTimestamp(conflict.block.endAt)
+        )
       );
       return;
     }
@@ -168,6 +169,7 @@ export default function CreateBlock() {
       focusMessage: isValidMessage(focusMessage) ? focusMessage : defaultConfig.defaultFocusMessage,
       blockMessage: isValidMessage(blockMessage) ? blockMessage : defaultConfig.defaultBlockMessage,
       warnedStart: false,
+      extreme,
     };
     const otherBlocks = policyState.blocks.filter((b) => b.id !== block.id);
     savePolicyState(defaultStore, { ...policyState, blocks: [...otherBlocks, block] });
@@ -181,11 +183,11 @@ export default function CreateBlock() {
           <AppPicker
             selected={selectedPackages}
             onToggle={togglePackage}
-            headerTitle={existing ? "Editar bloqueo — Apps" : "Nuevo bloqueo — Apps"}
-            headerDescription="Elegí qué apps querés incluir en este bloqueo."
+            headerTitle={existing ? strings.appsStepEditTitle : strings.appsStepNewTitle}
+            headerDescription={strings.appsStepDescription}
           />
           <View className="p-6">
-            <PrimaryButton title="Siguiente" onPress={() => goToStep("type")} disabled={selectedPackages.length === 0} />
+            <PrimaryButton title={strings.next} onPress={() => goToStep("type")} disabled={selectedPackages.length === 0} />
           </View>
         </View>
       )}
@@ -193,7 +195,7 @@ export default function CreateBlock() {
       {step === "type" && (
         <ScrollView contentContainerClassName="gap-4 bg-surface p-6 dark:bg-surface-dark">
           <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            Tipo de bloqueo
+            {strings.typeStepTitle}
           </Text>
 
           <View className="flex-row gap-3">
@@ -201,44 +203,60 @@ export default function CreateBlock() {
               onPress={() => setBlockType("duration")}
               className={`flex-1 items-center rounded-2xl p-4 ${blockType === "duration" ? "bg-primary-container dark:bg-primary-container-dark" : "bg-surface-container dark:bg-surface-container-dark"}`}
             >
-              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">Por tiempo</Text>
+              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">
+                {strings.durationTypeLabel}
+              </Text>
             </Pressable>
             <Pressable
               onPress={() => setBlockType("scheduled")}
               className={`flex-1 items-center rounded-2xl p-4 ${blockType === "scheduled" ? "bg-primary-container dark:bg-primary-container-dark" : "bg-surface-container dark:bg-surface-container-dark"}`}
             >
-              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">Programado</Text>
+              <Text className="font-label-lg text-label-lg text-on-surface dark:text-on-surface-dark">
+                {strings.scheduledTypeLabel}
+              </Text>
             </Pressable>
           </View>
 
           {blockType === "duration" ? (
-            <View className="flex-row gap-3">
-              <Field label="Horas" value={durationHours} onChangeText={setDurationHours} step={1} />
-              <Field label="Minutos" value={durationMinutes} onChangeText={setDurationMinutes} step={5} />
-            </View>
+            <DurationWheelPicker
+              hours={durationHours}
+              minutes={durationMinutes}
+              onChangeHours={setDurationHours}
+              onChangeMinutes={setDurationMinutes}
+            />
           ) : (
             <View className="flex-row gap-3">
-              <TimeCard label="Desde" value={formatTime(scheduledStart)} onPress={() => pickTime(scheduledStart, setScheduledStart)} />
-              <TimeCard label="Hasta" value={formatTime(scheduledEnd)} onPress={() => pickTime(scheduledEnd, setScheduledEnd)} />
+              <TimeCard
+                label={strings.fromLabel}
+                value={formatTime(scheduledStart)}
+                onPress={() => pickTime(scheduledStart, setScheduledStart)}
+              />
+              <TimeCard
+                label={strings.toLabel}
+                value={formatTime(scheduledEnd)}
+                onPress={() => pickTime(scheduledEnd, setScheduledEnd)}
+              />
             </View>
           )}
 
           <View className="gap-1 rounded-3xl bg-surface-container p-4 dark:bg-surface-container-dark">
             <Text className="font-label-md text-label-md font-semibold text-on-surface dark:text-on-surface-dark">
-              Duración: {formatDuration(range.endAt - range.startAt)}
+              {strings.durationSummary(formatDuration(range.endAt - range.startAt))}
             </Text>
             <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
-              Empieza a las {formatTimestamp(range.startAt)}.
+              {strings.startsAt(formatTimestamp(range.startAt))}
             </Text>
           </View>
 
           {durationError && (
-            <Banner tone="locked" title="Duración inválida" description={durationError} />
+            <Banner tone="locked" title={strings.invalidDurationTitle} description={durationError} />
           )}
 
-          <PrimaryButton title="Siguiente" onPress={confirmType} />
+          <PrimaryButton title={strings.next} onPress={confirmType} />
           <Pressable onPress={() => goToStep("apps")} className="items-center p-3">
-            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">Atrás</Text>
+            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+              {strings.back}
+            </Text>
           </Pressable>
         </ScrollView>
       )}
@@ -246,22 +264,34 @@ export default function CreateBlock() {
       {step === "category" && (
         <ScrollView contentContainerClassName="gap-3 bg-surface p-6 dark:bg-surface-dark">
           <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            Categoría de preguntas
+            {strings.categoryStepTitle}
           </Text>
           <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-            Elegí de qué tema van a ser las preguntas para poder entrar a estas apps durante el bloqueo.
+            {strings.categoryStepDescription}
           </Text>
           {AREAS.map((area) => (
             <SelectableRow
               key={area}
-              label={AREA_LABELS[area]}
+              label={strings.areaLabels[area]}
               checked={category === area}
               onPress={() => setCategory(area)}
             />
           ))}
-          <PrimaryButton title="Siguiente" onPress={() => goToStep("messages")} />
+
+          <SelectableRow
+            label={strings.extremeToggleLabel}
+            checked={extreme}
+            onPress={() => setExtreme((prev) => !prev)}
+          />
+          {extreme && (
+            <Banner tone="locked" title={strings.extremeWarningTitle} description={strings.extremeWarningDescription} />
+          )}
+
+          <PrimaryButton title={strings.next} onPress={() => goToStep("messages")} />
           <Pressable onPress={() => goToStep("type")} className="items-center p-3">
-            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">Atrás</Text>
+            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+              {strings.back}
+            </Text>
           </Pressable>
         </ScrollView>
       )}
@@ -269,13 +299,15 @@ export default function CreateBlock() {
       {step === "messages" && (
         <ScrollView contentContainerClassName="gap-4 bg-surface p-6 dark:bg-surface-dark">
           <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            Mensajes
+            {strings.messagesStepTitle}
           </Text>
-          <Field label="Mensaje de enfoque (hasta 120 caracteres)" value={focusMessage} onChangeText={setFocusMessage} multiline />
-          <Field label="Mensaje del bloqueo (hasta 120 caracteres)" value={blockMessage} onChangeText={setBlockMessage} multiline />
-          <PrimaryButton title="Siguiente" onPress={() => goToStep("summary")} />
+          <Field label={strings.focusMessageLabel} value={focusMessage} onChangeText={setFocusMessage} multiline />
+          <Field label={strings.blockMessageLabel} value={blockMessage} onChangeText={setBlockMessage} multiline />
+          <PrimaryButton title={strings.next} onPress={() => goToStep("summary")} />
           <Pressable onPress={() => goToStep("category")} className="items-center p-3">
-            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">Atrás</Text>
+            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+              {strings.back}
+            </Text>
           </Pressable>
         </ScrollView>
       )}
@@ -283,35 +315,41 @@ export default function CreateBlock() {
       {step === "summary" && (
         <ScrollView contentContainerClassName="gap-4 bg-surface p-6 dark:bg-surface-dark">
           <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            Resumen
+            {strings.summaryTitle}
           </Text>
           <View className="gap-1 rounded-3xl bg-surface-container p-4 dark:bg-surface-container-dark">
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
-              {selectedPackages.length} app{selectedPackages.length === 1 ? "" : "s"} seleccionada
-              {selectedPackages.length === 1 ? "" : "s"}
+              {strings.appsSelected(selectedPackages.length)}
             </Text>
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
-              Tipo: {blockType === "duration" ? "Por tiempo" : "Programado"}
+              {strings.typeLabel(blockType === "duration" ? strings.durationTypeLabel : strings.scheduledTypeLabel)}
             </Text>
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
-              Empieza a las {formatTimestamp(range.startAt)}, dura {formatDuration(range.endAt - range.startAt)}
+              {strings.startsAtDuration(formatTimestamp(range.startAt), formatDuration(range.endAt - range.startAt))}
             </Text>
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
-              Categoría: {AREA_LABELS[category]}
+              {strings.categoryLabel(strings.areaLabels[category])}
             </Text>
+            {extreme && (
+              <Text className="font-body-md text-body-md font-bold text-error dark:text-error-dark">
+                {strings.extremeModeLabel}
+              </Text>
+            )}
           </View>
 
           <Banner
             tone="locked"
-            title="Una vez creado, no se puede cancelar"
-            description="Mientras el bloqueo esté activo vas a tener que responder preguntas para poder usar estas apps."
+            title={strings.irreversibleTitle}
+            description={extreme ? strings.irreversibleExtremeDescription : strings.irreversibleNormalDescription}
           />
 
-          {overlapError && <Banner tone="locked" title="No se puede crear" description={overlapError} />}
+          {overlapError && <Banner tone="locked" title={strings.cannotCreateTitle} description={overlapError} />}
 
-          <PrimaryButton title={existing ? "Guardar cambios" : "Crear bloqueo"} onPress={confirmCreate} />
+          <PrimaryButton title={existing ? strings.saveChanges : strings.createBlockButton} onPress={confirmCreate} />
           <Pressable onPress={() => goToStep("messages")} className="items-center p-3">
-            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">Atrás</Text>
+            <Text className="font-label-lg text-label-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+              {strings.back}
+            </Text>
           </Pressable>
         </ScrollView>
       )}

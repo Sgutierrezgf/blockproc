@@ -4,6 +4,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BLOCK_MESSAGE_MAX_LENGTH, FOCUS_MESSAGE_MAX_LENGTH, isValidMessage } from "../../core/config";
+import { useStrings } from "../../i18n/LanguageProvider";
 import { loadConfig, saveConfig } from "../../storage/appRepository";
 import { defaultStore } from "../../storage/defaultStore";
 import { Banner } from "../../components/Banner";
@@ -15,12 +16,13 @@ interface FieldErrors {
   defaultBlockMessage?: string;
 }
 
-// Fase 10 (rediseño): Ajustes queda reducido a los mensajes por defecto que
-// prellenan cada bloqueo nuevo (RF-70) y la nota de batería (RF-44). Se
-// puede editar siempre, sin ningún bloqueo de edición global (D35): cambiar
-// el default acá nunca afecta a un bloqueo ya creado (sus mensajes quedan
-// congelados desde que se creó, RF-62).
+// Fase 10 (rediseño): Personalización (antes "Ajustes") queda reducida a los
+// mensajes por defecto que prellenan cada bloqueo nuevo (RF-70) y la nota de
+// batería (RF-44). Se puede editar siempre, sin ningún bloqueo de edición
+// global (D35): cambiar el default acá nunca afecta a un bloqueo ya creado
+// (sus mensajes quedan congelados desde que se creó, RF-62).
 export default function Settings() {
+  const strings = useStrings().personalization;
   const [config, setConfig] = useState(() => loadConfig(defaultStore));
   const [focusMessageText, setFocusMessageText] = useState(config.defaultFocusMessage);
   const [blockMessageText, setBlockMessageText] = useState(config.defaultBlockMessage);
@@ -33,13 +35,13 @@ export default function Settings() {
     if (isValidMessage(focusMessageText, FOCUS_MESSAGE_MAX_LENGTH)) {
       updated.defaultFocusMessage = focusMessageText;
     } else {
-      nextErrors.defaultFocusMessage = `Máximo ${FOCUS_MESSAGE_MAX_LENGTH} caracteres.`;
+      nextErrors.defaultFocusMessage = strings.maxCharactersError(FOCUS_MESSAGE_MAX_LENGTH);
     }
 
     if (isValidMessage(blockMessageText, BLOCK_MESSAGE_MAX_LENGTH)) {
       updated.defaultBlockMessage = blockMessageText;
     } else {
-      nextErrors.defaultBlockMessage = `Máximo ${BLOCK_MESSAGE_MAX_LENGTH} caracteres.`;
+      nextErrors.defaultBlockMessage = strings.maxCharactersError(BLOCK_MESSAGE_MAX_LENGTH);
     }
 
     setErrors(nextErrors);
@@ -55,37 +57,36 @@ export default function Settings() {
       >
         <View className="gap-2">
           <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            Ajustes
+            {strings.title}
           </Text>
           <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-            Estos mensajes se usan como punto de partida al crear un bloqueo nuevo — cada bloqueo puede tener los
-            suyos propios.
+            {strings.subtitle}
           </Text>
         </View>
 
         <Field
-          label={`Mensaje de enfoque por defecto (hasta ${FOCUS_MESSAGE_MAX_LENGTH} caracteres)`}
+          label={strings.focusMessageLabel(FOCUS_MESSAGE_MAX_LENGTH)}
           value={focusMessageText}
           onChangeText={setFocusMessageText}
           error={errors.defaultFocusMessage}
           multiline
         />
         <Field
-          label={`Mensaje de bloqueo por defecto (hasta ${BLOCK_MESSAGE_MAX_LENGTH} caracteres)`}
+          label={strings.blockMessageLabel(BLOCK_MESSAGE_MAX_LENGTH)}
           value={blockMessageText}
           onChangeText={setBlockMessageText}
           error={errors.defaultBlockMessage}
           multiline
         />
 
-        <PrimaryButton title="Guardar" onPress={save} />
+        <PrimaryButton title={strings.saveButton} onPress={save} />
 
         {/* Nunca en una build release: __DEV__ es false ahí (ver dev.tsx). */}
         {__DEV__ && (
           <Link href="/dev" asChild>
             <Pressable className="flex-row items-center justify-between rounded-2xl bg-surface-container p-3 active:bg-surface-container-high dark:bg-surface-container-dark dark:active:bg-surface-container-high-dark">
               <Text className="font-body-lg text-body-lg text-on-surface dark:text-on-surface-dark">
-                Herramientas de desarrollo
+                {strings.devToolsLink}
               </Text>
               <Text className="font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
                 ›
@@ -95,11 +96,7 @@ export default function Settings() {
         )}
 
         {/* RF-44: nota fija, siempre visible. */}
-        <Banner
-          tone="battery"
-          title="Optimización de batería"
-          description="Si el sistema cierra la app para ahorrar batería, el bloqueo puede dejar de funcionar."
-        />
+        <Banner tone="battery" title={strings.batteryTitle} description={strings.batteryDescription} />
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-const { withAndroidManifest, AndroidConfig } = require('expo/config-plugins');
+const { withAndroidManifest, withAppBuildGradle, AndroidConfig } = require('expo/config-plugins');
 
 // Permisos especiales (usuario los concede desde Ajustes, no con un diálogo):
 // PACKAGE_USAGE_STATS y SYSTEM_ALERT_WINDOW. El resto son permisos normales
@@ -37,6 +37,7 @@ const withBlockprocAndroid = (config) => {
   config = withMonitorService(config);
   config = withSupervisorTaskService(config);
   config = withBootReceiver(config);
+  config = withReleaseSigning(config);
   return config;
 };
 
@@ -188,6 +189,101 @@ const withBootReceiver = (config) => {
       });
     }
 
+    return config;
+  });
+};
+
+// Publicación en Play Store: `android/` se regenera con cada `expo
+// prebuild` (no se versiona), así que el keystore de producción y sus
+// contraseñas no pueden vivir ahí adentro ni en este plugin (que sí se
+// versiona). Viven en `release.keystore.properties` + el `.jks`, ambos en
+// la raíz del proyecto Expo (hermanos de `android/`, `app.json`), ignorados
+// por git. Si ese archivo no existe todavía (nadie generó el keystore real,
+// o es un checkout nuevo), el build de release sigue firmando con el
+// keystore de debug, exactamente como hasta ahora — no rompe nada.
+const RELEASE_KEYSTORE_PROPERTIES_LOADER = `
+def releaseKeystorePropertiesFile = new File(rootProject.projectDir.parentFile, 'release.keystore.properties')
+def releaseKeystoreProperties = new Properties()
+if (releaseKeystorePropertiesFile.exists()) {
+    releaseKeystoreProperties.load(new FileInputStream(releaseKeystorePropertiesFile))
+}
+`;
+
+const DEBUG_SIGNING_CONFIG_BLOCK = `    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }`;
+
+const SIGNING_CONFIG_WITH_RELEASE = `    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release {
+            if (releaseKeystorePropertiesFile.exists()) {
+                storeFile new File(rootProject.projectDir.parentFile, releaseKeystoreProperties['storeFile'])
+                storePassword releaseKeystoreProperties['storePassword']
+                keyAlias releaseKeystoreProperties['keyAlias']
+                keyPassword releaseKeystoreProperties['keyPassword']
+            } else {
+                storeFile file('debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
+    }`;
+
+const RELEASE_BUILD_TYPE_DEBUG_SIGNING = `        release {
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
+            signingConfig signingConfigs.debug`;
+
+const RELEASE_BUILD_TYPE_RELEASE_SIGNING = `        release {
+            // Publicación en Play Store: firma con release.keystore.properties
+            // si existe (ver withBlockprocAndroid.js); si no, con el keystore
+            // de debug, igual que antes.
+            signingConfig signingConfigs.release`;
+
+const withReleaseSigning = (config) => {
+  return withAppBuildGradle(config, (config) => {
+    if (config.modResults.language !== 'groovy') {
+      throw new Error(
+        'withReleaseSigning solo sabe editar build.gradle en Groovy (se encontró ' +
+          config.modResults.language +
+          '); revisar el plugin si el proyecto pasó a Kotlin DSL.'
+      );
+    }
+
+    let contents = config.modResults.contents;
+
+    if (!contents.includes('releaseKeystorePropertiesFile')) {
+      const androidBlockMarker = '\nandroid {';
+      if (!contents.includes(androidBlockMarker)) {
+        throw new Error("withReleaseSigning: no se encontró 'android {' en build.gradle generado.");
+      }
+      contents = contents.replace(androidBlockMarker, `\n${RELEASE_KEYSTORE_PROPERTIES_LOADER}${androidBlockMarker}`);
+    }
+
+    if (contents.includes(DEBUG_SIGNING_CONFIG_BLOCK)) {
+      contents = contents.replace(DEBUG_SIGNING_CONFIG_BLOCK, SIGNING_CONFIG_WITH_RELEASE);
+    } else if (!contents.includes('signingConfigs.release')) {
+      throw new Error('withReleaseSigning: no se encontró el bloque signingConfigs.debug esperado en build.gradle.');
+    }
+
+    if (contents.includes(RELEASE_BUILD_TYPE_DEBUG_SIGNING)) {
+      contents = contents.replace(RELEASE_BUILD_TYPE_DEBUG_SIGNING, RELEASE_BUILD_TYPE_RELEASE_SIGNING);
+    } else if (!contents.includes('signingConfig signingConfigs.release')) {
+      throw new Error('withReleaseSigning: no se encontró el buildType "release" esperado en build.gradle.');
+    }
+
+    config.modResults.contents = contents;
     return config;
   });
 };

@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BlockprocNative from "../../modules/blockproc-native/src/BlockprocNativeModule";
 import { findActiveBlockForPackage } from "../core/blocks";
 import { createSystemClock } from "../core/clock";
+import { useStrings } from "../i18n/LanguageProvider";
 import { defaultStore } from "../storage/defaultStore";
 import { loadPolicyState } from "../supervisor/policyRepository";
 
@@ -33,6 +34,7 @@ function readState(packageName: string) {
 // vive en el PolicyState, no en la URL: el enlace solo trae el paquete.
 // Sin BackButton a propósito (RF-66: sin ninguna salida durante la espera).
 export default function Wait() {
+  const strings = useStrings().wait;
   const { pkg, t } = useLocalSearchParams<{ pkg?: string; t?: string }>();
   const packageName = pkg ?? "";
 
@@ -75,7 +77,7 @@ export default function Wait() {
           <View className="absolute h-80 w-80 rounded-full bg-primary-container/20 dark:bg-primary-container-dark/10" />
           <View className="h-64 w-64 items-center justify-center gap-1 rounded-full border-8 border-surface-container-high bg-surface-container dark:border-surface-container-high-dark dark:bg-surface-container-dark">
             <Text className="font-label-sm text-label-sm font-semibold text-on-surface-variant dark:text-on-surface-variant-dark">
-              Tiempo restante
+              {strings.remainingTime}
             </Text>
             <Text className="font-headline-xl text-headline-xl font-bold text-on-surface dark:text-on-surface-dark">
               {formatCountdown(remainingMs)}

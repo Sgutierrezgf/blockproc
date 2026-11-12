@@ -44,8 +44,25 @@ describe("normalizeConfig", () => {
     const valid: Config = {
       defaultFocusMessage: "Mensaje propio",
       defaultBlockMessage: "Otro mensaje",
+      language: "en",
     };
     expect(normalizeConfig(valid)).toEqual(valid);
+  });
+
+  // RF-78: idioma ausente, inválido, o del modelo anterior (que no tenía este campo) → "es".
+  it("sin idioma guardado, usa español por defecto", () => {
+    const result = normalizeConfig({ defaultFocusMessage: "Mi mensaje" });
+    expect(result.language).toBe("es");
+  });
+
+  it("un idioma que no es 'es' ni 'en' se repara a español", () => {
+    const result = normalizeConfig({ language: "fr" });
+    expect(result.language).toBe("es");
+  });
+
+  it("conserva 'en' si es válido", () => {
+    const result = normalizeConfig({ language: "en" });
+    expect(result.language).toBe("en");
   });
 });
 
@@ -66,6 +83,7 @@ describe("parseStoredConfig", () => {
     const valid: Config = {
       defaultFocusMessage: "Mensaje propio",
       defaultBlockMessage: "Otro mensaje",
+      language: "en",
     };
     expect(parseStoredConfig(JSON.stringify(valid))).toEqual(valid);
   });

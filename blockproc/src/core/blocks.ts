@@ -19,6 +19,8 @@ export interface Block {
   blockMessage: string;
   /** RF-68: si ya se mostró el aviso de 2 minutos (solo relevante para "scheduled"). */
   warnedStart: boolean;
+  /** RF-73, RF-74, D41: sin ninguna salida mientras está activo (ni confirmación ni reto). */
+  extreme: boolean;
 }
 
 export type BlockStatus = "scheduled" | "active" | "ended";

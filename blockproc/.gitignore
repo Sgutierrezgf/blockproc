@@ -18,6 +18,9 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# Keystore de producción (ver release.keystore.properties.example)
+release.keystore.properties
+
 # Metro
 .metro-health-check*
 

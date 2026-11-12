@@ -25,6 +25,7 @@ function makeBlock(overrides: Partial<Block> = {}): Block {
     focusMessage: "foco",
     blockMessage: "bloqueado",
     warnedStart: false,
+    extreme: false,
     ...overrides,
   };
 }
@@ -48,6 +49,12 @@ describe("handleForegroundChanged", () => {
 
   it("con un bloqueo activo cubriendo la app, pide ShowAccess", () => {
     const state = withBlocks([makeBlock({ startAt: 0, endAt: 10_000 })]);
+    const result = handleForegroundChanged(state, PKG, 5000);
+    expect(result.actions).toEqual([{ type: "ShowAccess", packageName: PKG }]);
+  });
+
+  it("con un bloqueo extremo activo, pide ShowAccess igual que uno normal (D41: policy.ts no distingue extremo)", () => {
+    const state = withBlocks([makeBlock({ startAt: 0, endAt: 10_000, extreme: true })]);
     const result = handleForegroundChanged(state, PKG, 5000);
     expect(result.actions).toEqual([{ type: "ShowAccess", packageName: PKG }]);
   });

@@ -14,7 +14,7 @@ Todos se ejecutan desde `blockproc/`.
 ## Estilo y convenciones
 - React native(Typescript)
 - Estilos con Tailwind como principal, segunda opcion CSS
-- Identificadores en inglés; mensajes de usuario en español.
+- Identificadores en inglés; mensajes de usuario en español por defecto, con inglés como idioma alternativo configurable por el usuario.
 
 ## Reglas
 - Lee `docs/constitution.md` y la spec activa en `specs/` antes de tocar código.

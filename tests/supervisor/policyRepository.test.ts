@@ -22,6 +22,7 @@ describe("loadPolicyState", () => {
       focusMessage: "foco",
       blockMessage: "bloqueado",
       warnedStart: false,
+      extreme: false,
     };
     savePolicyState(store, { ...createPolicyState(), blocks: [block] });
     expect(loadPolicyState(store).blocks).toEqual([block]);

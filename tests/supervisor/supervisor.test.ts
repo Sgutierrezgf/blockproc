@@ -36,6 +36,7 @@ function makeBlock(overrides: Partial<Block> = {}): Block {
     focusMessage: "foco",
     blockMessage: "bloqueado",
     warnedStart: false,
+    extreme: false,
     ...overrides,
   };
 }

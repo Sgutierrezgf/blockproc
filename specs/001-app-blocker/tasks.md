@@ -1,7 +1,8 @@
 # Tareas 001 — Bloqueo consciente de apps con bloqueos múltiples y reto
 
-Derivadas de `plan.md` (decisiones D1–D35, riesgos R1–R6) y `spec.md` (RF-1 a RF-72, tras el
-rediseño de 2026-10-01 — ver nota de migración en `spec.md` para qué RF sigue vigente).
+Derivadas de `plan.md` (decisiones D1–D42, riesgos R1–R6) y `spec.md` (RF-1 a RF-79, tras el
+rediseño de 2026-10-01 y la ampliación de 2026-10-03 — ver nota de migración en `spec.md` para
+qué RF sigue vigente).
 
 ## Cómo leer este archivo
 - **Orden = dependencia.** Una tarea solo depende de las anteriores. Excepción: la fase 3 (banco de preguntas) solo necesita la T18 y puede hacerse en cualquier momento después.
@@ -210,3 +211,42 @@ como "se mantienen" en `spec.md`.
 ### Cierre
 
 - [x] **T140** ⏱ Verificación final de la Fase 10: `tsc`/`lint`/`jest` en verde. Recorrido completo en el dispositivo real: crear un bloqueo "por tiempo" y uno "programado", intentar solaparlos (se rechaza), activar uno, flujo completo de acceso (reflexión → confirmación → 3 preguntas → fallo con espera de 5 min → acierto con ventana de 2 min), editar y borrar un bloqueo programado, aviso 2 min antes de uno programado, reinicio del móvil con un bloqueo activo, Ajustes editable en todo momento. — **Hecho cuando:** todo verificado sin fallos, RF-55 a RF-72 confirmados RF por RF, y documentado en `plan.md` (mismo formato que T104).
+
+## Fase 11 — Bloqueo extremo, idioma y Acerca de
+
+### Núcleo
+- [x] **T141** `core/blocks.ts` — agregar `extreme: boolean` a `Block`. Actualizar los literales de `Block` ya existentes en `tests/core/blocks.test.ts` (y cualquier otro test que construya uno) para incluir el campo. — *RF:* 73; *Plan:* D41. — **Hecho cuando:** `tsc --noEmit` y `npm test` en verde, ningún `Block` literal sin el campo.
+- [x] **T142** `tests/core/policy.test.ts` — test nuevo: un bloqueo activo con `extreme: true` sigue emitiendo `ShowAccess` igual que uno normal (documenta D41: `policy.ts` no cambia). — *RF:* 74; *Plan:* D41. — **Hecho cuando:** el test pasa sin tocar `core/policy.ts`.
+- [x] **T143** `core/config.ts` — agregar `language: "es" | "en"` a `Config`; `createDefaultConfig()` usa `"es"` por defecto. — *RF:* 78. — **Hecho cuando:** test nuevo en `tests/core/config.test.ts` confirma el default.
+- [x] **T144** `core/normalizeConfig.ts` — tolerar `language` ausente, con un valor fuera de `"es"/"en"`, o configuración corrupta del modelo anterior: siempre cae a `"es"`. Hecha junto con T143 porque `normalizeConfig` construye `Config` directo y no compilaba sin esto. — *RF:* 78, 41. — **Hecho cuando:** test nuevo en `tests/core/normalizeConfig.test.ts` cubre los 3 casos.
+- [x] **T145** `core/questions.ts` — `selectQuestionBank(language, banks)`, función pura que elige el banco del idioma activo entre los ya cargados (con bancos falsos de prueba, sin esperar a T146-T150; el cableado real a `questions.en.json` en `challenge.tsx` queda para T159). — *RF:* 77. — **Hecho cuando:** test nuevo confirma que pedir "en" devuelve preguntas de un banco distinto al de "es".
+
+### Banco de preguntas en inglés (tandas revisables, 245 preguntas totales)
+- [x] **T146** ⏱ Traducir al inglés la categoría "general" (62 preguntas de `questions.es.json`), mismos `id`, mismo formato — tanda para tu revisión antes de seguir. — *RF:* 77. — **Hecho cuando:** mostradas y aprobadas por vos.
+- [x] **T147** ⏱ Traducir al inglés la categoría "technology" (61 preguntas) — tanda para tu revisión. — *RF:* 77. — **Hecho cuando:** mostradas y aprobadas por vos.
+- [x] **T148** ⏱ Traducir al inglés la categoría "health" (61 preguntas) — tanda para tu revisión. — *RF:* 77. — **Hecho cuando:** mostradas y aprobadas por vos.
+- [x] **T149** ⏱ Traducir al inglés la categoría "science" (61 preguntas) — tanda para tu revisión. — *RF:* 77. — **Hecho cuando:** mostradas y aprobadas por vos.
+- [x] **T150** Ensamblar `src/data/questions.en.json` (245) con las 4 tandas aprobadas. Test nuevo: mismo formato que el español (4 opciones, `correctIndex` válido, área conocida, sin duplicados, ≥60 por área) y mismo conjunto exacto de `id` que `questions.es.json`. — *RF:* 77. — **Hecho cuando:** ambos tests en verde.
+
+### Infraestructura de idioma
+- [x] **T151** `src/i18n/strings.ts` (diccionario vacío, tipo `Strings` con al menos una clave de ejemplo) + `src/i18n/LanguageProvider.tsx` (Context, hooks `useStrings()`/`useLanguage()`), montado una sola vez en `src/app/_layout.tsx` raíz; lee/guarda `Config.language` (T143). — *RF:* 76; *Plan:* D38, D39. — **Hecho cuando:** compila, cualquier pantalla puede usar `useStrings()`.
+
+### Bloqueo extremo — UI
+- [x] **T152** `create-block.tsx` — agregar el toggle "extremo" al asistente (junto a tipo/categoría/mensajes) y, en el paso de resumen, la advertencia reforzada cuando está activado. — *RF:* 60, 73. — **Hecho cuando:** en el móvil, se puede marcar "extremo" al crear y el resumen muestra la advertencia reforzada solo en ese caso.
+- [x] **T153** `blocks.tsx` — etiqueta "Extremo" siempre visible en los bloqueos marcados así, junto a su estado programado/activo. — *RF:* 75. — **Hecho cuando:** en el móvil, un bloqueo extremo se distingue a simple vista en la lista.
+- [x] **T154** `challenge.tsx` — si el bloqueo activo tiene `extreme: true`, mostrar directo la pantalla sin salida (solo `blockMessage`, sin ningún botón); `hardwareBackPress` va siempre a Inicio, nunca entra a reflexión/confirmación/preguntas. — *RF:* 74; *Plan:* D41. — **Hecho cuando:** en el móvil, abrir una app de un bloqueo extremo activo muestra solo el mensaje, sin reto ni confirmación.
+
+### Traducir la interfaz, pantalla por pantalla
+- [x] **T155** Extraer a `i18n/strings.ts` y reemplazar los textos fijos de `src/app/index.tsx` (pantalla de permisos). — *RF:* 76, 77. — **Hecho cuando:** en el móvil, cambiar el idioma en Ajustes (T161) cambia esta pantalla.
+- [x] **T156** Extraer y reemplazar los textos fijos de `src/app/(tabs)/settings.tsx` (Personalización). — *RF:* 76, 77. — **Hecho cuando:** ídem T155 para esta pantalla.
+- [x] **T157** Extraer y reemplazar los textos fijos de `src/app/(tabs)/blocks.tsx` (incluida la etiqueta "Extremo" de T153). — *RF:* 76, 77. — **Hecho cuando:** ídem T155 para esta pantalla.
+- [x] **T158** Extraer y reemplazar los textos fijos de `create-block.tsx` (incluido el toggle/advertencia de T152). — *RF:* 76, 77. — **Hecho cuando:** ídem T155 para esta pantalla.
+- [x] **T159** Extraer y reemplazar los textos fijos de `challenge.tsx` (incluida la pantalla sin salida de T154) y `wait.tsx`; cableado real del banco en inglés (`questions.en.json` + `selectQuestionBank`, T145/T150). — *RF:* 76, 77. — **Hecho cuando:** ídem T155 para ambas pantallas; un reto nuevo usa el banco del idioma activo.
+- [x] **T160** Extraer y reemplazar los textos fijos de los componentes compartidos (`Banner.tsx`, `Field.tsx`, `PrimaryButton.tsx`, `AppPicker.tsx`, `SelectableRow.tsx`, `DurationWheelPicker.tsx`) que tengan texto en español hardcodeado. `Banner`/`Field`/`PrimaryButton`/`SelectableRow` ya eran 100% controlados por props, sin texto fijo propio — solo `AppPicker.tsx` (placeholder del buscador, mensajes de "sin resultados", valores por defecto de header) y `DurationWheelPicker.tsx` ("Horas"/"Minutos") necesitaban cambios. — *RF:* 76, 77. — **Hecho cuando:** ningún componente compartido queda con texto fijo sin pasar por `useStrings()`.
+
+### Ajustes nuevo
+- [x] **T161** `src/app/(tabs)/ajustes.tsx` — selector de idioma (Español/English, RF-76) y sección "Acerca de" (nombre + versión de `app.json`/`package.json`, RF-79), usando `useStrings()`/`useLanguage()` desde el principio. Agregar como 3ra pestaña en `(tabs)/_layout.tsx`. — *RF:* 76, 78, 79. — **Hecho cuando:** en el móvil, se ve la 3ra pestaña, cambiar el idioma se aplica al instante en toda la app sin reiniciar, y "Acerca de" muestra nombre y versión correctos.
+
+### Verificación
+- [x] **T162** Test nuevo: `i18n/strings.ts` tiene exactamente las mismas claves en `es` y `en` (ninguna huérfana). — *RF:* 77. — **Hecho cuando:** el test pasa.
+- [x] **T163** ⏱ Verificación final de la Fase 11: `tsc`/`lint`/`jest` en verde. En el dispositivo real: crear un bloqueo "extremo", activarlo, confirmar que abrir una app incluida muestra solo el mensaje sin ningún botón ni reto; cambiar el idioma a inglés y confirmar que la interfaz y un reto nuevo cambian al instante sin reiniciar, mientras un mensaje propio ya escrito (Personalización o de un bloqueo) no se traduce; revisar "Acerca de". — *RF:* 73 a 79. — **Hecho cuando:** todo verificado sin fallos, RF-73 a RF-79 confirmados RF por RF, y documentado en `plan.md` (mismo formato que T104/T140).

@@ -71,6 +71,8 @@ export interface Strings {
     invalidDurationMessage: string;
     categoryStepTitle: string;
     categoryStepDescription: string;
+    categoryDisabledNote: string;
+    extremeSectionTitle: string;
     extremeToggleLabel: string;
     extremeWarningTitle: string;
     extremeWarningDescription: string;
@@ -120,6 +122,24 @@ export interface Strings {
     noMatchForQuery: (query: string) => string;
     noMatchForCategory: string;
     categoryLabels: Record<CategoryKey, string>;
+  };
+  // RF-82: detalle de solo lectura de un bloqueo.
+  blockDetail: {
+    title: string;
+    startLabel: (time: string) => string;
+    endLabel: (time: string) => string;
+    remaining: (duration: string) => string;
+    focusMessageTitle: string;
+    blockMessageTitle: string;
+    activeReadOnlyNote: string;
+    notFound: string;
+    back: string;
+  };
+  // RF-81: lista de nombres de apps de un bloqueo (resumen y detalle).
+  appNameList: {
+    moreApps: (count: number) => string;
+    showAll: string;
+    showFewer: string;
   };
   appSettings: {
     title: string;
@@ -216,6 +236,8 @@ export const STRINGS: Record<Language, Strings> = {
       categoryStepTitle: "Categoría de preguntas",
       categoryStepDescription:
         "Elegí de qué tema van a ser las preguntas para poder entrar a estas apps durante el bloqueo.",
+      categoryDisabledNote: "Un bloqueo extremo no tiene preguntas: la categoría no se usa.",
+      extremeSectionTitle: "Modo extremo",
       extremeToggleLabel: "Bloqueo extremo: sin ninguna salida mientras esté activo",
       extremeWarningTitle: "Sin reto, sin confirmación",
       extremeWarningDescription:
@@ -224,7 +246,7 @@ export const STRINGS: Record<Language, Strings> = {
       focusMessageLabel: "Mensaje de enfoque (hasta 120 caracteres)",
       blockMessageLabel: "Mensaje del bloqueo (hasta 120 caracteres)",
       summaryTitle: "Resumen",
-      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} seleccionada${count === 1 ? "" : "s"}`,
+      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} seleccionada${count === 1 ? "" : "s"}:`,
       typeLabel: (type) => `Tipo: ${type}`,
       startsAtDuration: (start, duration) => `Empieza a las ${start}, dura ${duration}`,
       categoryLabel: (area) => `Categoría: ${area}`,
@@ -280,6 +302,22 @@ export const STRINGS: Record<Language, Strings> = {
         accessibility: "Accesibilidad",
         other: "Otras",
       },
+    },
+    blockDetail: {
+      title: "Detalle del bloqueo",
+      startLabel: (time) => `Inicio: ${time}`,
+      endLabel: (time) => `Fin: ${time}`,
+      remaining: (duration) => `Quedan ${duration}`,
+      focusMessageTitle: "Mensaje de enfoque",
+      blockMessageTitle: "Mensaje del bloqueo",
+      activeReadOnlyNote: "Mientras esté activo no se puede editar ni cancelar.",
+      notFound: "Este bloqueo ya terminó.",
+      back: "Volver",
+    },
+    appNameList: {
+      moreApps: (count) => `+${count} más`,
+      showAll: "Ver todas",
+      showFewer: "Ver menos",
     },
     appSettings: {
       title: "Ajustes",
@@ -371,6 +409,8 @@ export const STRINGS: Record<Language, Strings> = {
       invalidDurationMessage: "The block must last more than 0 minutes and no more than 12 hours.",
       categoryStepTitle: "Question category",
       categoryStepDescription: "Choose what topic the questions will be about to get into these apps during the block.",
+      categoryDisabledNote: "An extreme block has no questions: the category isn't used.",
+      extremeSectionTitle: "Extreme mode",
       extremeToggleLabel: "Extreme block: no way out while it's active",
       extremeWarningTitle: "No challenge, no confirmation",
       extremeWarningDescription:
@@ -379,7 +419,7 @@ export const STRINGS: Record<Language, Strings> = {
       focusMessageLabel: "Focus message (up to 120 characters)",
       blockMessageLabel: "Block message (up to 120 characters)",
       summaryTitle: "Summary",
-      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} selected`,
+      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} selected:`,
       typeLabel: (type) => `Type: ${type}`,
       startsAtDuration: (start, duration) => `Starts at ${start}, lasts ${duration}`,
       categoryLabel: (area) => `Category: ${area}`,
@@ -433,6 +473,22 @@ export const STRINGS: Record<Language, Strings> = {
         accessibility: "Accessibility",
         other: "Other",
       },
+    },
+    blockDetail: {
+      title: "Block details",
+      startLabel: (time) => `Start: ${time}`,
+      endLabel: (time) => `End: ${time}`,
+      remaining: (duration) => `${duration} left`,
+      focusMessageTitle: "Focus message",
+      blockMessageTitle: "Block message",
+      activeReadOnlyNote: "While it's active it can't be edited or cancelled.",
+      notFound: "This block has already ended.",
+      back: "Back",
+    },
+    appNameList: {
+      moreApps: (count) => `+${count} more`,
+      showAll: "Show all",
+      showFewer: "Show fewer",
     },
     appSettings: {
       title: "Settings",

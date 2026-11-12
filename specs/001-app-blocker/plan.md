@@ -161,6 +161,8 @@ Todos los tiempos se guardan como **marcas absolutas**, por eso sobreviven al re
 | D41 | `challenge.tsx` revisa `block.extreme` apenas carga el bloqueo activo: si es `true`, renderiza directo la pantalla sin salida (solo `block.blockMessage`, sin botones, `hardwareBackPress` siempre va a Inicio) y nunca entra a los pasos "reflect"/"confirm"/"questions". `policy.ts` **no cambia**: sigue emitiendo `ShowAccess` igual que para cualquier bloqueo | Un `PolicyAction` nuevo (`ShowExtremeBlock`) decidido en `policy.ts`; una ruta nativa nueva (`showExtremeBlock()`) | Mismo razonamiento que D30: un bloqueo extremo nunca llega a tener `windowEndsAt`/`cooldownUntil` seteados (esos solo se escriben al completar o fallar un reto que un bloqueo extremo jamás ofrece), así que `policy.ts` siempre evalúa "sin ventana, sin cooldown" y emite `ShowAccess` de la forma de siempre — la única diferencia real está en qué UI se muestra del otro lado del mismo enlace profundo, igual que el paso reflexivo de D30 no necesitó tocar Kotlin | RF-74 |
 | D42 | La etiqueta "Extremo" (RF-75) se calcula leyendo `block.extreme` directamente en `blocks.tsx`, sin ningún estado derivado nuevo | Guardar un campo calculado aparte | `extreme` ya es un campo plano del `Block`; no hace falta derivarlo de nada | RF-75 |
 | D43 | **Descubrimiento durante T160.** `core/appCategories.ts` deja de traducir la categoría de Android a una etiqueta en español (`categoryLabel`): ahora devuelve una `CategoryKey` estable (`categoryKey`), y la etiqueta visible por idioma vive en `i18n/strings.ts` (`appPicker.categoryLabels`, `Record<CategoryKey, string>`) | Dejar `categoryLabel` como estaba, sin extraerlo a T160 (quedaba fuera del alcance original de la tarea) | Las categorías del buscador de apps ("Redes sociales", "Productividad", etc.) son texto de UI igual que cualquier otro; dejarlas hardcodeadas en español habría sido un hueco real de RF-77 (la interfaz no se traduce por completo). El tipo `Record<CategoryKey, string>` de TypeScript ya obliga a que ambos idiomas cubran las 10 claves, sin necesitar un test de paridad aparte | RF-49, 77 |
+| D44 | Los nombres de apps del resumen y del detalle (RF-81) salen de una función pura nueva, `core/appLabels.ts` (`summarizeAppLabels(packages, apps, max)` → nombres visibles + cantidad restante), alimentada por la misma lista de apps instaladas que ya lee `AppPicker` (`getInstalledLauncherApps`) | Guardar el nombre de cada app dentro del `Block` al crearlo | No cambia el formato del JSON guardado (regla de AGENTS.md) ni deja nombres viejos si la app se renombra; la lógica del corte en 5 y el respaldo al nombre de paquete quedan testeados en TypeScript puro | RF-60, 81, 82 |
+| D45 | El detalle de un bloqueo (RF-82) es una ruta nueva `src/app/block-detail.tsx`, fuera del grupo `(tabs)`, que recibe el `id` por parámetro — mismo patrón que `create-block.tsx` con `editingId` | Expandir la tarjeta dentro de la lista | Una pantalla aparte tiene espacio para la lista completa de apps y los mensajes sin alargar la lista; y al ser de solo lectura no necesita ninguna lógica nueva de política | RF-82 |
 
 ## 5. Módulos y RF que cubre cada uno
 
@@ -599,6 +601,37 @@ después de toda la Fase 11.
 
 **Veredicto: Fase 11 completa.** Bloqueo extremo, idioma (es/en) y Acerca de (RF-73 a RF-79,
 C34-C43, D37-D43) implementados con SDD completo y verificados en el dispositivo real.
+
+### Fase 12: mejoras de uso real (2026-11-12)
+
+Tras usar la app con la Fase 11 ya integrada, el usuario trajo 4 mejoras de interfaz. Se
+discutieron opción por opción y aprobó las propuestas tal cual:
+
+1. **Categoría como radio button (C44).** Se evaluó permitir varias categorías por bloqueo y se
+   descartó: reabre C24 sin una necesidad real. El problema era visual — `SelectableRow` siempre
+   dibujaba una casilla. Se agrega una variante radio y se usa también en el idioma de Ajustes.
+2. **Extremo separado de las categorías (RF-80, C45).** Se dibujaba como una fila más de la
+   lista, lo que hacía esperar que desmarcara la categoría. Pasa a su propia sección con un
+   interruptor; deshabilita las categorías mientras está activo, sin tocar el modelo de datos.
+3. **Nombres de apps en el resumen (RF-81, C46, D44).**
+4. **Detalle de solo lectura al tocar un bloqueo (RF-82, C47, D45).**
+
+Ningún cambio toca `policy.ts`, Kotlin ni el formato del JSON guardado.
+
+### T169: verificación final de la Fase 12 (mejoras de uso real)
+
+Verificación en el dispositivo real, hecha por el usuario (2026-11-12):
+
+| Feature | Verificado | Notas |
+|---|---|---|
+| Categoría y idioma como radio (C44) | ✅ | Opción única en el asistente y en Ajustes; la selección de apps sigue con casilla |
+| Extremo en su propia sección (RF-80, C45) | ✅ | El interruptor deshabilita las categorías; al apagarlo vuelve la elegida; el resumen omite la categoría |
+| Nombres de apps en el resumen (RF-81, C46) | ✅ | Hasta 5 nombres, "+N más" y "Ver todas" |
+| Detalle de solo lectura (RF-82, C47) | ✅ | Activo y programado; sin acciones sobre el bloqueo |
+
+`tsc --noEmit`, `expo lint` y los 215 tests de Jest (26 suites) en verde.
+
+**Veredicto: Fase 12 completa.**
 
 ## 8. Cambios a la spec (aplicados)
 

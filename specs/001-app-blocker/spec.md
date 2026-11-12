@@ -16,6 +16,11 @@
 > de"** en esa misma pantalla, con nombre y versión. Ver RF-73 en adelante y "Decisiones de
 > clarificación" (C35 en adelante).
 
+> **Mejoras de uso real (2026-11-12, Fase 12):** cuatro ajustes de interfaz sobre el asistente
+> de creación y la lista de Bloqueos: la categoría se elige como opción única (radio), el
+> bloqueo extremo se separa visualmente de las categorías, el resumen nombra las apps, y tocar
+> un bloqueo abre su detalle de solo lectura. Ver RF-80 a RF-82 y C44 a C47.
+
 ## Contexto y objetivo
 El uso compulsivo de ciertas apps del móvil roba tiempo que la persona preferiría dedicar a
 otras cosas. Esta app introduce **fricción consciente**: el usuario crea **bloqueos** sobre
@@ -46,6 +51,7 @@ de batería sobre la persistencia del bloqueo.
 - H12: Como usuario quiero poder marcar un bloqueo como "extremo" para los momentos en que sé que ni siquiera el reto me va a detener, y necesito que literalmente no haya ninguna salida hasta que termine.
 - H13: Como usuario quiero elegir el idioma de la app, español o inglés, para usarla en el que prefiera.
 - H14: Como usuario quiero ver el nombre y la versión de la app en algún lado, para saber qué versión tengo instalada.
+- H15: Como usuario quiero ver qué apps exactas va a bloquear un bloqueo antes de crearlo, y poder consultar el detalle de un bloqueo ya creado (aunque esté activo y no se pueda editar), para no tener dudas sobre qué está bloqueado.
 
 > Los identificadores RF no se renumeran: los requisitos nuevos de este rediseño usan números
 > consecutivos desde RF-55. Los RF retirados (ver nota de migración) no se reutilizan ni se
@@ -91,13 +97,16 @@ de "ventanas, esperas y bloqueo horario").
 - RF-57: EL SISTEMA permite elegir, al crear un bloqueo, exactamente una categoría de preguntas entre: conocimiento general, tecnología, salud y bienestar, ciencia y naturaleza, y matemática y lógica.
 - RF-58: EL SISTEMA permite personalizar, para cada bloqueo, un mensaje de enfoque y un mensaje de bloqueo (hasta 120 caracteres cada uno), prellenados con los mensajes por defecto definidos en Personalización (RF-70); el usuario puede dejarlos tal cual o cambiarlos solo para ese bloqueo.
 - RF-59: ANTES de crear un bloqueo, SI alguna app elegida ya pertenece a otro bloqueo (programado o activo) cuya franja de tiempo se superpone con la del nuevo, ENTONCES EL SISTEMA rechaza la creación completa (ninguna app del bloqueo nuevo se crea, ni siquiera las que no tienen conflicto) e indica qué app y con qué bloqueo existente se superpone, para que el usuario la quite o cambie el horario antes de reintentar.
-- RF-60: ANTES de crear un bloqueo, EL SISTEMA muestra un resumen (apps, tipo, franja o duración, categoría) junto con un aviso de advertencia, y solo lo crea cuando el usuario confirma explícitamente; SI el bloqueo se marca "extremo" (RF-73), ENTONCES EL SISTEMA muestra además una advertencia reforzada específica, aclarando que ese bloqueo no va a tener ninguna salida hasta terminar, ni siquiera por preguntas.
+- RF-60: ANTES de crear un bloqueo, EL SISTEMA muestra un resumen (apps por su nombre — ver RF-81 —, tipo, franja o duración, categoría) junto con un aviso de advertencia, y solo lo crea cuando el usuario confirma explícitamente; SI el bloqueo se marca "extremo" (RF-73), ENTONCES EL SISTEMA muestra además una advertencia reforzada específica, aclarando que ese bloqueo no va a tener ninguna salida hasta terminar, ni siquiera por preguntas.
 - RF-61: MIENTRAS un bloqueo todavía no empezó (estado "programado"), EL SISTEMA permite editarlo (cualquier campo elegido al crearlo, incluida la marca "extremo") o borrarlo libremente, sin pedir el reto — el modo extremo (RF-73, RF-74) solo aplica una vez que el bloqueo pasa a estar activo.
 - RF-62: MIENTRAS un bloqueo está activo, EL SISTEMA no permite cancelarlo ni editar ninguno de sus campos (apps, horario, categoría, mensajes); la única forma de acceder a una app incluida es completar el flujo de acceso (RF-63 a RF-67) — salvo que el bloqueo esté marcado "extremo" (RF-73), caso en el que no existe ninguna forma de acceder mientras esté activo (RF-74).
 - RF-72: EL SISTEMA aplica cada bloqueo únicamente a las apps que incluye; el resto del móvil (alarma, llamadas, apps no incluidas en ningún bloqueo) sigue funcionando con normalidad.
 - RF-73: EL SISTEMA permite marcar un bloqueo como "extremo" al crearlo (opción adicional en el asistente, junto al tipo, la categoría y los mensajes), desactivada por defecto.
 - RF-74: MIENTRAS un bloqueo marcado "extremo" está activo, CUANDO el usuario abre una app incluida, EL SISTEMA muestra únicamente el mensaje de bloqueo de ese bloqueo, sin ningún botón ni la posibilidad de iniciar el flujo de acceso (RF-63 a RF-67); la única salida de esa pantalla es ir a otra app o a Inicio, sin que eso conceda acceso.
 - RF-75: EL SISTEMA muestra, en la lista de Bloqueos, una etiqueta distintiva ("Extremo") en los bloqueos marcados así, siempre visible junto a su estado ("programado"/"activo").
+- RF-80: MIENTRAS el usuario marca un bloqueo como "extremo" en el asistente (RF-73), EL SISTEMA deshabilita la elección de categoría de preguntas indicando que ese bloqueo no tiene preguntas, y omite la categoría en el resumen (RF-60); SI el usuario desmarca "extremo" antes de confirmar, ENTONCES EL SISTEMA vuelve a habilitar la categoría con la que estaba elegida.
+- RF-81: EL SISTEMA muestra las apps de un bloqueo por su nombre visible (el del lanzador), en el resumen (RF-60) y en el detalle (RF-82); SI son más de 5, ENTONCES muestra las primeras 5 y "+N más", con la opción de ver la lista completa; SI una app ya no está instalada, ENTONCES muestra su nombre de paquete.
+- RF-82: CUANDO el usuario toca un bloqueo de la lista (programado o activo), EL SISTEMA muestra su detalle de solo lectura: apps (RF-81), tipo, inicio y fin, tiempo restante si está activo, categoría (o "Extremo" si está marcado así) y sus mensajes de enfoque y de bloqueo; el detalle no ofrece ninguna acción que modifique, pause o cancele el bloqueo (RF-62, RF-74).
 
 ### Flujo de acceso durante un bloqueo activo
 - RF-63: CUANDO el usuario abre una app incluida en un bloqueo activo, EL SISTEMA muestra primero una pantalla con el mensaje de enfoque de ese bloqueo y un único botón "Continuar", sin pedir ninguna respuesta todavía.
@@ -157,6 +166,8 @@ de "ventanas, esperas y bloqueo horario").
 - Una app no tiene categoría declarada por el sistema: se agrupa en "Otras" (RF-49).
 - El sistema no puede generar el ícono de alguna app: se muestra sin ícono, sin excluirla de la lista (RF-48).
 - El buscador no encuentra ninguna coincidencia, sola o combinada con una categoría: se muestra un mensaje de "sin resultados", sin ocultar el buscador (RF-46, RF-49).
+- Una app de un bloqueo se desinstaló antes de ver el resumen o el detalle: se muestra su nombre de paquete (RF-81).
+- El bloqueo termina con su detalle abierto (RF-82): al volver a la lista ya no aparece (RF-55).
 
 ## Fuera de alcance
 - iOS.
@@ -177,7 +188,7 @@ de "ventanas, esperas y bloqueo horario").
 
 ## Criterios de finalización
 - Todos los RF verificables sin dispositivo (lógica en TypeScript pura, con reloj inyectable) con test en verde.
-- Verificados por demo manual en un móvil real: RF-26, RF-27, RF-43, RF-45, RF-55, RF-59, RF-60, RF-61, RF-62, RF-63, RF-64, RF-65, RF-66, RF-67, RF-68, RF-73, RF-74, RF-75, RF-76, RF-79; la lógica de decisión detrás de cada uno también se prueba con tests en TypeScript.
+- Verificados por demo manual en un móvil real: RF-26, RF-27, RF-43, RF-45, RF-55, RF-59, RF-60, RF-61, RF-62, RF-63, RF-64, RF-65, RF-66, RF-67, RF-68, RF-73, RF-74, RF-75, RF-76, RF-79, RF-80, RF-81, RF-82; la lógica de decisión detrás de cada uno también se prueba con tests en TypeScript.
 - Un test valida el formato de cada banco local, español e inglés (4 opciones, `correctIndex` válido, área conocida, sin duplicados, mismos `id` en ambos archivos).
 - Cada banco local (español e inglés) tiene al menos 60 preguntas por cada área de texto (general, tecnología, salud, ciencia).
 - Demo manual en un móvil Android real, incluido el modo avión: crear un bloqueo "por tiempo" y uno "programado", intentar solaparlos (se rechaza), activar uno, flujo completo de acceso (reflexión → confirmación → 3 preguntas → fallo con espera de 5 min → acierto con ventana de 2 min), editar/borrar uno programado, reinicio del móvil con un bloqueo activo.
@@ -214,6 +225,10 @@ de "ventanas, esperas y bloqueo horario").
 - C41: el cambio de idioma se aplica al instante en toda la interfaz, sin pedir reiniciar la app.
 - C42: la pantalla nueva "Ajustes" (RF-76 a RF-79) es distinta de "Personalización" (RF-70, RF-44) — esta última no cambia; con esta ronda la app pasa a tener 3 pestañas (Personalización, Ajustes, Bloqueos).
 - C43: "Acerca de" (RF-79) muestra solo nombre y versión, sin changelog ni links — alcance mínimo, sin mantenimiento adicional.
+- C44 (2026-11-12, feedback de uso real): la categoría de preguntas se sigue eligiendo de a una (RF-57, C24 se mantienen); el problema era visual — se dibujaba con casillas de verificación, que sugieren elección múltiple. Toda elección de opción única (categoría, idioma de Ajustes) se dibuja como radio button.
+- C45: "extremo" no es una categoría sino una marca aparte (RF-73); se dibuja en su propia sección con un interruptor, no como una fila más de la lista de categorías. No se vuelven excluyentes en los datos: el bloqueo siempre guarda una categoría, que con "extremo" simplemente no se usa (RF-74) y se recupera si se desmarca (RF-80).
+- C46: el resumen y el detalle muestran como mucho 5 nombres de apps antes de "+N más" (RF-81), para que la pantalla no crezca sin límite con bloqueos de muchas apps.
+- C47: el detalle de un bloqueo (RF-82) es solo de lectura también para los programados; editar y borrar siguen en la tarjeta de la lista (RF-61), sin duplicar acciones en el detalle.
 
 ## Dudas abiertas
 Ninguna.

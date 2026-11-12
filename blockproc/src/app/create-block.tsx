@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { BackHandler, Pressable, ScrollView, Text, View } from "react-native";
+import { BackHandler, Pressable, ScrollView, Switch, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
@@ -22,6 +22,7 @@ import { useStrings } from "../i18n/LanguageProvider";
 import { loadConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
 import { loadPolicyState, savePolicyState } from "../supervisor/policyRepository";
+import { AppNameList } from "../components/AppNameList";
 import { AppPicker } from "../components/AppPicker";
 import { Banner } from "../components/Banner";
 import { DurationWheelPicker } from "../components/DurationWheelPicker";
@@ -283,20 +284,39 @@ export default function CreateBlock() {
           <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
             {strings.categoryStepDescription}
           </Text>
+          {/* C44: opción única → radio. RF-80: con "extremo" no hay preguntas,
+              así que la categoría queda deshabilitada pero se conserva. */}
           {AREAS.map((area) => (
             <SelectableRow
               key={area}
+              variant="radio"
               label={strings.areaLabels[area]}
               checked={category === area}
+              disabled={extreme}
               onPress={() => setCategory(area)}
             />
           ))}
+          {extreme && (
+            <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
+              {strings.categoryDisabledNote}
+            </Text>
+          )}
 
-          <SelectableRow
-            label={strings.extremeToggleLabel}
-            checked={extreme}
+          {/* C45: "extremo" es una marca aparte, no otra categoría. */}
+          <Text className="mt-4 font-label-md text-label-md font-semibold text-on-surface-variant dark:text-on-surface-variant-dark">
+            {strings.extremeSectionTitle}
+          </Text>
+          <Pressable
             onPress={() => setExtreme((prev) => !prev)}
-          />
+            accessibilityRole="switch"
+            accessibilityState={{ checked: extreme }}
+            className="flex-row items-center justify-between gap-3 rounded-xl bg-surface-container p-4 shadow-sm dark:bg-surface-container-dark"
+          >
+            <Text className="flex-1 font-body-lg text-body-lg text-on-surface dark:text-on-surface-dark">
+              {strings.extremeToggleLabel}
+            </Text>
+            <Switch value={extreme} onValueChange={setExtreme} />
+          </Pressable>
           {extreme && (
             <Banner tone="locked" title={strings.extremeWarningTitle} description={strings.extremeWarningDescription} />
           )}
@@ -335,15 +355,18 @@ export default function CreateBlock() {
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
               {strings.appsSelected(selectedPackages.length)}
             </Text>
+            <AppNameList packages={selectedPackages} />
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
               {strings.typeLabel(blockType === "duration" ? strings.durationTypeLabel : strings.scheduledTypeLabel)}
             </Text>
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
               {strings.startsAtDuration(formatTimestamp(range.startAt), formatDuration(range.endAt - range.startAt))}
             </Text>
-            <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
-              {strings.categoryLabel(strings.areaLabels[category])}
-            </Text>
+            {!extreme && (
+              <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
+                {strings.categoryLabel(strings.areaLabels[category])}
+              </Text>
+            )}
             {extreme && (
               <Text className="font-body-md text-body-md font-bold text-error dark:text-error-dark">
                 {strings.extremeModeLabel}

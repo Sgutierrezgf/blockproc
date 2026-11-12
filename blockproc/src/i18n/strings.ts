@@ -125,6 +125,16 @@ export interface Strings {
     aboutSectionTitle: string;
     versionLabel: (version: string) => string;
   };
+  // Textos que no muestra ninguna pantalla de React sino Android: el aviso
+  // del supervisor (tarea Headless) y la notificación fija del servicio.
+  notifications: {
+    blockStartingTitle: string;
+    blockStartingText: string;
+    alertsChannelName: string;
+    monitorChannelName: string;
+    monitorTitle: string;
+    monitorText: string;
+  };
 }
 
 export const STRINGS: Record<Language, Strings> = {
@@ -271,6 +281,14 @@ export const STRINGS: Record<Language, Strings> = {
       aboutSectionTitle: "Acerca de",
       versionLabel: (version) => `Versión ${version}`,
     },
+    notifications: {
+      blockStartingTitle: "Bloqueo programado",
+      blockStartingText: "El bloqueo programado empieza en 2 minutos.",
+      alertsChannelName: "Avisos",
+      monitorChannelName: "Vigilancia de bloqueos",
+      monitorTitle: "blockproc",
+      monitorText: "Vigilando tus bloqueos",
+    },
   },
   en: {
     permissions: {
@@ -411,6 +429,14 @@ export const STRINGS: Record<Language, Strings> = {
       languageEnglish: "English",
       aboutSectionTitle: "About",
       versionLabel: (version) => `Version ${version}`,
+    },
+    notifications: {
+      blockStartingTitle: "Scheduled block",
+      blockStartingText: "Your scheduled block starts in 2 minutes.",
+      alertsChannelName: "Alerts",
+      monitorChannelName: "Block monitoring",
+      monitorTitle: "blockproc",
+      monitorText: "Watching over your blocks",
     },
   },
 };

@@ -5,6 +5,7 @@ import type { Block } from "../../blockproc/src/core/blocks";
 import { loadPolicyState, savePolicyState } from "../../blockproc/src/supervisor/policyRepository";
 import { createSupervisor } from "../../blockproc/src/supervisor/supervisor";
 import type { NativeAdapter } from "../../blockproc/src/supervisor/nativeAdapter";
+import { loadConfig, saveConfig } from "../../blockproc/src/storage/appRepository";
 
 const PKG = "com.instagram.android";
 
@@ -12,7 +13,7 @@ type Call =
   | { type: "showChallenge"; packageName: string }
   | { type: "showWait"; packageName: string }
   | { type: "goHome" }
-  | { type: "showNotification"; notifyType: string; text: string };
+  | { type: "showNotification"; notifyType: string; title: string; text: string };
 
 function createFakeNativeAdapter(): NativeAdapter & { calls: Call[] } {
   const calls: Call[] = [];
@@ -21,7 +22,7 @@ function createFakeNativeAdapter(): NativeAdapter & { calls: Call[] } {
     showChallenge: (packageName) => calls.push({ type: "showChallenge", packageName }),
     showWait: (packageName) => calls.push({ type: "showWait", packageName }),
     goHome: () => calls.push({ type: "goHome" }),
-    showNotification: (notifyType, text) => calls.push({ type: "showNotification", notifyType, text }),
+    showNotification: (notifyType, title, text) => calls.push({ type: "showNotification", notifyType, title, text }),
   };
 }
 
@@ -86,7 +87,35 @@ describe("createSupervisor", () => {
     supervisor.onTick();
 
     expect(native.calls).toEqual([
-      { type: "showNotification", notifyType: "blockStarting", text: expect.any(String) },
+      {
+        type: "showNotification",
+        notifyType: "blockStarting",
+        title: "Bloqueo programado",
+        text: "El bloqueo programado empieza en 2 minutos.",
+      },
+    ]);
+  });
+
+  // RF-76, RF-77: el aviso sale en el idioma elegido por el usuario, leído de
+  // la configuración guardada en cada evento (la tarea Headless no tiene UI).
+  it("NotifyBlockStarting usa el idioma configurado (inglés)", () => {
+    const clock = createFakeClock(0);
+    const store = createInMemoryStore();
+    saveConfig(store, { ...loadConfig(store), language: "en" });
+    seedBlocks(store, [makeBlock({ type: "scheduled", startAt: 100_000, endAt: 200_000 })]);
+    const native = createFakeNativeAdapter();
+    const supervisor = createSupervisor({ native, store, clock });
+
+    clock.advance(100_000 - 60_000);
+    supervisor.onTick();
+
+    expect(native.calls).toEqual([
+      {
+        type: "showNotification",
+        notifyType: "blockStarting",
+        title: "Scheduled block",
+        text: "Your scheduled block starts in 2 minutes.",
+      },
     ]);
   });
 

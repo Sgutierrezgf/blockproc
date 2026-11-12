@@ -19,14 +19,10 @@ import android.util.Log
 import androidx.core.app.ServiceCompat
 
 // RF-27: servicio en primer plano con notificación visible que detecta los
-// cambios de app en primer plano mediante sondeo. RF-43: solo sondea con la
+// cambios de app en primer plano mediante sondeo y se los pasa al supervisor
+// (tarea Headless JS, que es quien decide). RF-43: solo sondea con la
 // pantalla encendida (con la pantalla apagada, ni siquiera se programa el
 // siguiente sondeo).
-//
-// El intervalo es fijo por ahora (T09). El sondeo adaptativo según haya o no
-// una app restringida en primer plano (plan.md, decisión D4) llega en una
-// tarea posterior, cuando exista la configuración de apps restringidas que
-// el servicio necesita para distinguir un caso del otro.
 class MonitorService : Service() {
 
   private val handler = Handler(Looper.getMainLooper())
@@ -38,15 +34,11 @@ class MonitorService : Service() {
   private var lastQueryEnd = System.currentTimeMillis()
   private var lastForegroundPackage: String? = null
 
-  // RF-15, RF-30, RF-33 (T63): estos avisos ("falta 1 minuto", "falta 2
-  // minutos") dependen del evento Tick del supervisor (policy.ts,
-  // handleTick), pero nada lo disparaba nunca en la app real — solo
-  // ForegroundChanged, cuando cambia la app en primer plano. Con una app
-  // restringida quieta en primer plano (el caso normal que ese aviso
-  // necesita detectar) nunca se enviaba ningún Tick y el aviso no podía
-  // salir jamás. Encontrado en la demo manual de la T63: usando Chrome de
-  // verdad durante los 5 min del límite, el aviso del minuto 4 nunca
-  // apareció. Se reaprovecha este mismo sondeo (ya atado a pantalla
+  // Evento Tick del supervisor (policy.ts, handleTick): sin él, con una app
+  // quieta en primer plano nada se re-evaluaría — ni el aviso 2 min antes
+  // de un bloqueo programado (RF-68), ni el inicio de un bloqueo sobre la
+  // app ya abierta, ni el fin de una ventana de acceso o de una espera
+  // (RF-66/67). Se reaprovecha este mismo sondeo (ya atado a pantalla
   // encendida/apagada, RF-43) en vez de programar un segundo Handler.
   private var lastTickDispatchedAt = 0L
 
@@ -79,6 +71,7 @@ class MonitorService : Service() {
     super.onCreate()
     Log.d(TAG, "onCreate")
     startForegroundWithNotification()
+    isRunning = true
     // ACTION_SCREEN_ON/OFF son difusiones protegidas del sistema: solo
     // Android puede emitirlas, así que no hace falta (ni corresponde) pedir
     // RECEIVER_EXPORTED/RECEIVER_NOT_EXPORTED al registrar este receptor.
@@ -99,6 +92,7 @@ class MonitorService : Service() {
 
   override fun onDestroy() {
     Log.d(TAG, "onDestroy")
+    isRunning = false
     stopPolling()
     unregisterReceiver(screenReceiver)
     super.onDestroy()
@@ -171,9 +165,8 @@ class MonitorService : Service() {
     startService(intent)
   }
 
-  // RF-15, RF-30, RF-33 (T63): igual que triggerSupervisorTask, pero para
-  // el evento periódico que faltaba (ver el comentario junto a
-  // lastTickDispatchedAt).
+  // Igual que triggerSupervisorTask, pero para el evento periódico (ver el
+  // comentario junto a lastTickDispatchedAt).
   private fun triggerSupervisorTick() {
     val intent = Intent(this, SupervisorTaskService::class.java).apply {
       putExtra("event", "Tick")
@@ -182,41 +175,51 @@ class MonitorService : Service() {
   }
 
   private fun startForegroundWithNotification() {
-    val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      manager.createNotificationChannel(
-        NotificationChannel(
-          CHANNEL_ID,
-          "Vigilancia de apps restringidas",
-          // RF-27 (T63): con IMPORTANCE_MIN, Android colapsa la notificación
-          // del servicio en primer plano al fondo de la bandeja, sin ícono
-          // en la barra de estado ni texto legible (encontrado al comprobar
-          // la demo manual). LOW la deja visible, sin sonido ni interrupción.
-          NotificationManager.IMPORTANCE_LOW
-        )
-      )
-    }
-
-    // El icono es un ícono del sistema, como marcador temporal del
-    // prototipo; una tarea de pulido de la UI (fase 5) lo cambia por uno
-    // propio de blockproc.
-    val notification: Notification = Notification.Builder(this, CHANNEL_ID)
-      .setContentTitle("blockproc")
-      .setContentText("Vigilando el uso de las apps restringidas")
-      .setSmallIcon(android.R.drawable.ic_dialog_info)
-      .setOngoing(true)
-      .build()
-
     ServiceCompat.startForeground(
       this,
       NOTIFICATION_ID,
-      notification,
+      buildNotification(this),
       ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
     )
   }
 
   companion object {
     private const val TAG = "BlockprocMonitor"
+
+    // Solo lo lee refreshTexts: evita publicar la notificación fija cuando
+    // el servicio no está corriendo.
+    @Volatile
+    private var isRunning = false
+
+    // RF-76, RF-77: textos en el idioma elegido (ver NotificationTexts).
+    // El ícono es uno del sistema, marcador temporal hasta tener uno propio.
+    private fun buildNotification(context: Context): Notification {
+      val texts = NotificationTexts.load(context)
+      val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // Recrear el canal con el mismo id solo actualiza su nombre.
+        // IMPORTANCE_LOW (T63): con MIN, Android colapsa la notificación al
+        // fondo de la bandeja, sin ícono ni texto legible; LOW la deja
+        // visible, sin sonido ni interrupción.
+        manager.createNotificationChannel(
+          NotificationChannel(CHANNEL_ID, texts.monitorChannelName, NotificationManager.IMPORTANCE_LOW)
+        )
+      }
+      return Notification.Builder(context, CHANNEL_ID)
+        .setContentTitle(texts.monitorTitle)
+        .setContentText(texts.monitorText)
+        .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setOngoing(true)
+        .build()
+    }
+
+    /** RF-76: vuelve a publicar la notificación fija con los textos recién guardados. */
+    fun refreshTexts(context: Context) {
+      if (!isRunning) return
+      val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+      manager.notify(NOTIFICATION_ID, buildNotification(context))
+    }
+
     // "_v2": Android trata la importancia de un canal como fija una vez
     // creado (solo el usuario puede subirla a mano); un id nuevo es la
     // única forma de que el cambio a IMPORTANCE_LOW tenga efecto en
@@ -225,10 +228,9 @@ class MonitorService : Service() {
     private const val NOTIFICATION_ID = 1
     private const val POLL_INTERVAL_MS = 500L
 
-    // RF-15, RF-30, RF-33 (T63): cada cuánto se revisan los avisos de "falta
-    // 1/2 minutos", independiente del sondeo de primer plano (más frecuente,
-    // arriba). No hace falta más precisión que esta para un aviso que se da
-    // en minutos.
+    // Cada cuánto se envía el Tick al supervisor, independiente del sondeo
+    // de primer plano (más frecuente, arriba). Los plazos que revisa (aviso
+    // de 2 min, ventana de 2 min, espera de 5 min) no necesitan más precisión.
     private const val TICK_INTERVAL_MS = 10_000L
   }
 

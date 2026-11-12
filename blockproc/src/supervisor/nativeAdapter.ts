@@ -6,5 +6,5 @@ export interface NativeAdapter {
   showChallenge(packageName: string): void;
   showWait(packageName: string): void;
   goHome(): void;
-  showNotification(type: string, text: string): void;
+  showNotification(type: string, title: string, text: string): void;
 }

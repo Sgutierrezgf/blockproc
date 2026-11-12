@@ -115,12 +115,24 @@ class BlockprocNativeModule : Module() {
       getEssentialPackages()
     }
 
-    // RF-15, RF-30, RF-33 (T47): notificación de aviso con un texto y un
-    // tipo dados. El tipo solo decide el título y el id (para que un aviso
-    // nuevo del mismo tipo reemplace al anterior en vez de apilarse); el
-    // texto siempre lo da quien llama (T50 lo tomará de la configuración).
-    Function("showNotification") { type: String, text: String ->
-      showNotification(type, text)
+    // RF-68 (T47): notificación de aviso. El tipo solo decide el id (para
+    // que un aviso nuevo del mismo tipo reemplace al anterior en vez de
+    // apilarse); título y texto llegan ya traducidos desde JS (RF-76/77).
+    Function("showNotification") { type: String, title: String, text: String ->
+      showNotification(type, title, text)
+    }
+
+    // RF-76, RF-77: JS manda los textos de Android en el idioma elegido cada
+    // vez que cambia; se guardan para el servicio y se aplican ya mismo a la
+    // notificación fija y a los nombres de canal existentes.
+    Function("setNotificationTexts") {
+        alertsChannelName: String, monitorChannelName: String, monitorTitle: String, monitorText: String ->
+      NotificationTexts(alertsChannelName, monitorChannelName, monitorTitle, monitorText).save(context)
+      val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager.getNotificationChannel(ALERT_CHANNEL_ID) != null) {
+        createAlertChannel(manager, alertsChannelName)
+      }
+      MonitorService.refreshTexts(context)
     }
 
     // RF-9, RF-38 (T48): abre la pantalla correspondiente encima de la app
@@ -314,32 +326,29 @@ class BlockprocNativeModule : Module() {
     return pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)?.activityInfo?.packageName
   }
 
-  // RF-15, RF-30, RF-33: tres avisos, cada uno con su propio id para que se
-  // reemplace a sí mismo (no se acumulan) y no pisen a los otros dos.
-  private fun titleForNotificationType(type: String): String = when (type) {
-    "limit" -> "Límite de uso"
-    "window" -> "Ventana de acceso"
-    "restBlock" -> "Bloqueo horario"
-    else -> "blockproc"
-  }
-
+  // RF-68: hoy el único aviso es "blockStarting"; cada tipo tiene su propio
+  // id para reemplazarse a sí mismo sin pisar a otros avisos futuros.
   private fun idForNotificationType(type: String): Int = when (type) {
-    "limit" -> ALERT_NOTIFICATION_ID_LIMIT
-    "window" -> ALERT_NOTIFICATION_ID_WINDOW
-    "restBlock" -> ALERT_NOTIFICATION_ID_REST_BLOCK
-    else -> ALERT_NOTIFICATION_ID_LIMIT
+    "blockStarting" -> ALERT_NOTIFICATION_ID_BLOCK_STARTING
+    else -> ALERT_NOTIFICATION_ID_OTHER
   }
 
-  private fun showNotification(type: String, text: String) {
-    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+  private fun createAlertChannel(manager: NotificationManager, name: String) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      // Recrear un canal con el mismo id solo actualiza su nombre (Android
+      // conserva la importancia que ya tenía).
       manager.createNotificationChannel(
-        NotificationChannel(ALERT_CHANNEL_ID, "Avisos", NotificationManager.IMPORTANCE_DEFAULT)
+        NotificationChannel(ALERT_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
       )
     }
+  }
+
+  private fun showNotification(type: String, title: String, text: String) {
+    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    createAlertChannel(manager, NotificationTexts.load(context).alertsChannelName)
 
     val notification = Notification.Builder(context, ALERT_CHANNEL_ID)
-      .setContentTitle(titleForNotificationType(type))
+      .setContentTitle(title)
       .setContentText(text)
       .setSmallIcon(android.R.drawable.ic_dialog_info)
       .setAutoCancel(true)
@@ -351,9 +360,10 @@ class BlockprocNativeModule : Module() {
   companion object {
     private const val FOREGROUND_QUERY_WINDOW_MS = 60_000L
     private const val ALERT_CHANNEL_ID = "alerts"
-    private const val ALERT_NOTIFICATION_ID_LIMIT = 10
-    private const val ALERT_NOTIFICATION_ID_WINDOW = 11
-    private const val ALERT_NOTIFICATION_ID_REST_BLOCK = 12
+    // 12 era el id del viejo aviso de bloqueo horario: se conserva para
+    // que el aviso de bloqueo programado lo siga reemplazando.
+    private const val ALERT_NOTIFICATION_ID_BLOCK_STARTING = 12
+    private const val ALERT_NOTIFICATION_ID_OTHER = 10
     private const val ICON_SIZE_PX = 96
   }
 }

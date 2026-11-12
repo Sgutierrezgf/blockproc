@@ -110,7 +110,7 @@ export default function Dev() {
   // pantalla no debe quedar alcanzable ni por enlace profundo directo
   // (blockproc://dev), aunque el enlace de Personalización ya esté oculto.
   if (!__DEV__) {
-    return <Redirect href="/settings" />;
+    return <Redirect href="/personalization" />;
   }
 
   return (

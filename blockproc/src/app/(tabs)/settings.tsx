@@ -1,53 +1,19 @@
-import { useState } from "react";
-import { Link } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import Constants from "expo-constants";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { BLOCK_MESSAGE_MAX_LENGTH, FOCUS_MESSAGE_MAX_LENGTH, isValidMessage } from "../../core/config";
-import { useStrings } from "../../i18n/LanguageProvider";
-import { loadConfig, saveConfig } from "../../storage/appRepository";
-import { defaultStore } from "../../storage/defaultStore";
-import { Banner } from "../../components/Banner";
-import { Field } from "../../components/Field";
-import { PrimaryButton } from "../../components/PrimaryButton";
+import { useLanguage, useStrings } from "../../i18n/LanguageProvider";
+import { SelectableRow } from "../../components/SelectableRow";
 
-interface FieldErrors {
-  defaultFocusMessage?: string;
-  defaultBlockMessage?: string;
-}
-
-// Fase 10 (rediseño): Personalización (antes "Ajustes") queda reducida a los
-// mensajes por defecto que prellenan cada bloqueo nuevo (RF-70) y la nota de
-// batería (RF-44). Se puede editar siempre, sin ningún bloqueo de edición
-// global (D35): cambiar el default acá nunca afecta a un bloqueo ya creado
-// (sus mensajes quedan congelados desde que se creó, RF-62).
-export default function Settings() {
-  const strings = useStrings().personalization;
-  const [config, setConfig] = useState(() => loadConfig(defaultStore));
-  const [focusMessageText, setFocusMessageText] = useState(config.defaultFocusMessage);
-  const [blockMessageText, setBlockMessageText] = useState(config.defaultBlockMessage);
-  const [errors, setErrors] = useState<FieldErrors>({});
-
-  const save = () => {
-    const nextErrors: FieldErrors = {};
-    const updated = { ...config };
-
-    if (isValidMessage(focusMessageText, FOCUS_MESSAGE_MAX_LENGTH)) {
-      updated.defaultFocusMessage = focusMessageText;
-    } else {
-      nextErrors.defaultFocusMessage = strings.maxCharactersError(FOCUS_MESSAGE_MAX_LENGTH);
-    }
-
-    if (isValidMessage(blockMessageText, BLOCK_MESSAGE_MAX_LENGTH)) {
-      updated.defaultBlockMessage = blockMessageText;
-    } else {
-      nextErrors.defaultBlockMessage = strings.maxCharactersError(BLOCK_MESSAGE_MAX_LENGTH);
-    }
-
-    setErrors(nextErrors);
-    saveConfig(defaultStore, updated);
-    setConfig(updated);
-  };
+// Fase 11 (RF-76, RF-78, RF-79): pantalla nueva, distinta de Personalización
+// (que sigue con los mensajes por defecto + nota de batería, sin cambios).
+// Selector de idioma (aplica al instante, D38/D39) y "Acerca de" (nombre +
+// versión, leídos de app.json vía expo-constants, sin dependencia nueva).
+export default function AppSettings() {
+  const strings = useStrings().appSettings;
+  const { language, setLanguage } = useLanguage();
+  const appName = Constants.expoConfig?.name ?? "blockproc";
+  const appVersion = Constants.expoConfig?.version ?? "";
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface dark:bg-surface-dark">
@@ -55,48 +21,37 @@ export default function Settings() {
         contentContainerClassName="gap-4 bg-surface p-6 dark:bg-surface-dark"
         className="bg-surface dark:bg-surface-dark"
       >
+        <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
+          {strings.title}
+        </Text>
+
         <View className="gap-2">
-          <Text className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-on-surface-dark">
-            {strings.title}
+          <Text className="font-label-md text-label-md font-semibold text-on-surface-variant dark:text-on-surface-variant-dark">
+            {strings.languageSectionTitle}
           </Text>
-          <Text className="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dark">
-            {strings.subtitle}
-          </Text>
+          <SelectableRow
+            label={strings.languageSpanish}
+            checked={language === "es"}
+            onPress={() => setLanguage("es")}
+          />
+          <SelectableRow
+            label={strings.languageEnglish}
+            checked={language === "en"}
+            onPress={() => setLanguage("en")}
+          />
         </View>
 
-        <Field
-          label={strings.focusMessageLabel(FOCUS_MESSAGE_MAX_LENGTH)}
-          value={focusMessageText}
-          onChangeText={setFocusMessageText}
-          error={errors.defaultFocusMessage}
-          multiline
-        />
-        <Field
-          label={strings.blockMessageLabel(BLOCK_MESSAGE_MAX_LENGTH)}
-          value={blockMessageText}
-          onChangeText={setBlockMessageText}
-          error={errors.defaultBlockMessage}
-          multiline
-        />
-
-        <PrimaryButton title={strings.saveButton} onPress={save} />
-
-        {/* Nunca en una build release: __DEV__ es false ahí (ver dev.tsx). */}
-        {__DEV__ && (
-          <Link href="/dev" asChild>
-            <Pressable className="flex-row items-center justify-between rounded-2xl bg-surface-container p-3 active:bg-surface-container-high dark:bg-surface-container-dark dark:active:bg-surface-container-high-dark">
-              <Text className="font-body-lg text-body-lg text-on-surface dark:text-on-surface-dark">
-                {strings.devToolsLink}
-              </Text>
-              <Text className="font-body-lg text-body-lg text-on-surface-variant dark:text-on-surface-variant-dark">
-                ›
-              </Text>
-            </Pressable>
-          </Link>
-        )}
-
-        {/* RF-44: nota fija, siempre visible. */}
-        <Banner tone="battery" title={strings.batteryTitle} description={strings.batteryDescription} />
+        <View className="gap-1 rounded-2xl bg-surface-container-low p-4 dark:bg-surface-container-low-dark">
+          <Text className="font-label-md text-label-md font-semibold text-on-surface dark:text-on-surface-dark">
+            {strings.aboutSectionTitle}
+          </Text>
+          <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
+            {appName}
+          </Text>
+          <Text className="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant-dark">
+            {strings.versionLabel(appVersion)}
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

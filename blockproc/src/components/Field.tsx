@@ -1,7 +1,7 @@
 import { Pressable, Text, TextInput, View } from "react-native";
 
 // T67 (Fase 7, sistema "Mindful Calm"): reemplaza `NumberField`/`MessageField`
-// de settings.tsx. Sin lógica de negocio: la validación y el rango siguen en
+// de personalization.tsx. Sin lógica de negocio: la validación y el rango siguen en
 // quien lo usa (core/config.ts); acá solo hay presentación y, si se pasa
 // `step`, la aritmética simple de sumar/restar sobre el texto actual (nunca
 // valida ni recorta al rango — eso lo decide, y lo muestra como error, quien

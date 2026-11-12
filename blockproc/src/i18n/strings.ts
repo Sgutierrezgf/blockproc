@@ -123,6 +123,12 @@ export interface Strings {
     noMatchForCategory: string;
     categoryLabels: Record<CategoryKey, string>;
   };
+  // RF-81: lista de nombres de apps de un bloqueo (resumen y detalle).
+  appNameList: {
+    moreApps: (count: number) => string;
+    showAll: string;
+    showFewer: string;
+  };
   appSettings: {
     title: string;
     languageSectionTitle: string;
@@ -228,7 +234,7 @@ export const STRINGS: Record<Language, Strings> = {
       focusMessageLabel: "Mensaje de enfoque (hasta 120 caracteres)",
       blockMessageLabel: "Mensaje del bloqueo (hasta 120 caracteres)",
       summaryTitle: "Resumen",
-      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} seleccionada${count === 1 ? "" : "s"}`,
+      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} seleccionada${count === 1 ? "" : "s"}:`,
       typeLabel: (type) => `Tipo: ${type}`,
       startsAtDuration: (start, duration) => `Empieza a las ${start}, dura ${duration}`,
       categoryLabel: (area) => `Categoría: ${area}`,
@@ -284,6 +290,11 @@ export const STRINGS: Record<Language, Strings> = {
         accessibility: "Accesibilidad",
         other: "Otras",
       },
+    },
+    appNameList: {
+      moreApps: (count) => `+${count} más`,
+      showAll: "Ver todas",
+      showFewer: "Ver menos",
     },
     appSettings: {
       title: "Ajustes",
@@ -385,7 +396,7 @@ export const STRINGS: Record<Language, Strings> = {
       focusMessageLabel: "Focus message (up to 120 characters)",
       blockMessageLabel: "Block message (up to 120 characters)",
       summaryTitle: "Summary",
-      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} selected`,
+      appsSelected: (count) => `${count} app${count === 1 ? "" : "s"} selected:`,
       typeLabel: (type) => `Type: ${type}`,
       startsAtDuration: (start, duration) => `Starts at ${start}, lasts ${duration}`,
       categoryLabel: (area) => `Category: ${area}`,
@@ -439,6 +450,11 @@ export const STRINGS: Record<Language, Strings> = {
         accessibility: "Accessibility",
         other: "Other",
       },
+    },
+    appNameList: {
+      moreApps: (count) => `+${count} more`,
+      showAll: "Show all",
+      showFewer: "Show fewer",
     },
     appSettings: {
       title: "Settings",

@@ -22,6 +22,7 @@ import { useStrings } from "../i18n/LanguageProvider";
 import { loadConfig } from "../storage/appRepository";
 import { defaultStore } from "../storage/defaultStore";
 import { loadPolicyState, savePolicyState } from "../supervisor/policyRepository";
+import { AppNameList } from "../components/AppNameList";
 import { AppPicker } from "../components/AppPicker";
 import { Banner } from "../components/Banner";
 import { DurationWheelPicker } from "../components/DurationWheelPicker";
@@ -354,6 +355,7 @@ export default function CreateBlock() {
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
               {strings.appsSelected(selectedPackages.length)}
             </Text>
+            <AppNameList packages={selectedPackages} />
             <Text className="font-body-md text-body-md text-on-surface dark:text-on-surface-dark">
               {strings.typeLabel(blockType === "duration" ? strings.durationTypeLabel : strings.scheduledTypeLabel)}
             </Text>

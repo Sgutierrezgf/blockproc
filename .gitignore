@@ -3,3 +3,6 @@
 
 # macOS
 .DS_Store
+
+# Registro de tareas de el Gentleman (ODD), notas de trabajo locales.
+odd/
